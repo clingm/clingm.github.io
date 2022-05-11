@@ -18,7 +18,7 @@ document.addEventListener("pjax:success", initScrollReveal);
 <meta property="og:description" content="CryptoHack 刷题记录RSASTARTERRSA START1 计算 $101^{17} mod\ 22663$ RSA START2 pow(12, 0x10001, 17*23)  RSA START3 计算欧拉函数 p &#x3D; 857504083339712752489993810777 q &#x3D; 1029224947942998075080348647219  phi &#x3D; (p - 1)">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-05-11T13:17:43.000Z">
-<meta property="article:modified_time" content="2022-05-11T13:20:55.777Z">
+<meta property="article:modified_time" content="2022-05-11T13:24:28.478Z">
 <meta property="article:author" content="tr0uble">
 <meta property="article:tag" content="wtiteup">
 <meta name="twitter:card" content="summary"><script>(function() {
@@ -79,7 +79,7 @@ ct <span class="token operator">=</span> <span class="token triple-quoted-string
 <p><strong>Everything is Big</strong></p>
 <p>维纳攻击</p>
 <p><strong>Crossed Wires</strong></p>
-<p>$$c\equiv m^{e_0e_1e_2e_3e_4} \pmod n\ed\equiv1\pmod {\phi(n)}&#x3D;&gt;k_1\phi(n)&#x3D;ed-1\令x&#x3D;e_0e_1e_2e_3e_4，xd_2\equiv1\pmod{k_1\phi(n)}，也就是xd_2&#x3D;k_1k_2\phi(n)+1\两边同余\phi(n)，得xd_2\equiv1\pmod{\phi(n)}$$</p>
+<p>$$c\equiv m^{e_0e_1e_2e_3e_4} \pmod n\\ ed\equiv1\pmod {\phi(n)}&#x3D;&gt;k_1\phi(n)&#x3D;ed-1\\ 令x&#x3D;e_0e_1e_2e_3e_4，xd_2\equiv1\pmod{k_1\phi(n)}，也就是xd_2&#x3D;k_1k_2\phi(n)+1\\ 两边同余\phi(n)，得xd_2\equiv1\pmod{\phi(n)}$$</p>
 <pre class="language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> Crypto<span class="token punctuation">.</span>Util<span class="token punctuation">.</span>number <span class="token keyword">import</span> <span class="token operator">*</span>
 <span class="token keyword">import</span> gmpy2
 
