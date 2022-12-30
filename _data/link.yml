@@ -1,0 +1,19 @@
+- class_name: Link
+  link_list:
+    - name: tr0uble
+      link: http://clingm.top/
+      avatar: https://avatars.githubusercontent.com/u/93030921?v=4
+      descr: Another Blog
+
+- class_name: Website
+  class_desc: 值得推薦的網站
+  link_list:
+    - name: CryptoHack
+      link: https://cryptohack.org/
+      avatar: https://cryptohack.org/static/img/main.png
+      descr: A fun, free platform for learning modern cryptography
+    - name: CryptoPals
+      link: https://cryptopals.com/
+      descr: A Crypto Challange Platform
+
+
