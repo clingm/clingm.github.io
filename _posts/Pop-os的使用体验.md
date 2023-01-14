@@ -36,9 +36,9 @@ cover: https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Pop_OS-Logo-nob
 
 首先是输入法的改变，如果你使用是ibus并且已经厌倦了ibus智能拼音，那么rime是一个很好的选择。
 
-### 安装
+#### 安装
 
-```bash
+```shell
 sudo apt install ibus-rime
 ```
 
@@ -47,4 +47,28 @@ sudo apt install ibus-rime
 > 设置 -> 键盘 -> 输入源 -> 汉语(中国) -> 中文(Rime)
 
 Rime的好处在于很多地方可以自定义。更多细节可以看[官网](https://rime.im/)。
+
+### Dock
+
+个人不太喜欢Pop!_os自带的Dock。像latte或者plank对于笔者来说可能能好。笔者自己使用的是plank。
+
+#### 安装
+
+```bash
+sudo apt install plank
+```
+
+#### 配置
+
+鼠标在plank dock上，按住`ctrl`右键，首选项，就可以对plank进行一些简单的配置。
+
+更多的plank theme可以在Gnome插件市场上找到。https://www.gnome-look.org/browse?cat=273
+
+在安装plank后，最好把plank设置为开机时启动。按下`super`键搜索`启动引用程序`，或者命令行输入
+
+```bash
+gnome-session-properties
+```
+
+然后找到plank可执行文件的位置，一般会在`/usr/bin/plank`。添加进去就可以了。
 

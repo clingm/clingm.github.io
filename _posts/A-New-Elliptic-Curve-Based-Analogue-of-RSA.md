@@ -35,7 +35,7 @@ $$
 \end{cases}
 $$
 
-椭圆曲线的阶表示为
+椭圆曲线的阶8表示为
 
 $$
 |E_p(a, b)| = 1 + \sum_{x=1}^p((\frac{z}{p}) + 1)
@@ -202,5 +202,4 @@ d = gen_prikey(ciphertext, p, q, a, b, tp, tq)
 m = d * ciphertext
 print(long_to_bytes(int(m[0])))
 ```
-
 

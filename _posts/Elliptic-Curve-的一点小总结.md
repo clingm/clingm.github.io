@@ -362,3 +362,9 @@ Smart's Attack 适用于$\#F(p)=p$的曲线。
 
 > [more see](https://wstein.org/edu/2010/414/projects/novotney.pdf)
 
+
+
+# 奇异椭圆曲线
+
+
+
