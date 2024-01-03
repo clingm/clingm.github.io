@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="scroll-smooth" data-default-appearance="dark"
+  data-auto-appearance="true"><head>
+  <meta charset="utf-8" />
+  
+  <meta http-equiv="content-language" content="en" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  
+  <title>Cryptanalysis of Rsa Variants With Primes Sharing Most Significant Bits &middot; tr0uble</title>
+  <meta name="title" content="Cryptanalysis of Rsa Variants With Primes Sharing Most Significant Bits &middot; tr0uble" />
+  
+  <meta name="description" content="A powerful, lightweight theme for Hugo built with Tailwind CSS." />
+  
+  
+  
+  <link rel="canonical" href="https://clingm.github.io/posts/cryptanalysis-of-rsa-variants-with-primes-sharing-most-significant-bits/" />
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <link type="text/css" rel="stylesheet" href="/css/main.bundle.min.2b8b793b5350f23c027e845b237b267c85c08a4a6128dfad2b43b25f354c42eb4629bb7f88b75e09b52056c28e0d057594a8185bd540bd7bece42b3be6399cdf.css"
+    integrity="sha512-K4t5O1NQ8jwCfoRbI3smfIXAikphKN&#43;tK0OyXzVMQutGKbt/iLdeCbUgVsKODQV1lKgYW9VAvXvs5Cs75jmc3w==" />
+  
+  
+  <script type="text/javascript" src="/js/appearance.min.516a16745bea5a9bd011138d254cc0fd3973cd55ce6e15f3dec763e7c7c2c7448f8fe7b54cca811cb821b0c7e12cd161caace1dd794ac3d34d40937cbcc9ee12.js"
+    integrity="sha512-UWoWdFvqWpvQERONJUzA/TlzzVXObhXz3sdj58fCx0SPj&#43;e1TMqBHLghsMfhLNFhyqzh3XlKw9NNQJN8vMnuEg=="></script>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script defer type="text/javascript" id="script-bundle" src="/js/main.bundle.min.1271c22a557a15f10b5d38d2c87e49503604cfeffebadc1e7c267934e4b9f3ba1b74d81371219f9681dab2141482fc4ed2a8b462b179f0ef43a5f76d0575e85b.js"
+    integrity="sha512-EnHCKlV6FfELXTjSyH5JUDYEz&#43;/&#43;utwefCZ5NOS587obdNgTcSGfloHashQUgvxO0qi0YrF58O9DpfdtBXXoWw==" data-copy="" data-copied=""></script>
+  
+  
+  <script src="/js/zoom.min.js"></script>
+  
+  
+  
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  
+  
+  
+  
+  
+  
+  
+  <meta property="og:title" content="Cryptanalysis of Rsa Variants With Primes Sharing Most Significant Bits" />
+<meta property="og:description" content="概论 # 当RSA的公钥e和私钥d满足公式$ed-k(p^2-1)(q^2-1)=1$，如果模数m的两个因子p,q有相同的MSB，也就是说，如果p,q的差值$|p-q|$比较小，那么就可以计算出上式中的d，并且分解模数m。
+RSA变式 # RSA-LUC # 1993年，Smith 和 Lennon 发表了一个RSA变种密码系统，叫做LUC，基于 Lucas sequences。模数$N=pq$，公钥e和私钥d满足 $ed\equiv1 \pmod{(p^2-1)(q^2-1)}$。
+还有很多其他的变式可以看原文，这些变式都满足 $ed\equiv1 \pmod{(p^2-1)(q^2-1)}$ 这条式子。
+后面的研究中，把这条式子改写为等式 $ed-k(p^2-1)(q^2-1)=1$ ，并得出 $\frac{k}{d}$ 可以用 $e/(N^2-\frac{9}{4}N&#43;1)$的 连分数形式的逼近来表示，如果 $d &lt; \sqrt{(2N^3-18N^2)/e}$，这个方法将非常有效。
+在2017年，Bunder发现当公钥e满足 $ex-(p^2-1)(q^2-1)y=z$，可以将Coppersmith方法和连分数方法结合起来，如果 $xy &lt; 2N-4\sqrt{2}N^{\frac{3}{4}}$ 且 $|z| &lt; |p-q|N^{\frac{1}{4}}y$ ，那么可以很有效的分解N，当z=1时，上式变为 $ed-k(p^2-1)(q^2-1)=1$ ，d 的上界为 $d &lt; \sqrt{2N-4\sqrt{2}N^{\frac{3}{4}}}$ 。d 和 e 的界也被考虑成 $e = N^{\alpha}$ 和 $d = N^{\delta}$ 。再到后来密码学家们发现 $ed\equiv1 \pmod{(p^2-1)(q^2-1)}$ 可以被解决，如果 $\delta &lt; \frac{7}{3} - \frac{2}{3}\sqrt{1&#43;3\alpha}$ 。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://clingm.github.io/posts/cryptanalysis-of-rsa-variants-with-primes-sharing-most-significant-bits/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-01-14T15:31:52+08:00" />
+<meta property="article:modified_time" content="2023-01-14T15:31:52+08:00" />
+
+
+  <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Cryptanalysis of Rsa Variants With Primes Sharing Most Significant Bits"/>
+<meta name="twitter:description" content="概论 # 当RSA的公钥e和私钥d满足公式$ed-k(p^2-1)(q^2-1)=1$，如果模数m的两个因子p,q有相同的MSB，也就是说，如果p,q的差值$|p-q|$比较小，那么就可以计算出上式中的d，并且分解模数m。
+RSA变式 # RSA-LUC # 1993年，Smith 和 Lennon 发表了一个RSA变种密码系统，叫做LUC，基于 Lucas sequences。模数$N=pq$，公钥e和私钥d满足 $ed\equiv1 \pmod{(p^2-1)(q^2-1)}$。
+还有很多其他的变式可以看原文，这些变式都满足 $ed\equiv1 \pmod{(p^2-1)(q^2-1)}$ 这条式子。
+后面的研究中，把这条式子改写为等式 $ed-k(p^2-1)(q^2-1)=1$ ，并得出 $\frac{k}{d}$ 可以用 $e/(N^2-\frac{9}{4}N&#43;1)$的 连分数形式的逼近来表示，如果 $d &lt; \sqrt{(2N^3-18N^2)/e}$，这个方法将非常有效。
+在2017年，Bunder发现当公钥e满足 $ex-(p^2-1)(q^2-1)y=z$，可以将Coppersmith方法和连分数方法结合起来，如果 $xy &lt; 2N-4\sqrt{2}N^{\frac{3}{4}}$ 且 $|z| &lt; |p-q|N^{\frac{1}{4}}y$ ，那么可以很有效的分解N，当z=1时，上式变为 $ed-k(p^2-1)(q^2-1)=1$ ，d 的上界为 $d &lt; \sqrt{2N-4\sqrt{2}N^{\frac{3}{4}}}$ 。d 和 e 的界也被考虑成 $e = N^{\alpha}$ 和 $d = N^{\delta}$ 。再到后来密码学家们发现 $ed\equiv1 \pmod{(p^2-1)(q^2-1)}$ 可以被解决，如果 $\delta &lt; \frac{7}{3} - \frac{2}{3}\sqrt{1&#43;3\alpha}$ 。"/>
+
+  
+  <script type="application/ld+json">
+  [{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "articleSection": "Posts",
+    "name": "Cryptanalysis of Rsa Variants With Primes Sharing Most Significant Bits",
+    "headline": "Cryptanalysis of Rsa Variants With Primes Sharing Most Significant Bits",
+    
+    "abstract": "概论 # 当RSA的公钥e和私钥d满足公式$ed-k(p^2-1)(q^2-1)=1$，如果模数m的两个因子p,q有相同的MSB，也就是说，如果p,q的差值$|p-q|$比较小，那么就可以计算出上式中的d，并且分解模数m。\nRSA变式 # RSA-LUC # 1993年，Smith 和 Lennon 发表了一个RSA变种密码系统，叫做LUC，基于 Lucas sequences。模数$N=pq$，公钥e和私钥d满足 $ed\\equiv1 \\pmod{(p^2-1)(q^2-1)}$。\n还有很多其他的变式可以看原文，这些变式都满足 $ed\\equiv1 \\pmod{(p^2-1)(q^2-1)}$ 这条式子。\n后面的研究中，把这条式子改写为等式 $ed-k(p^2-1)(q^2-1)=1$ ，并得出 $\\frac{k}{d}$ 可以用 $e\/(N^2-\\frac{9}{4}N\u002b1)$的 连分数形式的逼近来表示，如果 $d \u0026lt; \\sqrt{(2N^3-18N^2)\/e}$，这个方法将非常有效。\n在2017年，Bunder发现当公钥e满足 $ex-(p^2-1)(q^2-1)y=z$，可以将Coppersmith方法和连分数方法结合起来，如果 $xy \u0026lt; 2N-4\\sqrt{2}N^{\\frac{3}{4}}$ 且 $|z| \u0026lt; |p-q|N^{\\frac{1}{4}}y$ ，那么可以很有效的分解N，当z=1时，上式变为 $ed-k(p^2-1)(q^2-1)=1$ ，d 的上界为 $d \u0026lt; \\sqrt{2N-4\\sqrt{2}N^{\\frac{3}{4}}}$ 。d 和 e 的界也被考虑成 $e = N^{\\alpha}$ 和 $d = N^{\\delta}$ 。再到后来密码学家们发现 $ed\\equiv1 \\pmod{(p^2-1)(q^2-1)}$ 可以被解决，如果 $\\delta \u0026lt; \\frac{7}{3} - \\frac{2}{3}\\sqrt{1\u002b3\\alpha}$ 。",
+    "inLanguage": "en",
+    "url" : "https:\/\/clingm.github.io\/posts\/cryptanalysis-of-rsa-variants-with-primes-sharing-most-significant-bits\/",
+    "author" : {
+      "@type": "Person",
+      "name": "tr0uble"
+    },
+    "copyrightYear": "2023",
+    "dateCreated": "2023-01-14T15:31:52\u002b08:00",
+    "datePublished": "2023-01-14T15:31:52\u002b08:00",
+    
+    "dateModified": "2023-01-14T15:31:52\u002b08:00",
+    
+    
+    
+    "mainEntityOfPage": "true",
+    "wordCount": "2212"
+  }]
+  </script>
+
+
+  
+  
+  <meta name="author" content="tr0uble" />
+  
+  
+  
+  <link href="https://twitter.com/tr0ubl3102" rel="me" />
+  
+  
+  <link href="https://github.com/clingm/" rel="me" />
+  
+  
+  
+  
+  <script type="text/javascript">
+    window.MathJax = {
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async>
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$','$'], ['\\(','\\)']],
+        displayMath: [['$$','$$'], ['\[\[','\]\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+        TeX: { equationNumbers: { autoNumber: "AMS" },
+            extensions: ["AMSmath.js", "AMSsymbols.js"] }
+      }
+    });
+    MathJax.Hub.Queue(function() {
+        
+        
+        
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i = 0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+  </script>
+  <style>
+    code.has-jax {
+      font: inherit;
+      font-size: 100%;
+      background: inherit;
+      border: inherit;
+      color: #515151;
+    }
+  </style>
+
+
+  
+  
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PEDMYR1V0K"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-PEDMYR1V0K');
+</script>
+
+  
+  
+  <meta name="theme-color"/>
+  
+  
+  
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script>
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB5tqlqDky77Vb4Tc4apiHV4hRZI18KGiY",
+      authDomain: "AIzaSyB5tqlqDky77Vb4Tc4apiHV4hRZI18KGiY",
+      projectId: "blowfish-21fff",
+      storageBucket: "blowfish-21fff.appspot.com",
+      messagingSenderId: "60108104191",
+      appId: "1:60108104191:web:039842ebe1370698b487ca",
+      measurementId: "G-PEDMYR1V0K"
+    };
+
+    var app = firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+    var auth = firebase.auth();
+
+  </script>
+  
+  
+</head>
+<body
+  class="flex flex-col h-screen px-6 m-auto text-lg leading-7 max-w-7xl bg-neutral text-neutral-900 dark:bg-neutral-800 dark:text-neutral sm:px-14 md:px-24 lg:px-32">
+  <div id="the-top" class="absolute flex self-center">
+    <a class="px-3 py-1 text-sm -translate-y-8 rounded-b-lg bg-primary-200 focus:translate-y-0 dark:bg-neutral-600"
+      href="#main-content"><span
+        class="font-bold text-primary-600 ltr:pr-2 rtl:pl-2 dark:text-primary-400">&darr;</span>Skip to main content</a>
+  </div>
+  
+  
+  <div class="min-h-[148px]"></div>
+<div class="fixed inset-x-0 pl-[24px] pr-[24px]" style="z-index:100">
+  <div id="menu-blur" class="absolute opacity-0 inset-x-0 top-0 h-full single_hero_background nozoom backdrop-blur-2xl shadow-2xl"></div>
+  <div class="relative max-w-[64rem] ml-auto mr-auto">
+    <div style="padding-left:0;padding-right:0;padding-top:2px;padding-bottom:3px"
+    class="main-menu flex items-center justify-between px-4 py-6 sm:px-6 md:justify-start space-x-3">
+    
+    <div class="flex flex-1 items-center justify-between">
+        <nav class="flex space-x-3">
+
+            
+            <a href="/" class="text-base font-medium text-gray-500 hover:text-gray-900">tr0uble</a>
+            
+
+        </nav>
+        <nav class="hidden md:flex items-center space-x-5 md:ml-12 h-12">
+
+            
+            
+            
+  <a href="/posts/"  class="flex items-center">
+    
+    <p class="text-base font-medium text-gray-500 hover:text-gray-900" title="Posts">
+        Blog
+    </p>
+</a>
+
+
+            
+            
+  <a href="/about/"  class="flex items-center">
+    
+    <p class="text-base font-medium text-gray-500 hover:text-gray-900" title="About">
+        About
+    </p>
+</a>
+
+
+            
+            
+
+            
+
+
+            
+            <button id="search-button" aria-label="Search" class="text-base hover:text-primary-600 dark:hover:text-primary-400 h-12"
+                title="">
+                
+
+  <span class="relative block icon">
+    <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+
+  </span>
+
+
+            </button>
+            
+
+
+            
+            
+            <div
+                class="ltr:mr-14 rtl:ml-14 cursor-pointer text-sm text-neutral-700 hover:text-primary-600 dark:text-neutral dark:hover:text-primary-400">
+                <button id="appearance-switcher" aria-label="Dark mode switcher" type="button">
+                    <div class="flex items-center justify-center h-12 dark:hidden">
+                        
+
+  <span class="relative block icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M32 256c0-123.8 100.3-224 223.8-224c11.36 0 29.7 1.668 40.9 3.746c9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3c9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480C132.1 480 32 379.6 32 256z"/></svg>
+
+  </span>
+
+
+                    </div>
+                    <div class="items-center justify-center hidden h-12 dark:flex">
+                        
+
+  <span class="relative block icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 159.1c-53.02 0-95.1 42.98-95.1 95.1S202.1 351.1 256 351.1s95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347L446.1 255.1l63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7l-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89L164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6L12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256l-63.15 91.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7l19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109l109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69 0-127.1-57.31-127.1-127.1c0-70.69 57.31-127.1 127.1-127.1s127.1 57.3 127.1 127.1C383.1 326.7 326.7 383.1 256 383.1z"/></svg>
+
+  </span>
+
+
+                    </div>
+                </button>
+            </div>
+            
+
+        </nav>
+        <div class="flex md:hidden items-center space-x-5 md:ml-12">
+
+            <span></span>
+
+            
+
+
+            
+            <button id="search-button-mobile" aria-label="Search" class="text-base hover:text-primary-600 dark:hover:text-primary-400"
+                title="">
+                
+
+  <span class="relative block icon">
+    <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+
+  </span>
+
+
+            </button>
+            
+
+            
+            
+            <button id="appearance-switcher-mobile" aria-label="Dark mode switcher" type="button" style="margin-right:5px">
+                <div class="flex items-center justify-center h-12 dark:hidden">
+                    
+
+  <span class="relative block icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M32 256c0-123.8 100.3-224 223.8-224c11.36 0 29.7 1.668 40.9 3.746c9.616 1.777 11.75 14.63 3.279 19.44C245 86.5 211.2 144.6 211.2 207.8c0 109.7 99.71 193 208.3 172.3c9.561-1.805 16.28 9.324 10.11 16.95C387.9 448.6 324.8 480 255.8 480C132.1 480 32 379.6 32 256z"/></svg>
+
+  </span>
+
+
+                </div>
+                <div class="items-center justify-center hidden h-12 dark:flex">
+                    
+
+  <span class="relative block icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 159.1c-53.02 0-95.1 42.98-95.1 95.1S202.1 351.1 256 351.1s95.1-42.98 95.1-95.1S309 159.1 256 159.1zM509.3 347L446.1 255.1l63.15-91.01c6.332-9.125 1.104-21.74-9.826-23.72l-109-19.7l-19.7-109c-1.975-10.93-14.59-16.16-23.72-9.824L256 65.89L164.1 2.736c-9.125-6.332-21.74-1.107-23.72 9.824L121.6 121.6L12.56 141.3C1.633 143.2-3.596 155.9 2.736 164.1L65.89 256l-63.15 91.01c-6.332 9.125-1.105 21.74 9.824 23.72l109 19.7l19.7 109c1.975 10.93 14.59 16.16 23.72 9.824L256 446.1l91.01 63.15c9.127 6.334 21.75 1.107 23.72-9.822l19.7-109l109-19.7C510.4 368.8 515.6 356.1 509.3 347zM256 383.1c-70.69 0-127.1-57.31-127.1-127.1c0-70.69 57.31-127.1 127.1-127.1s127.1 57.3 127.1 127.1C383.1 326.7 326.7 383.1 256 383.1z"/></svg>
+
+  </span>
+
+
+                </div>
+            </button>
+            
+
+        </div>
+    </div>
+    <div class="-my-2 -mr-2 md:hidden">
+
+        <label id="menu-button" for="menu-controller" class="block">
+            <input type="checkbox" id="menu-controller" class="hidden" />
+            
+            <div class="cursor-pointer hover:text-primary-600 dark:hover:text-primary-400">
+                
+
+  <span class="relative block icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M0 96C0 78.33 14.33 64 32 64H416C433.7 64 448 78.33 448 96C448 113.7 433.7 128 416 128H32C14.33 128 0 113.7 0 96zM0 256C0 238.3 14.33 224 32 224H416C433.7 224 448 238.3 448 256C448 273.7 433.7 288 416 288H32C14.33 288 0 273.7 0 256zM416 448H32C14.33 448 0 433.7 0 416C0 398.3 14.33 384 32 384H416C433.7 384 448 398.3 448 416C448 433.7 433.7 448 416 448z"/></svg>
+
+  </span>
+
+
+            </div>
+            <div id="menu-wrapper" style="padding-top:5px;"
+                class="fixed inset-0 z-30 invisible w-screen h-screen m-0 overflow-auto transition-opacity opacity-0 cursor-default bg-neutral-100/50 backdrop-blur-sm dark:bg-neutral-900/50">
+                <ul
+                    class="flex space-y-2 mt-3 flex-col items-end w-full px-6 py-6 mx-auto overflow-visible list-none ltr:text-right rtl:text-left max-w-7xl">
+
+                    <li>
+                        <span
+                            class="cursor-pointer inline-block align-text-bottom hover:text-primary-600 dark:hover:text-primary-400">
+
+  <span class="relative block icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z"/></svg>
+
+  </span>
+
+</span>
+                    </li>
+
+                    
+
+                    
+  <li class="mt-1">
+    <a href="/posts/"  class="flex items-center">
+        
+        <p class="text-bg font-bg text-gray-500 hover:text-gray-900" title="Posts">
+            Blog
+        </p>
+    </a>
+</li>
+
+
+
+                    
+
+                    
+  <li class="mt-1">
+    <a href="/about/"  class="flex items-center">
+        
+        <p class="text-bg font-bg text-gray-500 hover:text-gray-900" title="About">
+            About
+        </p>
+    </a>
+</li>
+
+
+
+                    
+
+                </ul>
+                
+                
+
+            </div>
+        </label>
+    </div>
+</div>
+
+
+
+
+<script>
+    (function () {
+        var $mainmenu = $('.main-menu');
+        var path = window.location.pathname;
+        $mainmenu.find('a[href="' + path + '"]').each(function (i, e) {
+            $(e).children('p').addClass('active');
+        });
+    })();
+</script>
+
+
+  </div>
+</div>
+<script>
+  window.addEventListener('scroll', function (e) {
+    var scroll = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    var background_blur = document.getElementById('menu-blur');
+    background_blur.style.opacity = (scroll / 300);
+  });
+</script>
+
+  
+  <div class="relative flex flex-col grow">
+    <main id="main-content" class="grow">
+      
+
+
+<article>
+  
+  
+  
+  
+  
+  
+
+
+  
+  
+
+  <header id="single_header" class="mt-5 max-w-prose">
+    
+    <ol class="text-sm text-neutral-500 dark:text-neutral-400 print:hidden">
+  
+  
+    
+  
+    
+  
+  <li class="inline hidden">
+    <a
+      class="hover:underline decoration-neutral-300 dark:underline-neutral-600"
+      href="/"
+      >Welcome to My Blog :tada:</a
+    ><span class="px-1 text-primary-500">/</span>
+  </li>
+
+  
+  <li class="inline ">
+    <a
+      class="hover:underline decoration-neutral-300 dark:underline-neutral-600"
+      href="/posts/"
+      >Posts</a
+    ><span class="px-1 text-primary-500">/</span>
+  </li>
+
+  
+  <li class="inline hidden">
+    <a
+      class="hover:underline decoration-neutral-300 dark:underline-neutral-600"
+      href="/posts/cryptanalysis-of-rsa-variants-with-primes-sharing-most-significant-bits/"
+      >Cryptanalysis of Rsa Variants With Primes Sharing Most Significant Bits</a
+    ><span class="px-1 text-primary-500">/</span>
+  </li>
+
+</ol>
+
+
+    
+    <h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">
+      Cryptanalysis of Rsa Variants With Primes Sharing Most Significant Bits
+    </h1>
+    <div class="mt-1 mb-6 text-base text-neutral-500 dark:text-neutral-400 print:hidden">
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div style="cursor: default;" class="flex flex-row flex-wrap items-center">
+  
+  
+  <span>
+    
+    <span id="views_posts/cryptanalysis-of-rsa-variants-with-primes-sharing-most-significant-bits.md" 
+    
+        class="animate-pulse inline-block text-transparent max-h-3 rounded-full mt-[-2px] align-middle bg-neutral-300 dark:bg-neutral-400" title="views">loading</span> 
+    <span class="inline-block align-text-bottom">
+
+  <span class="relative block icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+<path fill="currentColor" d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg>
+  </span>
+
+</span>
+</span><span class="px-2 text-primary-500">&middot;</span><span>
+    
+    <span id="likes_posts/cryptanalysis-of-rsa-variants-with-primes-sharing-most-significant-bits.md" 
+    
+        class="animate-pulse inline-block text-transparent max-h-3 rounded-full mt-[-2px] align-middle bg-neutral-300 dark:bg-neutral-400" title="likes">loading</span> 
+    <span class="inline-block align-text-bottom">
+
+  <span class="relative block icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<path fill="currentColor" d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/></svg>
+  </span>
+
+</span>
+</span><span class="px-2 text-primary-500">&middot;</span><span>
+    <button id="button_likes"
+        class="rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400"
+        onclick="process_article()">
+        <span id="button_likes_heart" style="display:none" class="inline-block align-text-bottom">
+
+  <span class="relative block icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<path fill="currentColor" d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/></svg>
+  </span>
+
+ </span>
+        <span id="button_likes_emtpty_heart" class="inline-block align-text-bottom">
+
+  <span class="relative block icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<path fill="currentColor" d="M244 84L255.1 96L267.1 84.02C300.6 51.37 347 36.51 392.6 44.1C461.5 55.58 512 115.2 512 185.1V190.9C512 232.4 494.8 272.1 464.4 300.4L283.7 469.1C276.2 476.1 266.3 480 256 480C245.7 480 235.8 476.1 228.3 469.1L47.59 300.4C17.23 272.1 0 232.4 0 190.9V185.1C0 115.2 50.52 55.58 119.4 44.1C164.1 36.51 211.4 51.37 244 84C243.1 84 244 84.01 244 84L244 84zM255.1 163.9L210.1 117.1C188.4 96.28 157.6 86.4 127.3 91.44C81.55 99.07 48 138.7 48 185.1V190.9C48 219.1 59.71 246.1 80.34 265.3L256 429.3L431.7 265.3C452.3 246.1 464 219.1 464 190.9V185.1C464 138.7 430.4 99.07 384.7 91.44C354.4 86.4 323.6 96.28 301.9 117.1L255.1 163.9z"/></svg>
+  </span>
+
+</span>
+        <span id="button_likes_text">&nbsp;Like</span>
+    </button>
+</span><span class="px-2 text-primary-500">&middot;</span>
+
+
+  
+    
+  
+  
+
+<span class="mb-[2px]">
+  <a
+    href="https://github.com/nunocoracao/blowfish/tree/main/exampleSite/content/posts/cryptanalysis-of-rsa-variants-with-primes-sharing-most-significant-bits.md"
+    class="text-lg hover:text-primary-500"
+    rel="noopener noreferrer"
+    target="_blank"
+    title="Edit content"
+    ><span class="inline-block align-text-bottom">
+
+  <span class="relative block icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M490.3 40.4C512.2 62.27 512.2 97.73 490.3 119.6L460.3 149.7L362.3 51.72L392.4 21.66C414.3-.2135 449.7-.2135 471.6 21.66L490.3 40.4zM172.4 241.7L339.7 74.34L437.7 172.3L270.3 339.6C264.2 345.8 256.7 350.4 248.4 353.2L159.6 382.8C150.1 385.6 141.5 383.4 135 376.1C128.6 370.5 126.4 361 129.2 352.4L158.8 263.6C161.6 255.3 166.2 247.8 172.4 241.7V241.7zM192 63.1C209.7 63.1 224 78.33 224 95.1C224 113.7 209.7 127.1 192 127.1H96C78.33 127.1 64 142.3 64 159.1V416C64 433.7 78.33 448 96 448H352C369.7 448 384 433.7 384 416V319.1C384 302.3 398.3 287.1 416 287.1C433.7 287.1 448 302.3 448 319.1V416C448 469 405 512 352 512H96C42.98 512 0 469 0 416V159.1C0 106.1 42.98 63.1 96 63.1H192z"/></svg>
+
+  </span>
+
+</span></a
+  >
+</span>
+  
+
+  
+  
+</div>
+
+
+<div style="cursor: pointer;" class="flex flex-row flex-wrap items-center">
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+</div>
+
+
+
+
+<div style="cursor: pointer;" class="flex flex-row flex-wrap items-center">
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+</div>
+
+
+
+    </div>
+
+    
+    
+    
+    
+    
+
+    
+    
+    
+<div class="flex">
+  
+  
+  
+  
+  
+  
+  <img class="!mt-0 !mb-0 h-24 w-24 rounded-full ltr:mr-4 rtl:ml-4" width="96" height="96"
+    alt="tr0uble" src="/img/avatar_hua6c1dd558e6abcbb29bbd81b2e8f5fdd_219482_192x192_fill_box_center_3.png" />
+  
+  
+  <div class="place-self-center">
+    
+    <div class="text-[0.6rem] uppercase leading-3 text-neutral-500 dark:text-neutral-400">
+      Author
+    </div>
+    <div class="font-semibold leading-6 text-neutral-800 dark:text-neutral-300">
+      tr0uble
+    </div>
+    
+    
+    <div class="text-sm text-neutral-700 dark:text-neutral-400">A noob</div>
+    
+    <div class="text-2xl sm:text-lg">
+  <div class="flex flex-wrap text-neutral-400 dark:text-neutral-500">
+    
+      
+        <a
+          class="px-1 hover:text-primary-700 dark:hover:text-primary-400"
+          href="https://twitter.com/tr0ubl3102"
+          target="_blank"
+          aria-label="X-Twitter"
+          rel="me noopener noreferrer"
+          ><span class="inline-block align-text-bottom">
+
+  <span class="relative block icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg>
+  </span>
+
+</span></a
+        >
+      
+    
+      
+        <a
+          class="px-1 hover:text-primary-700 dark:hover:text-primary-400"
+          href="https://github.com/clingm/"
+          target="_blank"
+          aria-label="Github"
+          rel="me noopener noreferrer"
+          ><span class="inline-block align-text-bottom">
+
+  <span class="relative block icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="currentColor" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+
+  </span>
+
+</span></a
+        >
+      
+    
+  </div>
+
+</div>
+  </div>
+</div>
+    
+
+    
+
+    
+
+    
+    <div class="mb-5"></div>
+    
+  
+  </header>
+  
+  <section class="flex flex-col max-w-full mt-0 prose dark:prose-invert lg:flex-row">
+    
+     <div
+      class="order-first sm:max-w-prose lg:ml-auto px-0 lg:order-last lg:max-w-xs ltr:lg:pl-8 rtl:lg:pr-8">
+      <div class="toc ltr:pl-5 rtl:pr-5 print:hidden lg:sticky lg:top-[140px]">
+
+         <details open class="mt-0 overflow-hidden rounded-lg ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 hidden lg:block">
+  <summary
+    class="block py-1 text-lg font-semibold cursor-pointer bg-neutral-100 text-neutral-800 ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 dark:bg-neutral-700 dark:text-neutral-100 lg:hidden">
+    Table of Contents
+  </summary>
+  <div
+    class="min-w-[220px] py-2 border-dotted border-neutral-300 ltr:-ml-5 ltr:border-l ltr:pl-5 rtl:-mr-5 rtl:border-r rtl:pr-5 dark:border-neutral-600">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#概论">概论</a></li>
+    <li><a href="#rsa变式">RSA变式</a>
+      <ul>
+        <li><a href="#rsa-luc">RSA-LUC</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#证明">证明</a></li>
+    <li><a href="#demo">demo</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#证明-1">证明</a></li>
+    <li><a href="#dome">dome</a></li>
+  </ul>
+</nav>
+  </div>
+</details>
+<details class="mt-0 overflow-hidden rounded-lg ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 lg:hidden">
+  <summary
+    class="py-1 text-lg font-semibold cursor-pointer bg-neutral-100 text-neutral-800 ltr:-ml-5 ltr:pl-5 rtl:-mr-5 rtl:pr-5 dark:bg-neutral-700 dark:text-neutral-100 lg:hidden">
+    Table of Contents
+  </summary>
+  <div
+    class="py-2 border-dotted border-neutral-300 ltr:-ml-5 ltr:border-l ltr:pl-5 rtl:-mr-5 rtl:border-r rtl:pr-5 dark:border-neutral-600">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#概论">概论</a></li>
+    <li><a href="#rsa变式">RSA变式</a>
+      <ul>
+        <li><a href="#rsa-luc">RSA-LUC</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#证明">证明</a></li>
+    <li><a href="#demo">demo</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#证明-1">证明</a></li>
+    <li><a href="#dome">dome</a></li>
+  </ul>
+</nav>
+  </div>
+</details>
+
+ 
+<script>
+  (function () {
+    var $toc = $('#TableOfContents');
+    if ($toc.length > 0) {
+      var $window = $(window);
+
+      function onScroll() {
+        var currentScroll = $window.scrollTop();
+        var h = $('.anchor');
+        var id = "";
+        h.each(function (i, e) {
+          e = $(e);
+          if (e.offset().top - $(window).height()/3 <= currentScroll) {
+            id = e.attr('id');
+          }
+        });
+        var active = $toc.find('a.active');      
+        if (active.length == 1 && active.eq(0).attr('href') == '#' + id) return true;
+
+        active.each(function (i, e) {
+          
+            $(e).removeClass('active');
+          
+        });
+        $toc.find('a[href="#' + id + '"]').addClass('active')
+        $toc.find('a[href="#' + id + '"]').parentsUntil('#TableOfContents').each(function (i, e) {
+          $(e).children('a').parents('ul').show();          
+        });
+      }
+
+      $window.on('scroll', onScroll);
+      $(document).ready(function () {
+        
+        onScroll();
+      });
+    }
+  })();
+</script>
+   </div>
+      </div>
+      
+
+      <div class="min-w-0 min-h-0 max-w-fit">
+        
+        
+
+
+        <div class="max-w-prose mb-20">
+          <h2 class="relative group">概论 
+    <div id="概论" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100">
+        <a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700"
+            style="text-decoration-line: none !important;" href="#%e6%a6%82%e8%ae%ba" aria-label="Anchor">#</a>
+    </span>        
+    
+</h2>
+<p>当RSA的公钥e和私钥d满足公式$ed-k(p^2-1)(q^2-1)=1$，如果模数m的两个因子p,q有相同的MSB，也就是说，如果p,q的差值$|p-q|$比较小，那么就可以计算出上式中的d，并且分解模数m。</p>
+<h2 class="relative group">RSA变式 
+    <div id="rsa变式" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100">
+        <a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700"
+            style="text-decoration-line: none !important;" href="#rsa%e5%8f%98%e5%bc%8f" aria-label="Anchor">#</a>
+    </span>        
+    
+</h2>
+<h3 class="relative group">RSA-LUC 
+    <div id="rsa-luc" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100">
+        <a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700"
+            style="text-decoration-line: none !important;" href="#rsa-luc" aria-label="Anchor">#</a>
+    </span>        
+    
+</h3>
+<p>1993年，Smith 和 Lennon 发表了一个RSA变种密码系统，叫做LUC，基于 Lucas sequences。模数$N=pq$，公钥e和私钥d满足 $ed\equiv1 \pmod{(p^2-1)(q^2-1)}$。</p>
+<p>还有很多其他的变式可以看原文，这些变式都满足 $ed\equiv1 \pmod{(p^2-1)(q^2-1)}$ 这条式子。</p>
+<p>后面的研究中，把这条式子改写为等式 $ed-k(p^2-1)(q^2-1)=1$ ，并得出 $\frac{k}{d}$ 可以用 $e/(N^2-\frac{9}{4}N+1)$的 连分数形式的逼近来表示，如果 $d &lt; \sqrt{(2N^3-18N^2)/e}$，这个方法将非常有效。</p>
+<p>在2017年，Bunder发现当公钥e满足 $ex-(p^2-1)(q^2-1)y=z$，可以将Coppersmith方法和连分数方法结合起来，如果 $xy &lt; 2N-4\sqrt{2}N^{\frac{3}{4}}$ 且 $|z| &lt; |p-q|N^{\frac{1}{4}}y$ ，那么可以很有效的分解N，当z=1时，上式变为 $ed-k(p^2-1)(q^2-1)=1$ ，d 的上界为 $d &lt; \sqrt{2N-4\sqrt{2}N^{\frac{3}{4}}}$ 。d 和 e 的界也被考虑成 $e = N^{\alpha}$ 和 $d = N^{\delta}$ 。再到后来密码学家们发现 $ed\equiv1 \pmod{(p^2-1)(q^2-1)}$ 可以被解决，如果 $\delta &lt; \frac{7}{3} - \frac{2}{3}\sqrt{1+3\alpha}$ 。</p>
+<p>这篇论文主要论述的是RSA模数N=pq，且 $q &lt; p &lt; 2q$，$p-q=N^{\beta}$。如果p和q满足 $q&lt;p&lt;2q$，那么 $\beta$ 总是小于0.5的，而且当 $\beta$ 小于0.25时就可以费马分解的方法直接分解N了。</p>
+<h1 class="relative group">连分数方法攻击 
+    <div id="连分数方法攻击" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100">
+        <a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700"
+            style="text-decoration-line: none !important;" href="#%e8%bf%9e%e5%88%86%e6%95%b0%e6%96%b9%e6%b3%95%e6%94%bb%e5%87%bb" aria-label="Anchor">#</a>
+    </span>        
+    
+</h1>
+<p><strong>定理</strong> 令 $N=pq$ 是 RSA 的模数，$q&lt;p&lt;2q$，$|p-q|=N^{\beta}$ 。令加密指数 $e=N^{\alpha}$ 满足 $ed-k(p^2-1)(q^2-1)=1$ 。如果 $$ \delta &lt; 2-\beta - \frac{1}{2}\alpha $$ 可以再多项式时间内找到p，q 。</p>
+<h2 class="relative group">证明 
+    <div id="证明" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100">
+        <a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700"
+            style="text-decoration-line: none !important;" href="#%e8%af%81%e6%98%8e" aria-label="Anchor">#</a>
+    </span>        
+    
+</h2>
+<p>$$ \begin{aligned} e d-(N-1)^{2} k &amp; =k\left(p^{2}-1\right)\left(q^{2}-1\right)+1-(N-1)^{2} k \\ &amp; =1+k\left(\left(p^{2}-1\right)\left(q^{2}-1\right)-(N-1)^{2}\right) \\ &amp; =1-k(p-q)^{2} \end{aligned} $$</p>
+<p>由此推出 $$ \left|\frac{e}{(N-1)^{2}}-\frac{k}{d}\right|=\frac{\left|1-k(p-q)^{2}\right|}{d(N-1)^{2}}&lt;\frac{k(p-q)^{2}}{d(N-1)^{2}} . $$ 由e, d 的关系，得到 $k(p^2-1)(q^2-1)=ed-1&lt;ed$ ，所以 $$ \frac{k}{d}&lt;\frac{e}{\left(p^{2}-1\right)\left(q^{2}-1\right)}, $$ 和 $$ \left|\frac{e}{(N-1)^{2}}-\frac{k}{d}\right|&lt;\frac{e(p-q)^{2}}{(N-1)^{2}\left(p^{2}-1\right)\left(q^{2}-1\right)} $$ 因为 $q&lt;p&lt;2q$ 所以 $$ N^2-\frac{5}{2}N+1&lt;(p^2-1)(q^2-1)&lt;N^2-2N+1 $$ 然后得到 $$ \begin{aligned} (N-1)^{2}\left(p^{2}-1\right)\left(q^{2}-1\right) &amp; &gt;(N-1)^{2}\left(N^{2}-\frac{5}{2} N+1\right) \\ &amp; =N^{4}-\frac{9}{2} N^{3}+7 N^{2}-\frac{9}{2} N+1 \\ &amp; &gt;\frac{1}{2} N^{4}, \end{aligned} $$ 这个不等式要求 $N\ge8$ 。因此用 $e=N^{\alpha}$ ，$|p-q|=N^{\beta}$ 以及 $d=N^{\delta}$ ，我们得到 $$ \left|\frac{e}{(N-1)^{2}}-\frac{k}{d}\right|&lt;\frac{e(p-q)^{2}}{(N-1)^{2}\left(p^{2}-1\right)\left(q^{2}-1\right)}&lt;2 N^{\alpha+2 \beta-4} . $$ 如果 $2N^{\alpha+2\beta-4}&lt;\frac{1}{2}N^{-2\delta}$ ，由于指数的作用比乘积大，也就是说前面的不等式等价于 $\delta&lt;2-\beta-\frac{1}{2} \alpha$ 。</p>
+<p>那么就有 $$ \left|\frac{e}{(N-1)^{2}}-\frac{k}{d}\right|&lt;\frac{1}{2} N^{-2 \delta}=\frac{1}{2 d^{2}} $$ 由于 d 是一个很大的数，所以 $1/2d^2$ 非常小，就能知道 $\frac{k}{d}$ 和 $\frac{e}{(N-1)^2}$ 非常接近，于是就可以用$\frac{e}{(N-1)^2}$ 的连分数去逼近 $\frac{k}{d}$ ，然后用$ed-k(p^2-1)(q^2-1)=1$ 和 $N=pq$ 去解 p 和 q 。</p>
+<p>总的来看和 Wiener’s Theorem 还是很相似的，e, d 的关系变成 $ed-k(p^2-1)(q^2-1)=1$ ，在公式的推导中利用的很多不等式和近似。</p>
+<p>简单总结一下：</p>
+<ul>
+<li>连分数攻击适用于 $\delta&lt;2-\beta-\frac{1}{2} \alpha$ ，其中 $d=N^{\delta}$ ， $e=N^{\alpha}$ ，$|p-q|=N^{\beta}$ 。也就是 $d^2 &lt; N^4-|p-q|^2-e$ 如果粗糙一点说也可以用这个不等式来判断 $d &lt; \sqrt{(2N^3-18N^2)/e}$ 。</li>
+<li>找 $\frac{e}{(N-1)^2}$ 的连分数逼近</li>
+<li>迭代 $\frac{k_i}{d_i}$ 利用 e, d 关系 $ed-k(p^2-1)(q^2-1)=1$ 和 $N=pq$ 去分解N。</li>
+</ul>
+<h2 class="relative group">demo 
+    <div id="demo" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100">
+        <a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700"
+            style="text-decoration-line: none !important;" href="#demo" aria-label="Anchor">#</a>
+    </span>        
+    
+</h2>
+<p>attack function by sagemath</p>
+<pre><code># contiune fraction method
+def attack(N, e):
+    &quot;&quot;&quot;
+    Recovers the prime factors of a modulus and the private exponent if two prime factors share most significant bits
+    :param N: the modulus
+    :param e: the public exponent
+    :return: a tuple containing the prime factors and the private exponent, or None if the private exponent was not found
+    &quot;&quot;&quot;
+    PR = PolynomialRing(ZZ, 'x')
+    x = PR.gen()
+    convergents = continued_fraction(ZZ(e) / ZZ((N-1)**2)).convergents()
+    for c in convergents:
+        k = c.numerator()
+        d = c.denominator()
+        try:
+            f = x**2 - x*(N**2 + 1 - int((e*d-1)/k)) + N**2
+            if f.discriminant() &gt; 0:
+                root = f.roots()
+                p2 = root[0][0]; q2 = root[1][0]
+                if is_square(p2) and is_square(q2):
+                    p = isqrt(p2); q = isqrt(q2)
+                    if p*q == N:
+                        return p, q, d
+        except:
+            continue
+    return None
+</code></pre>
+<p>测试代码</p>
+<pre><code>from sage.all import *
+from math import isqrt
+
+# genetare parmater 
+n_bits = 1024
+p = random_prime(2**512, lbound=2**511)
+beta = 0.46
+pqdiff_bound = 1 &lt;&lt; int(n_bits * beta)
+pqdiff_lower_bound = 1 &lt;&lt; int(n_bits * beta - 1)
+q = next_prime(p - random_prime(pqdiff_bound, lbound=pqdiff_lower_bound))
+assert p &gt; q and p &lt; 2*q
+N = p*q
+phi = (p**2-1)*(q**2-1)
+delta = 0.54
+d_bound = 1 &lt;&lt; int(n_bits*delta)
+d_lower_bound = 1 &lt;&lt; int(n_bits * delta - 1)
+while True:
+    d = random_prime(d_bound, lbound=d_lower_bound)
+    if gcd(d, phi) == 1:
+        e = inverse_mod(d, phi)
+        if gcd(e, phi) == 1:
+            alpha = int(e).bit_length() / n_bits
+            break
+# paramters
+print(f&quot;alpha = {alpha}&quot;)
+print(f&quot;beta = {beta}&quot;)
+print(f&quot;delta = {delta}&quot;)
+print(f&quot;p = {p}&quot;)
+print(f&quot;q = {q}&quot;)
+print(f&quot;e = {e}&quot;)
+print(f&quot;d = {d}&quot;)
+# check
+attack_bound = ZZ(isqrt((2*N**3 - 18*N**2)//ZZ(e)))
+print(f&quot;check step 1: {d &lt; attack_bound}&quot;)
+print(f&quot;check step 2: {delta &lt; 2-beta-0.5*alpha}&quot;)
+# contiune fraction method
+def attack(N, e):
+    &quot;&quot;&quot;
+    Recovers the prime factors of a modulus and the private exponent if two prime factors share most significant bits
+    :param N: the modulus
+    :param e: the public exponent
+    :return: a tuple containing the prime factors and the private exponent, or None if the private exponent was not found
+    &quot;&quot;&quot;
+    PR = PolynomialRing(ZZ, 'x')
+    x = PR.gen()
+    convergents = continued_fraction(ZZ(e) / ZZ((N-1)**2)).convergents()
+    for c in convergents:
+        k = c.numerator()
+        d = c.denominator()
+        try:
+            f = x**2 - x*(N**2 + 1 - int((e*d-1)/k)) + N**2
+            if f.discriminant() &gt; 0:
+                root = f.roots()
+                p2 = root[0][0]; q2 = root[1][0]
+                if is_square(p2) and is_square(q2):
+                    p = isqrt(p2); q = isqrt(q2)
+                    if p*q == N:
+                        return p, q, d
+        except:
+            continue
+    return None
+
+result = attack(N, e)
+assert result != None, &quot;no result&quot;
+p, q, d = result
+print(&quot;attack finish, get&quot;)
+print(f&quot;p = {p}&quot;)
+print(f&quot;q = {q}&quot;)
+print(f&quot;d = {d}&quot;)
+</code></pre>
+<p>输出</p>
+<pre><code>alpha = 1.99609375
+beta = 0.46
+delta = 0.54
+p = 8406643377981629626811646133771198403255255522467207444991622697680850682941538832110654789948650168347547487883409896215504739533322889924095611950833997
+q = 8406643377977179979671041238653918211315952818096881317941557663045423915326379167410018138334335185395189383254205899373386216155386760699272210407922759
+e = 1110800340083303328409168504484065292940668235722045412659413083991459540716589704385849056470951835369439790243586123952050852123679997511675601108424970995223757885717140402024028525018368572164542875329515620447453397899075007131099258157788275439784354313980338033207127998650481283926225741172740750647416454068540786594711130891562928160432618419846698928632055429541344493485659153805653186418897286561907086377175044409847334727768680508645477651906431561168347733901347223084949905765613688938377277010995416972766098844482178898448679408222490011796397878275175763710131617180329057114830701572732576610783
+d = 13874613842901198703840384827215457417464863664524770654955846214097908890393956737749090737131189322336619851723197432511838668534730694642961386947340470001867225887
+check step 1: False
+check step 2: True
+attack finish, get
+p = 8406643377981629626811646133771198403255255522467207444991622697680850682941538832110654789948650168347547487883409896215504739533322889924095611950833997
+q = 8406643377977179979671041238653918211315952818096881317941557663045423915326379167410018138334335185395189383254205899373386216155386760699272210407922759
+d = 13874613842901198703840384827215457417464863664524770654955846214097908890393956737749090737131189322336619851723197432511838668534730694642961386947340470001867225887
+</code></pre>
+<p>测试过来上面的参数已经挺极限的了，再往上调解不出来的可能性很大。</p>
+<h1 class="relative group">Coppersmith 方法攻击 
+    <div id="coppersmith-方法攻击" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100">
+        <a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700"
+            style="text-decoration-line: none !important;" href="#coppersmith-%e6%96%b9%e6%b3%95%e6%94%bb%e5%87%bb" aria-label="Anchor">#</a>
+    </span>        
+    
+</h1>
+<p><strong>定理</strong> 令 $N=pq$ 是 RSA 的模数，$q&lt;p&lt;2q$，$|p-q|=N^{\beta}$ 。令加密指数 $e=N^{\alpha}$ 满足 $ed-k(p^2-1)(q^2-1)=1$ ， $d=N^{\delta}$ 。如果 $$ \delta &lt; 2-\sqrt{2\alpha\beta}-\epsilon $$ 对于小的正数 $\epsilon$ ，可以在多项式时间内找到p，q 。</p>
+<p>与连分数攻击相比较 $$ \begin{aligned} 2-\beta-\frac{1}{2}\alpha &amp;= 2-(\beta+\alpha) + \frac{1}{2}\alpha \\ &amp;\le 2-\sqrt{2\beta\alpha} + \frac{1}{2}\alpha \\ &amp;&lt; 2-\sqrt{2\beta\alpha} - \epsilon \end{aligned} $$ 所以Coppersmith 方法的界比连分数攻击的界要大很多。如果能用Coppersmith方法那么连分数方法应该也能用。</p>
+<h2 class="relative group">证明 
+    <div id="证明-1" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100">
+        <a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700"
+            style="text-decoration-line: none !important;" href="#%e8%af%81%e6%98%8e-1" aria-label="Anchor">#</a>
+    </span>        
+    
+</h2>
+<p>对于N&gt;5 $$ (p^2-1)(q^2-1)&gt;N^2-\frac{5}{2}N+1&gt;\frac{1}{2}N^2 $$ 那么 $$ k=\frac{e d-1}{\left(p^{2}-1\right)\left(q^{2}-1\right)}&lt;\frac{2 e d}{N^{2}}=2 N^{\alpha+\delta-2} $$ 这个不等式给出了k的一个上界。同时密钥关系的式子可以写成 $$ (-k)(p-q)^{2}-(N-1)^{2}(-k)+1 \equiv 0 \quad(\bmod e) $$ 考虑这个多项式 $f(x, y)=xy+Ax+1$ ，$A=-(N-1)^2$ 。$(x, y)=(-k,(p-q)^2)$ 是 $f(x, y)\equiv 0 \pmod{e}$ 的一个解。对这个多项式 $F(x, u)=u+Ax, u=xy+1$ 可以用Coppersmith方法求出小根。 $$ |x|&lt;2 N^{\alpha+\delta-2}, \quad|y|&lt;N^{2 \beta}, \quad|u|&lt;2 N^{\alpha+\delta+2 \beta-2} $$ 令 m 和 t 是正整数。考虑下面的多项式 $$ \begin{array}{l} G_{k, i_{1}, i_{2}, i_{3}}(x, y, u)=x^{i_{1}} F(x, u)^{k} e^{m-k} \\ \text { with } k=0, \ldots m, i_{1}=0, \ldots, m-k, i_{2}=0, i_{3}=k, \\ H_{k, i_{1}, i_{2}, i_{3}}(x, y, u)=y^{i_{2}} F(x, u)^{k} e^{m-k} \\ \text { with } i_{1}=0, i_{2}=1, \ldots t, k=\left\lfloor\frac{m}{t}\right\rfloor i_{2}, \ldots, m, i_{3}=k . \end{array} $$ 其中把 $H_{k, i_{1}, i_{2}, i_{3}}(x, y, u)$ 进行展开，把每一项 $xy$ 用 $u-1$ 来替代，这样 $G_{k, i_{1}, i_{2}, i_{3}}(x, y, u)$ 和 $H_{k, i_{1}, i_{2}, i_{3}}(x, y, u)$ 都会变成单项式。</p>
+<ul>
+<li>
+<p>单项式 $G_{k, i_{1}, i_{2}, i_{3}}(x, y, u)$ 依照下面这个output排列</p>
+<p>$for\ k=0, \ldots m , for\ i_{1}=0, \ldots, m-k , for\ i_{2}=0 , for\ i_{3}=k , output\ x^{i_{1}} y^{i_{2}} u^{i_{3}}$</p>
+</li>
+<li>
+<p>单项式 $H_{k, i_{1}, i_{2}, i_{3}}(x, y, u)$ 依照下面这个output排列</p>
+<p>$for\ i_{1}=0 , for\ i_{2}=1, \ldots t , for\ k=\left\lfloor\frac{m}{t}\right\rfloor i_{2}, \ldots, m , for\ i_{3}=k , output\ x^{i_{1}} y^{i_{2}} u^{i_{3}}$</p>
+</li>
+</ul>
+<p>然后我们令 $$ X=2 N^{\alpha+\delta-2}, \quad Y=N^{2 \beta}, \quad U=2 N^{\alpha+\delta+2 \beta-2} $$ 然后多项式 $G_{k,i_1,i_2,i_3}(Xx,Yy,Uu)$ 和 $H_{k,i_1,i_2,i_3}(Xx,Yy,Uu)$ 可以构成一个格 $\mathcal{L}$ 。以 $m=t=2$ 为例</p>
+<p>
+
+
+
+
+  <figure>
+    <img class="my-0 rounded-md" src="https://s2.loli.net/2023/01/14/zHrRmOTwNpcBgi5.png" alt="image.png" />
+    
+  </figure>
+
+</p>
+<p>由于是下三角矩阵，这个格基的行列式为下面的形式 $$ \operatorname{det}(\mathcal{L})=X^{n_{X}} Y^{n_{Y}} U^{n_{U}} e^{n_{e}} $$ 其中 $n_X,n_Y,n_U$ 和 格基的维 $\omega$ 等于 $$ \begin{aligned} n_{X} &amp; =\sum_{k=0}^{m} \sum_{i_{1}=0}^{m-k} i_{1}=\frac{1}{6} m^{3}+o\left(m^{3}\right) \\ n_{Y} &amp; =\sum_{i_{2}=1}^{t} \sum_{k=\left\lfloor\frac{m}{t}\right\rfloor}^{m} i_{2}=\frac{1}{2} m t^{2}-\frac{1}{3}\left\lfloor\frac{m}{t}\right\rfloor t^{3}+o\left(m t^{2}\right) \\ n_{U} &amp; =\sum_{k=0}^{m} \sum_{i_{1}=0}^{m-k} k+\sum_{i_{2}=1}^{t} \sum_{k=\left\lfloor\frac{m}{t}\right\rfloor}^{m} k=\frac{1}{6} m^{3}+\frac{1}{2} m^{2} t-\frac{1}{6}\left\lfloor\frac{m}{t}\right\rfloor^{2} t^{3}+o\left(m^{3}\right) \\ n_{e} &amp; =\sum_{k=0}^{m} \sum_{i_{1}=0}^{m-k}(m-k)+\sum_{i_{2}=1}^{t} \sum_{k=\left\lfloor\frac{m}{t}\right\rfloor}^{m}(m-k) \\ &amp; =\frac{1}{3} m^{3}+\frac{1}{2} m^{2} t+\frac{1}{6}\left\lfloor\frac{m}{t}\right\rfloor^{2} t^{3}-\frac{1}{2}\left\lfloor\frac{m}{t}\right\rfloor m t^{2}+o\left(m^{3}\right) \\ \omega &amp; =\sum_{k=0}^{m} \sum_{i_{1}=0}^{m-k} 1+\sum_{i_{2}=1}^{t} \sum_{k=\left\lfloor\frac{m}{t}\right.}^{m} 1=\frac{1}{2} m^{2}+m t-\frac{1}{2}\left\lfloor\frac{m}{t}\right\rfloor t^{2}+o\left(m^{2}\right) \end{aligned} $$ 用 $1/\tau$ 来代替 $\left\lfloor\frac{m}{t}\right\rfloor$ ，并且使用一些近似得到 $$ \begin{aligned} n_{X} &amp; =\frac{1}{6} m^{3}+o\left(m^{3}\right) \\ n_{Y} &amp; =\frac{1}{6} \tau^{2} m^{3}+o\left(m^{3}\right) \\ n_{U} &amp; =\frac{1}{6}(2 \tau+1) m^{3}+o\left(m^{3}\right), \\ n_{e} &amp; =\frac{1}{6}(\tau+2) m^{3}+o\left(m^{3}\right) \\ \omega &amp; =\frac{1}{2}(\tau+1) m^{2}+o\left(m^{2}\right) \end{aligned} $$ 对上面的格基进行LLL规约，新的格基有三个多项式 $h_1(x,y,z)$ ， $h_2(x,y,z)$ 和 $h_3(x,y,z)$ 共有一个根 $(x, y, z)=(-k,(p-q)^2,-k(p-q)^2+1)$​ ，然后用Grobner basis，可以得到 $p-q=\sqrt{y}$ 再结合 $N=pq$ 就可以分解N。</p>
+<p>简单总结一下，在一开始看这一节的时候很多地方没看懂，看到对 $F(x, u)=u+Ax$ 用 Coppersmith 方法可以解出根我以为直接用 sage 的 small_root 就可以解，然后去试了一下发现解不出来。然后硬啃下了后面的部分，感觉应该是使用了Coppersmith 的原理，自己构造单项式和多项式吧。</p>
+<ul>
+<li>Coppersmith method 攻击适用于 $\delta &lt; 2-\sqrt{2\alpha\beta}-\epsilon$ ，但实际上用 $\delta &lt; 2-\sqrt{2\alpha\beta}$ 粗略的判断一下也可以。</li>
+<li>选取参数 m 和 t 构造格基，LLL规约后利用Grobner basis解出一个根(x, y, z)，其中 $\sqrt{y}=p-q$ 再结合 $N=pq$ 分解 N。</li>
+</ul>
+<h2 class="relative group">dome 
+    <div id="dome" class="anchor"></div>
+    
+    <span
+        class="absolute top-0 w-6 transition-opacity opacity-0 ltr:-left-6 rtl:-right-6 not-prose group-hover:opacity-100">
+        <a class="group-hover:text-primary-300 dark:group-hover:text-neutral-700"
+            style="text-decoration-line: none !important;" href="#dome" aria-label="Anchor">#</a>
+    </span>        
+    
+</h2>
+<p>实现起来比连分数要复杂很多，参考了一些RCTF 2022 Clearlove 的题解，东拼西凑写出来的。</p>
+<pre><code>from sage.all import *
+
+beta = 0.44
+n_bits = 1024
+delta = 0.63
+p = random_prime(1 &lt;&lt; (n_bits//2), lbound=1&lt;&lt;(n_bits//2 - 1))
+pqdiff_bound = 1 &lt;&lt; int(n_bits * beta)
+pqdiff_lower_bound = 1 &lt;&lt; int(n_bits * beta - 1)
+q = next_prime(p - random_prime(pqdiff_bound, lbound=pqdiff_lower_bound))
+assert p &gt; q and p &lt; 2*q
+N = p*q
+phi = (p**2-1)*(q**2-1)
+d_bound = 1 &lt;&lt; int(n_bits*delta)
+d_lower_bound = 1 &lt;&lt; int(n_bits * delta - 1)
+while True:
+    d = random_prime(d_bound, lbound=d_lower_bound)
+    if gcd(d, phi) == 1:
+        e = inverse_mod(d, phi)
+        if gcd(e, phi) == 1:
+            break
+alpha = int(e).bit_length() / n_bits
+print(f&quot;alpha={alpha}, beta={beta}, delta={delta}&quot;)
+print(f&quot;is delta &lt; sqrt(2*alpha*beta)? {delta &lt; sqrt(2*alpha*beta)}&quot;)
+import logging
+logging.basicConfig(level=logging.DEBUG)
+def find_roots_univariate(x, polynomial):
+    &quot;&quot;&quot;
+    Returns a generator generating all roots of a univariate polynomial in an unknown.
+    :param x: the unknown
+    :param polynomial: the polynomial
+    :return: a generator generating dicts of (x: root) entries
+    &quot;&quot;&quot;
+    if polynomial.is_constant():
+        return
+
+    for root in polynomial.roots(multiplicities=False):
+        if root != 0:
+            yield {x: int(root)}
+def find_roots_groebner(pr, polynomials):
+    &quot;&quot;&quot;
+    Returns a generator generating all roots of a polynomial in some unknowns.
+    Uses Groebner bases to find the roots.
+    :param pr: the polynomial ring
+    :param polynomials: the reconstructed polynomials
+    :return: a generator generating dicts of (x0: x0root, x1: x1root, ...) entries
+    &quot;&quot;&quot;
+    # We need to change the ring to QQ because groebner_basis is much faster over a field.
+    # We also need to change the term order to lexicographic to allow for elimination.
+    gens = pr.gens()
+    s = Sequence(polynomials, pr.change_ring(QQ, order=&quot;lex&quot;))
+    while len(s) &gt; 0:
+        G = s.groebner_basis()
+        logging.debug(f&quot;Sequence length: {len(s)}, Groebner basis length: {len(G)}&quot;)
+        if len(G) == len(gens):
+            logging.debug(f&quot;Found Groebner basis with length {len(gens)}, trying to find roots...&quot;)
+            roots = {}
+            for polynomial in G:
+                vars = polynomial.variables()
+                if len(vars) == 1:
+                    for root in find_roots_univariate(vars[0], polynomial.univariate_polynomial()):
+                        roots |= root
+
+            if len(roots) == pr.ngens():
+                yield roots
+                return
+            return
+        else:
+            # Remove last element (the biggest vector) and try again.
+            s.pop()
+def factorit(N, y):
+    pqdiff = ZZ(sqrt(y))
+    assert pqdiff^2 == y
+    x = var(&quot;x&quot;)
+    roots = (x*(x + pqdiff) - N).roots()
+    p = ZZ(max(r for r, _ in roots))
+    assert ZZ(N) % p == 0
+    q = ZZ(N) // p
+    return p, q
+
+
+m=8
+tau = (alpha - delta - 2. * beta) / (alpha * beta)
+# t = ceil(tau * m)
+t=12
+print(f&quot;m={m}, t={t}&quot;)
+A = -(N - 1)**2
+R = PolynomialRing(QQ, 'x, y, u')
+x, y, u = R.gens()
+Rquo = R.quo(x*y - (u - 1))
+F = u + A*x
+X = ZZ(ceil(2*N**(alpha+beta-2)))
+Y = ZZ(ceil(N**(2*beta)))
+U = ZZ(ceil(2*N**(beta+beta+2*beta-2)))
+
+def G(k, i1, i2, i3):
+    return x**i1 * F**k * e**(m - k)
+
+def H(k, i1, i2, i3):
+    return Rquo(y**i2 * F**k * e**(m - k)).lift()
+polynomials = []
+monomials = []
+for k in range(m + 1):
+    for i1 in range(m - k + 1):
+        polynomials.append(G(k, i1, 0, k))
+        monomials.append(x**i1*u**k)
+for i2 in range(1, t + 1):
+    for k in range(m//t * i2, m + 1):
+        polynomials.append(H(k, 0, i2, k))
+        monomials.append(y**i2*u**k)
+L = Matrix(ZZ, nrows=len(polynomials), ncols=len(monomials))
+for r, g in enumerate(polynomials):
+    for v, M in g(x=X*x, y=Y*y, u=U*u):
+        L[r,monomials.index(M)] = v
+def mprint(M):
+    print(&quot;\n&quot;.join(''.join(&quot;0X&quot;[bool(x)] for x in r) for r in M))
+# mprint(L)
+B = L.LLL()
+
+polys = list(B * vector([m / m.monomials()[0](x=X, y=Y, u=U) for m in monomials]))
+print(len(polys))
+RR = PolynomialRing(QQ, 'xx, yy')
+xx, yy = RR.gens()
+def inj(f): return RR(f(u=xx*yy + 1, x=xx, y=yy))
+
+for roots in find_roots_groebner(RR, list(map(inj, polys))):
+    print(f&quot;{A = }&quot;)
+    print(roots)
+    if (roots[xx] * roots[yy] + A * roots[xx] + 1) % e != 0:
+        print(&quot;Not an actual root for f&quot;)
+    _y = roots[yy]
+    if not is_square(_y):
+        print(&quot;Not a square&quot;)
+        continue
+    if _y &gt; 0:
+        print(factorit(N, ZZ(_y)))
+        exit()
+</code></pre>
+<p>在测试这段代码的时候发现表现的并不理想，用上面这个参数跑了10分钟左右也没有跑出来。也有可能是我哪里写错了？</p>
+<p>后来找到了HFCTF2022出题人的github上有类似的exp，看了一下，他方法也是Coppersmith，也是从 $$ (-k)(p-q)^{2}-(N-1)^{2}(-k)+1 \equiv 0 \quad(\bmod e) $$ 这个方程下手，构造这样的多项式 $$ F=xy^2+Ax+1, \ where\ A=-(N-1)^2 $$ 发现仅仅是把这篇论文中的 $(p-q)^2=y$ 替换成 $p-q=y$ ，也就是说 $(x,y)=(-k,p-q)$ 是这个多项式的根。</p>
+<p>以及单项式变成 $$ G_{k, i_1,i_2}(x,y)=x^{i_1-k}y^{i_2-2k}F(x,y)^{k}e^{m-k} \\ H_{k, i_1,i_2}(x,y)=y^{i_2-2k}F(x,y)^{k}e^{m-k} $$ 发现这个样子构造出来的格的维度要比这篇论文中的小一点点，可能就是这一点点，让这种方法的LLL格基规约速度更快吧。下面贴一下代码。</p>
+<pre><code>from gmpy2 import next_prime, iroot
+from Crypto.Util.number import getPrime, inverse, GCD, bytes_to_long, long_to_bytes
+from sage.all import *
+import time
+
+def attack2(N, e, m, t, X, Y):
+    ti=time.time()
+    PR = PolynomialRing(QQ, 'x,y', 2, order='lex')
+    x, y = PR.gens()
+    A = -(N-1)**2
+    F = x * y**2 + A * x + 1
+
+    G_polys = []
+    # G_{k,i_1,i_2}(x,y) = x^{i_1-k}y_{i_2-2k}f(x,y)^{k}e^{m-k} 
+    for k in range(m + 1):
+        for i_1 in range(k, m+1):
+            for i_2 in [2*k, 2*k + 1]:
+                G_polys.append(x**(i_1-k) * y**(i_2-2*k) * F**k * e**(m-k))
+
+    H_polys = []
+    # y_shift H_{k,i_1,i_2}(x,y) = y^{i_2-2k} f(x,y)^k e^{m-k}
+    for k in range(m + 1):
+        for i_2 in range(2*k+2, 2*k+t+1):
+            H_polys.append(y**(i_2-2*k) * F**k * e**(m-k))
+
+    polys = G_polys + H_polys
+    monomials = []
+    for poly in polys:
+        monomials.append(poly.lm())
+    
+    dims1 = len(polys)
+    dims2 = len(monomials)
+    MM = matrix(QQ, dims1, dims2)
+    for idx, poly in enumerate(polys):
+        for idx_, monomial in enumerate(monomials):
+            if monomial in poly.monomials():
+                MM[idx, idx_] = poly.monomial_coefficient(monomial) * monomial(X, Y)
+    print(f&quot;LLL dimension: {MM.nrows()}x{MM.ncols()}&quot;)
+    B = MM.LLL()
+    found_polynomials = False
+
+    for pol1_idx in range(B.nrows()):
+        for pol2_idx in range(pol1_idx + 1, B.nrows()):
+            P = PolynomialRing(QQ, 'a,b', 2)
+            a, b = P.gens()
+            pol1 = pol2 = 0
+            for idx_, monomial in enumerate(monomials):
+                pol1 += monomial(a,b) * B[pol1_idx, idx_] / monomial(X, Y)
+                pol2 += monomial(a,b) * B[pol2_idx, idx_] / monomial(X, Y)
+
+            # resultant
+            rr = pol1.resultant(pol2)
+            # are these good polynomials?
+            if rr.is_zero() or rr.monomials() == [1]:
+                continue
+            else:
+                print(f&quot;found them, using vectors {pol1_idx}, {pol2_idx}&quot;)
+                found_polynomials = True
+                break
+        if found_polynomials:
+            break
+
+    if not found_polynomials:
+        print(&quot;no independant vectors could be found. This should very rarely happen...&quot;)
+
+
+    PRq = PolynomialRing(QQ, 'z')
+    z = PRq.gen()
+    rr = rr(z, z)
+    soly = rr.roots()[0][0]
+
+    ppol = pol1(z, soly)
+    solx = ppol.roots()[0][0]
+    return solx, soly
+
+
+beta = 0.44
+n_bits = 1024
+delta = 0.63
+p = random_prime(1 &lt;&lt; (n_bits//2), lbound=1&lt;&lt;(n_bits//2 - 1))
+pqdiff_bound = 1 &lt;&lt; int(n_bits * beta)
+pqdiff_lower_bound = 1 &lt;&lt; int(n_bits * beta - 1)
+q = next_prime(p - random_prime(pqdiff_bound, lbound=pqdiff_lower_bound))
+assert p &gt; q and p &lt; 2*q
+n = p*q
+phi = (p**2-1)*(q**2-1)
+d_bound = 1 &lt;&lt; int(n_bits*delta)
+d_lower_bound = 1 &lt;&lt; int(n_bits * delta - 1)
+while True:
+    d = random_prime(d_bound, lbound=d_lower_bound)
+    if gcd(d, phi) == 1:
+        e = inverse_mod(d, phi)
+        if gcd(e, phi) == 1:
+            break
+nbits = n_bits
+alpha = ZZ(e).nbits() / ZZ(n).nbits()
+print(f&quot;alpha={alpha}, beta={beta}, delta={delta}&quot;)
+print(f&quot;is delta &lt; sqrt(2*alpha*beta)? {delta &lt; sqrt(2*alpha*beta)}&quot;)
+X = 2 ** int(nbits*(alpha+delta-2)+3)
+Y = 2 ** int(nbits*beta+3)
+t = time.time()
+x, y = map(int, attack2(n, e, 8, 12, X, Y))
+
+p_minus_q = y
+p_plus_q = iroot(p_minus_q**2 + 4 * n, 2)[0]
+
+p = (p_minus_q + p_plus_q) // 2
+q = n // p
+print(f&quot;p = {p}&quot;)
+print(f&quot;q = {q}&quot;)
+print(f&quot;if attack successfully? {p*q == n}&quot;)
+</code></pre>
+<p>跑了几次，大概5，6分钟左右就出了。</p>
+
+        </div>
+                
+        
+
+        
+
+        
+
+
+  
+      </div>
+     
+     <script>
+        var oid = "views_posts\/cryptanalysis-of-rsa-variants-with-primes-sharing-most-significant-bits.md"
+        var oid_likes = "likes_posts\/cryptanalysis-of-rsa-variants-with-primes-sharing-most-significant-bits.md"
+      </script>
+      
+      
+      <script type="text/javascript" src="/js/page.min.5b1bad196a6075a1e11bae1dc95f24f67b610948a00525e347566c5a62338ea78f1c7224ab9a53873dcdb2a1a7d7d391b8a8ef45561297f68806c01315b0c4f6.js" integrity="sha512-WxutGWpgdaHhG64dyV8k9nthCUigBSXjR1ZsWmIzjqePHHIkq5pThz3NsqGn19ORuKjvRVYSl/aIBsATFbDE9g=="></script>
+  
+    </section>
+  <footer class="pt-8 max-w-prose print:hidden">
+
+    
+  
+
+
+    
+  </footer>
+</article>
+
+      <div id="top-scroller" class="pointer-events-none absolute top-[110vh] bottom-0 w-12 ltr:right-0 rtl:left-0">
+  <a href="#the-top"
+    class="pointer-events-auto sticky top-[calc(100vh-5.5rem)] flex h-12 w-12 mb-16 items-center justify-center rounded-full bg-neutral/50 text-xl text-neutral-700 backdrop-blur hover:text-primary-600 dark:bg-neutral-800/50 dark:text-neutral dark:hover:text-primary-400"
+    aria-label="Scroll to top" title="Scroll to top">
+    &uarr;
+  </a>
+</div>
+    </main><footer id="site-footer" class="py-10 print:hidden">
+  
+  
+    
+    <nav class="flex flex-row pb-4 text-base font-medium text-neutral-500 dark:text-neutral-400">
+      <ul class="flex flex-col list-none sm:flex-row">
+        
+        <li class="flex mb-1 ltr:text-right rtl:text-left sm:mb-0 ltr:sm:mr-7 ltr:sm:last:mr-0 rtl:sm:ml-7 rtl:sm:last:ml-0">
+          <a class="decoration-primary-500 hover:underline hover:decoration-2 hover:underline-offset-2" href="/tags/"
+            title="Tags">Tags</a>
+        </li>
+        
+        <li class="flex mb-1 ltr:text-right rtl:text-left sm:mb-0 ltr:sm:mr-7 ltr:sm:last:mr-0 rtl:sm:ml-7 rtl:sm:last:ml-0">
+          <a class="decoration-primary-500 hover:underline hover:decoration-2 hover:underline-offset-2" href="https://external-link"
+            title="">Privacy</a>
+        </li>
+        
+      </ul>
+    </nav>
+    
+  
+  <div class="flex items-center justify-between">
+
+    
+    
+    <p class="text-sm text-neutral-500 dark:text-neutral-400">
+      &copy;
+      2024
+      tr0uble
+    </p>
+    
+
+    
+    
+    <p class="text-xs text-neutral-500 dark:text-neutral-400">
+      
+      
+      Powered by <a class="hover:underline hover:decoration-primary-400 hover:text-primary-500"
+        href="https://gohugo.io/" target="_blank" rel="noopener noreferrer">Hugo</a> &amp; <a class="hover:underline hover:decoration-primary-400 hover:text-primary-500"
+        href="https://blowfish.page/" target="_blank" rel="noopener noreferrer">Blowfish</a>
+    </p>
+    
+
+  </div>
+  <script>
+    
+    mediumZoom(document.querySelectorAll("img:not(.nozoom)"), {
+      margin: 24,
+      background: 'rgba(0,0,0,0.5)',
+      scrollOffset: 0,
+    })
+    
+  </script>
+  
+  
+  <script type="text/javascript" src="/js/process.min.62060bb247f4de2b6dde45903668fefb68d792f365587605177b1227c0cf43588701edaca0cb40e2c8e2789bd5ce67c1d2a215b9fb258c3496a7cd25e7cb5fdf.js" integrity="sha512-YgYLskf03itt3kWQNmj&#43;&#43;2jXkvNlWHYFF3sSJ8DPQ1iHAe2soMtA4sjieJvVzmfB0qIVufsljDSWp80l58tf3w=="></script>
+  
+  
+</footer><div
+  id="search-wrapper"
+  class="invisible fixed inset-0 flex h-screen w-screen cursor-default flex-col bg-neutral-500/50 p-4 backdrop-blur-sm dark:bg-neutral-900/50 sm:p-6 md:p-[10vh] lg:p-[12vh]"
+  data-url="https://clingm.github.io/"
+  style="z-index:500"
+>
+  <div
+    id="search-modal"
+    class="flex flex-col w-full max-w-3xl min-h-0 mx-auto border rounded-md shadow-lg top-20 border-neutral-200 bg-neutral dark:border-neutral-700 dark:bg-neutral-800"
+  >
+    <header class="relative z-10 flex items-center justify-between flex-none px-2">
+      <form class="flex items-center flex-auto min-w-0">
+        <div class="flex items-center justify-center w-8 h-8 text-neutral-400">
+          
+
+  <span class="relative block icon">
+    <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="search" class="svg-inline--fa fa-search fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+
+  </span>
+
+
+        </div>
+        <input
+          type="search"
+          id="search-query"
+          class="flex flex-auto h-12 mx-1 bg-transparent appearance-none focus:outline-dotted focus:outline-2 focus:outline-transparent"
+          placeholder="Search"
+          tabindex="0"
+        />
+      </form>
+      <button
+        id="close-search-button"
+        class="flex items-center justify-center w-8 h-8 text-neutral-700 hover:text-primary-600 dark:text-neutral dark:hover:text-primary-400"
+        title="Close (Esc)"
+      >
+        
+
+  <span class="relative block icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z"/></svg>
+
+  </span>
+
+
+      </button>
+    </header>
+    <section class="flex-auto px-2 overflow-auto">
+      <ul id="search-results">
+        
+      </ul>
+    </section>
+  </div>
+</div>
+
+  </div>
+</body>
+
+<script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+  data-id="nunocoracao" data-description="Support me on Buy me a coffee!" data-message=""
+  data-color="#FFDD00" data-position="Right" data-x_margin="18" data-y_margin="18"></script>
+
+</html>

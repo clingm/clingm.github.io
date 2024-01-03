@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://clingm.github.io/sitemap.xml

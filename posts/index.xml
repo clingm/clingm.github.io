@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on tr0uble</title>
+    <link>https://clingm.github.io/posts/</link>
+    <description>Recent content in Posts on tr0uble</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>© 2024 tr0uble</copyright>
+    <lastBuildDate>Mon, 13 Jun 2022 20:55:37 +0100</lastBuildDate><atom:link href="https://clingm.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Start to Use AstroNvim</title>
+      <link>https://clingm.github.io/posts/start-to-use-astronvim/</link>
+      <pubDate>Sun, 31 Dec 2023 14:32:11 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/start-to-use-astronvim/</guid>
+      <description>AstroNvim is an aesthetic and feature-rich Neovim configuration that focuses on extensibility and usability.
+最近把原先的LzayVim换成了AstroNvim，用了一段时间感觉还不错
+why AstroNvim # 首先引用以下AstroNvim官网的话
+We found other Neovim configurations either being powerful out of the box but hard to customize, or easy to customize but minimal out of the box functionality.</description>
+      
+    </item>
+    
+    <item>
+      <title>Migrate From Hexo to Hugo</title>
+      <link>https://clingm.github.io/posts/migrate-from-hexo-to-hugo/</link>
+      <pubDate>Sat, 23 Dec 2023 14:55:24 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/migrate-from-hexo-to-hugo/</guid>
+      <description>嗨嗨嗨，Blog大变样。
+上上个周末强网杯打的有点道心破碎，于是抽了点时间出来把博客整了整，大体上就是从hexo迁移到了hugo。于是呢就来简单聊聊整个迁移的过程。
+为什么要迁移到hugo呢？
+我hexo的数学公式不知道什么原因一直渲染有问题。 感觉hexo有点慢，而且臃肿。正好hugo自称是世界上最快的网页生成框架，就想试试。 总感觉用hugo比用hexo要高级…. 对于go语言写的东西没有抵抗力，而且越来越不喜欢nodejs了。 于是在上周二决定要整成hugo，从此命运的齿轮开始转动。
+安装hugo，在archlinux上直接yay -S hugo就ok了。
+装好hugo后的第一步应该要先选择一个自己喜欢的主题。 hugo themes这里有非常多的好看的主题可以选择。我使用的是 Jane，在此呢也是非常推荐大家使用这个主题尤其是喜欢&amp;quot;简洁&amp;quot;的小伙伴。
+关于主题的配置可以看主题的 github仓库有很详细的介绍，而且配置文件里也有很详细的中文注释和英文注释，我这里主要提一下数学公式的配置。
+在示例配置文件theme/jane/exampleSite/full-config.toml中有关于数学公式的配置项（记得把这个复制到博客根目录的配置文件中）
+可以在这里直接选一个开，但是这样还不够，我们需要找到主题中用于渲染latex公式的js部分。
+我已经找到在themes/jane/layout/partials/scripts.html，把他修改成下面这个样子
+&amp;lt;!-- Mathjax --&amp;gt; {{- if and (or .Params.mathjax (and .Site.Params.mathjax (ne .</description>
+      
+    </item>
+    
+    <item>
+      <title>Qwbctf 2023</title>
+      <link>https://clingm.github.io/posts/qwbctf-2023/</link>
+      <pubDate>Fri, 22 Dec 2023 15:06:27 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/qwbctf-2023/</guid>
+      <description>新一年的强网杯，但我还是一如既往的菜。
+not only rsa # from Crypto.Util.number import bytes_to_long from secret import flag import os n = 6249734963373034215610144758924910630356277447014258270888329547267471837899275103421406467763122499270790512099702898939814547982931674247240623063334781529511973585977522269522704997379194673181703247780179146749499072297334876619475914747479522310651303344623434565831770309615574478274456549054332451773452773119453059618433160299319070430295124113199473337940505806777950838270849 e = 641747 m = bytes_to_long(flag) flag = flag + os.urandom(n.bit_length() // 8 - len(flag) - 1) m = bytes_to_long(flag) c = pow(m, e, n) with open(&amp;#39;out.</description>
+      
+    </item>
+    
+    <item>
+      <title>Dive Into Coppersmith</title>
+      <link>https://clingm.github.io/posts/dive-into-coppersmith/</link>
+      <pubDate>Fri, 15 Dec 2023 15:18:33 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/dive-into-coppersmith/</guid>
+      <description>Introduction of Coppersmith’s Method # 1996年 Don Coppersmith 发表了两片论文，“Finding a Small Root of a Univariate Modular Equation”, “Finding a Small Root of a Bivariate Integer Equation; Factoring with High Bits Known”，第一篇讨论如何求单变量模方程的小根，第二篇讨论如何求双变量整数方程的小根，并且把整数方程拓展到了模方程。</description>
+      
+    </item>
+    
+    <item>
+      <title>省赛初赛小记</title>
+      <link>https://clingm.github.io/posts/zjss2023/</link>
+      <pubDate>Sat, 04 Nov 2023 15:22:00 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/zjss2023/</guid>
+      <description>今年再次参加了浙江省赛，今年是第二次参赛了，与队内的web和bin大手子一起组了队，这次预赛的成绩还是不错的，拿到第6，决赛已经稳了。这篇blog就记录一下赛中解的Crypto题水一篇。
+小小数学家 # 看到题目内容和附件，就直接按照描述所说，计算一坨算式即可，直接eval()了
+probs = open(&#39;flag.txt&#39;).readlines() flag = [] for prob in probs: prob = prob[:-3] flag.append(int(eval(prob))) print(bytes(flag)) EC_Party-III # 题目关键代码
+p = getPrime(384) q = getPrime(384) n = p*q d = getPrime(80) e = inverse_mod(d, ord_p*ord_q) 直接就想到了wiener attack，在EC中$Order(p) = p+1+\alpha$,alpha是一个小于$2\sqrt{p}$的数，本来是想要调一下的，但是发现不用改直接连分数就出了</description>
+      
+    </item>
+    
+    <item>
+      <title>近期比赛的复现</title>
+      <link>https://clingm.github.io/posts/zjbsfx/</link>
+      <pubDate>Sun, 16 Jul 2023 15:24:01 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/zjbsfx/</guid>
+      <description>好久没写blog了。。复现一下最近的比赛
+Crypto CTF 2023 # Medium # blobfish # #!/usr/bin/env python3 import os from hashlib import md5 from Crypto.Cipher import AES from Crypto.Random import get_random_bytes from PIL import Image from PIL import ImageDraw from flag import flag key = get_random_bytes(8) * 2 iv = md5(key).</description>
+      
+    </item>
+    
+    <item>
+      <title>UIUCTF 2023 Crypto WriteUps</title>
+      <link>https://clingm.github.io/posts/uiuctf-2023-crypto-writeups/</link>
+      <pubDate>Tue, 04 Jul 2023 15:27:00 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/uiuctf-2023-crypto-writeups/</guid>
+      <description>这次用IKUN为ID打了UIUCTF，解了全部的密码题，都挺简单的。
+Three-Time-Pad # 通过题目描述就知道是One-Time-Pad的key reuse。而且给了一个明密文对，xor一下就得到key，然后去解其他的明文就可以了
+from Crypto.Util.strxor import strxor c1 = open(&#39;Three-Time Pad/c1&#39;, &#39;rb&#39;).read() c2 = open(&#39;Three-Time Pad/c2&#39;, &#39;rb&#39;).read() c3 = open(&#39;Three-Time Pad/c3&#39;, &#39;rb&#39;).read() p2 = open(&#39;Three-Time Pad/p2&#39;, &#39;rb&#39;).read() key = strxor(c2 ,p2) print(key) print(strxor(key[:len(c3)], c3[:len(key)])) Morphing Time # #!</description>
+      
+    </item>
+    
+    <item>
+      <title>Simple Study of Kannan&#39;s Embedding</title>
+      <link>https://clingm.github.io/posts/simple-study-of-kannan-s-embedding/</link>
+      <pubDate>Sun, 21 May 2023 15:28:49 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/simple-study-of-kannan-s-embedding/</guid>
+      <description>关于Lattice问题的复习和Kannan’s Embedding for solve LWE的学习记录
+SVP # SVP(shortset vector problem)是找到一个格$L$上的最短向量，最短指的是Euclidean Norm(欧几里得范式)最小。一个格中最少有两个具有相同范式的最短向量，并且这两个向量的符号相反，也就是反向。把第一最短向量记为$\lambda_{1}(L)$，第二最短向量为$\lambda_2(L)$。
+uSVP # uSVP(unique SVP)是指在一个格中，满足$\lambda_1(L) \ll \lambda_2(L)$，找到$\lambda_1(L)$。或者给一个辅助变量$\gamma$，$\gamma\lambda_1(L) &amp;lt; \lambda_2(L)$，uSVP就变成$\gamma$-uSVP，$\gamma$可以看作是$\lambda_1(L)$和$\lambda_2(L)$之间的gap。所以$\gamma$-uSVP也可以当作是gapSVP。$\gamma$越大，在这个格$L$中就越容易找到$\lambda_1(L)$。
+CVP # CVP(closest vector problem)是给定一个格$L$和一个不在$L$中的目标向量$t$，在$L$中找到一个向量$v$，与$t$的距离最短。
+BDD # BDD(Bounded Distance Decoding)是在CVP中规定$||v-t|| &amp;lt; \beta\lambda_1(L)$，而且$\beta$小于0.</description>
+      
+    </item>
+    
+    <item>
+      <title>浅谈第一次数模比赛的体验</title>
+      <link>https://clingm.github.io/posts/first-sm/</link>
+      <pubDate>Thu, 18 May 2023 15:30:31 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/first-sm/</guid>
+      <description>上个星期和几个朋友一起打了第三届长三角数学建模比赛，作为第一次打数模的小白来说感觉就是，有大佬带好爽😍。
+这次比赛我们选择的是B题，题目描述如下：
+题目描述 # {% pdf https://cdn.jsdelivr.net/gh/clingm/PicGo-image/2023%E5%B9%B4%E7%AC%AC%E4%B8%89%E5%B1%8A%E9%95%BF%E4%B8%89%E8%A7%92%E9%AB%98%E6%A0%A1%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1%E7%AB%9E%E8%B5%9BB%E9%A2%98.pdf %}
+​ 看完题目描述，很容易看的出来这是一道大数据题目，需要预测和对参数做一下重要性评估。在整个论文中，我负责的是第二问重要性评估和对论文的排版($\LaTeX$)。
+数据收集 # ​ 作为一道大数据题目，主办方并没有给数据，要我们自己找。这也是整个比赛最难受的地方，我们第一去找的数据是新能源汽车的产量和销量，通过google我们成功找到来一些资源，包括收费的和不收费的😢。在这些资源中，我们又找到了数据的来源， 国家统计局，和各地的经济发展公报，比如 2020年江苏省国民经济和社会发展统计公报，在这里可以找到如下数据
+​ 这里对新能源汽车的产量有特别标注出来，其他省份也一样但也有比较奇怪的，比如上海市2018年公报内容是这样的
+并没有把新能源汽车的产量特别标注出来，而是与其他新兴产业合在一起给来一个增长百分比。那我们去找2017年的
+跟2018一样，2016同样如此。只有2019年开始才跟江苏省一样把新能源汽车标出来，但是江苏，浙江，安徽都是从2016年开始就这样了。还有就是2016年前的官方一点数据都咩有，呜呜~。2016-2022就七年的的时间，而且还是以年为单位的，也是就我们要用7个数据去预测后面3各数据，对于机器学习或者神经网络来说我感觉还是比较难的。
+​ 在找数据的过程中，我认为最离谱的还是那些卖数据的。明明他们的数据也基本是从官方渠道来的，而且这些数据都是公开的，非公开的国家数据应该也不能拿来卖吧（？。还有一些是专门卖这个赛题的数据的，更离谱了，甚至有些数据还是错的，大无语。
+重要性评估 # 由于最近有学习人工智能方面的东西，尤其是深度学习，所以一下子就想到了随机森林算法。在得到数据之后，利用sklearn很容易构建出一个模型。我们收集到的的有关数据包括
+年份 燃油价格 电动车充电成本 电动车平均价格 燃油车平均价格 新能源汽车能源效率 燃油车能源效率 新能源车政府补贴金额 新能源汽车企业数量 新能源汽车专利申请数量 新能源汽车充电桩数量 新能源汽车燃油车保有量比 并且使用新能源汽车燃油车保有量比作为新能源汽车和燃油车的竞争量。</description>
+      
+    </item>
+    
+    <item>
+      <title>Cryptanalysis of Rsa Variants With Primes Sharing Most Significant Bits</title>
+      <link>https://clingm.github.io/posts/cryptanalysis-of-rsa-variants-with-primes-sharing-most-significant-bits/</link>
+      <pubDate>Sat, 14 Jan 2023 15:31:52 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/cryptanalysis-of-rsa-variants-with-primes-sharing-most-significant-bits/</guid>
+      <description>概论 # 当RSA的公钥e和私钥d满足公式$ed-k(p^2-1)(q^2-1)=1$，如果模数m的两个因子p,q有相同的MSB，也就是说，如果p,q的差值$|p-q|$比较小，那么就可以计算出上式中的d，并且分解模数m。
+RSA变式 # RSA-LUC # 1993年，Smith 和 Lennon 发表了一个RSA变种密码系统，叫做LUC，基于 Lucas sequences。模数$N=pq$，公钥e和私钥d满足 $ed\equiv1 \pmod{(p^2-1)(q^2-1)}$。
+还有很多其他的变式可以看原文，这些变式都满足 $ed\equiv1 \pmod{(p^2-1)(q^2-1)}$ 这条式子。
+后面的研究中，把这条式子改写为等式 $ed-k(p^2-1)(q^2-1)=1$ ，并得出 $\frac{k}{d}$ 可以用 $e/(N^2-\frac{9}{4}N+1)$的 连分数形式的逼近来表示，如果 $d &amp;lt; \sqrt{(2N^3-18N^2)/e}$，这个方法将非常有效。
+在2017年，Bunder发现当公钥e满足 $ex-(p^2-1)(q^2-1)y=z$，可以将Coppersmith方法和连分数方法结合起来，如果 $xy &amp;lt; 2N-4\sqrt{2}N^{\frac{3}{4}}$ 且 $|z| &amp;lt; |p-q|N^{\frac{1}{4}}y$ ，那么可以很有效的分解N，当z=1时，上式变为 $ed-k(p^2-1)(q^2-1)=1$ ，d 的上界为 $d &amp;lt; \sqrt{2N-4\sqrt{2}N^{\frac{3}{4}}}$ 。d 和 e 的界也被考虑成 $e = N^{\alpha}$ 和 $d = N^{\delta}$ 。再到后来密码学家们发现 $ed\equiv1 \pmod{(p^2-1)(q^2-1)}$ 可以被解决，如果 $\delta &amp;lt; \frac{7}{3} - \frac{2}{3}\sqrt{1+3\alpha}$ 。</description>
+      
+    </item>
+    
+    <item>
+      <title>Elliptic Curve</title>
+      <link>https://clingm.github.io/posts/elliptic-curve/</link>
+      <pubDate>Thu, 15 Dec 2022 15:33:52 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/elliptic-curve/</guid>
+      <description>定义 # 在数学上，椭圆曲线（Elliptic curve，缩写为EC）为一 平面代数曲线，由如下形式的方程定义 $$ y^2=x^3 + ax + b $$
+其中$a$和$b$为实数。这类方程被称为short Weierstrass （韦尔斯特拉斯）方程。椭圆曲线的定义也要求曲线是非奇异的。几何上来说，这意味着图像里面没有尖点、自相交或孤立点。代数上来说，这成立当且仅当判别式 $$ \Delta=-16(4a^3+27b^2) $$ 不等于0。 有short Weierstrass自然也有long Weierstrass方程 $$ y^2+a_1xy+a_3y=x^3+a_2x^2+a_4x+a_6 $$ （至于为什么没有$a_5$我也不知道，看过的资料里都是没有$a_5$的） long Weierstrass形式可以转化为short Weierstrass形式。 令$y\longrightarrow y-\frac{(a_1x+a_3)}{2}$，化简后 $$ y^2=x^3+Ax^2+Bx+C $$ 再令$x\longrightarrow x-\frac{A}{3}$ $$ y^2=x^3+ax+b $$</description>
+      
+    </item>
+    
+    <item>
+      <title>Hitcon Ctf 2022 Secret</title>
+      <link>https://clingm.github.io/posts/hitcon-ctf-2022-secret/</link>
+      <pubDate>Fri, 02 Dec 2022 15:36:08 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/hitcon-ctf-2022-secret/</guid>
+      <description>源码 # prob.py
+import random, os from Crypto.Util.number import getPrime, bytes_to_long p = getPrime(1024) q = getPrime(1024) n = p * q flag = open(&#39;flag&#39;,&#39;rb&#39;).read() pad_length = 256 - len(flag) m = bytes_to_long(os.</description>
+      
+    </item>
+    
+    <item>
+      <title>Hitcon Ctf 2022 Superprime</title>
+      <link>https://clingm.github.io/posts/hitcon-ctf-2022-superprime/</link>
+      <pubDate>Wed, 30 Nov 2022 15:42:47 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/hitcon-ctf-2022-superprime/</guid>
+      <description>继续复现HITCON CTF 的赛题。争取近期全部复现完。
+源码 # chall.py
+from Crypto.Util.number import getPrime, isPrime, bytes_to_long def getSuperPrime(nbits): while True: p = getPrime(nbits) pp = bytes_to_long(str(p).encode()) if isPrime(pp): return p, pp p1, q1 = getSuperPrime(512) p2, q2 = getSuperPrime(512) p3, q3 = getSuperPrime(512) p4, q4 = getSuperPrime(512) p5, q5 = getSuperPrime(512) n1 = p1 * q1 n2 = p2 * p3 n3 = q2 * q3 n4 = p4 * q5 n5 = p5 * q4 e = 65537 c = bytes_to_long(open(&amp;quot;flag.</description>
+      
+    </item>
+    
+    <item>
+      <title>Hitcon Ctf 2022 Babysss</title>
+      <link>https://clingm.github.io/posts/hitcon-ctf-2022-babysss/</link>
+      <pubDate>Mon, 28 Nov 2022 15:46:12 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/hitcon-ctf-2022-babysss/</guid>
+      <description>周末抽时间看了一下HITCON的题，不愧是顶尖的比赛。由于水平比较菜，在比赛期间就做出来这么一道题（实际上就周六早上看了一下，下午赶ddl，周日打安洵杯）。 maple3142师傅和lyc师傅出的题目质量都很高，这个星期再复现学习一下。
+chall.py
+from random import SystemRandom from Crypto.Cipher import AES from hashlib import sha256 from secret import flag rand = SystemRandom() def polyeval(poly, x): return sum([a * x**i for i, a in enumerate(poly)]) DEGREE = 128 SHARES_FOR_YOU = 8 # I am really stingy :) poly = [rand.</description>
+      
+    </item>
+    
+    <item>
+      <title>Breaking Ecdsa From Nonce Bits</title>
+      <link>https://clingm.github.io/posts/breaking-ecdsa-from-nonce-bits/</link>
+      <pubDate>Tue, 22 Nov 2022 15:48:05 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/breaking-ecdsa-from-nonce-bits/</guid>
+      <description>如果对HNP不太了解，可以先看一下我的另一篇文章 HNP
+Preview # 先简单回顾一下HNP和ECDSA。
+Hidden Number problem（HNP） ：有一个对外保密的数$\alpha$和对外公开的模数$n$。随机的选择$t_i$计算$s_i=\alpha t_i\ mod\ n$，并且泄漏出$s_i$的最高有效位，就可以利用$CVP$的方法去恢复$\alpha$。
+ECDSA ：在有限域$\mathbb{F}p$上选择椭圆曲线$E\left(\mathbb{F}_{p}\right)$，以及阶为$n$的子群的基点$G$。私钥为$0\leq d &amp;lt; n$，公钥为$dG=Q$。 签名：
+选择nonce为随机数$k$ 计算明文的$hash$，$h=Hash(m)$ 计算$r=(kG)_x$，x表示$kG$的x坐标 计算$s = k^{-1} \cdot (h+d\cdot r)\ mod\ n$ 签名为$(r, s)$ ECDSA as a HNP # 由ECDSA的签名过程，重写一下公式。</description>
+      
+    </item>
+    
+    <item>
+      <title>Hidden Number Problem</title>
+      <link>https://clingm.github.io/posts/hidden-number-problem/</link>
+      <pubDate>Fri, 18 Nov 2022 15:49:12 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/hidden-number-problem/</guid>
+      <description>在最近的很多比赛都遇到了这个Hidden Number Problem(HNP)，所以抽个时间来仔细学习一下，然后马上要HGAME2023了，正好准备一下题目给新生写。
+Introduce # HNP问题第一次被提出是在这篇论文中 “Hardness of computing the most significant bits of secret keys in Diffie-Hellman and related schemes” by Dan Boneh and Ramarathnam Venkatesan。HNP问题本来是用来研究Diffie-Hellman共享密钥中的最高有效位是否与整个秘密一样难以计算？并且D. Boneh和R. Venkatesan还展示了一种有效的算法，用于在有足够大的位泄漏的情况下恢复密钥。</description>
+      
+    </item>
+    
+    <item>
+      <title>A New Elliptic Curve Based Analogue of Rsa</title>
+      <link>https://clingm.github.io/posts/a-new-elliptic-curve-based-analogue-of-rsa/</link>
+      <pubDate>Sun, 02 Oct 2022 15:50:47 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/a-new-elliptic-curve-based-analogue-of-rsa/</guid>
+      <description>refer: A New Elliptic Curve Based Analogue of RSA # 椭圆曲线 # 令 p 和 q 是素数，都大于3。并且满足$4a^3 + 27b^2 \not\equiv 0 \pmod{p}$。用$E_p(a, b)$表示模p参数为a,b的椭圆曲线。$y^2 \equiv x^3 + ax + b \pmod{p}$。</description>
+      
+    </item>
+    
+    <item>
+      <title>AMM Algorithm</title>
+      <link>https://clingm.github.io/posts/amm-algorithm/</link>
+      <pubDate>Sun, 02 Oct 2022 00:51:50 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/amm-algorithm/</guid>
+      <description>refere： 1111.4877.pdf (arxiv.org) # AMM平方根提取算法可以被拓展到一般的$r^{th}$根提取问题上，并且要求
+$r\mid p -1，(m, r)=1$
+AMM算法的核心观点暨在有限域$F_p$上开2次方的方法 # AMM在有限域$F_p$中开平方根，这要求$p$是一个素数，那么$p$就可以写成$2^t\cdot s$的形式，其中$s$是奇数。对于一个二次剩余$\delta$和二次非剩余$\rho$，我们有
+$$ (\delta^{s})^{2^{t - 1}}\equiv1\pmod{p}，(\rho^{s})^{2^{t - 1}}\equiv-1\pmod{p} $$
+如果$t=1$，$\delta^{s}\equiv1\pmod{p}$，两边乘$\delta$得到
+$$ (\delta^{\frac{s+1}{2}})^{2} \equiv \delta \pmod{p} $$
+所以$\delta^{\frac{s+1}{2}}$就是一个根。
+当$t\geq 2$，那么 $(δ^s)^{2^{t−2}} (mod p)\in { 1, −1}$（虽然在是不知道这是为什么，可能是将他当成一个新的二次（非）剩余），引入$k_1={0, 1}$，表示成</description>
+      
+    </item>
+    
+  </channel>
+</rss>
