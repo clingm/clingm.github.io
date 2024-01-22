@@ -9,8 +9,6 @@
     <copyright>© 2024 tr0uble</copyright>
     <lastBuildDate>Mon, 13 Jun 2022 20:55:37 +0100</lastBuildDate><atom:link href="https://clingm.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-<<<<<<< HEAD
-=======
       <title>Mechine Learning Start -- Linear</title>
       <link>https://clingm.github.io/posts/ml-start-linear/</link>
       <pubDate>Sun, 21 Jan 2024 21:52:06 +0800</pubDate>
@@ -45,7 +43,6 @@ Linear Regression # basic model # 特征向量$x$，输出$y$，有 $$ \begin{al
     </item>
     
     <item>
->>>>>>> 670f658 (...)
       <title>Start to Use AstroNvim</title>
       <link>https://clingm.github.io/posts/start-to-use-astronvim/</link>
       <pubDate>Sun, 31 Dec 2023 14:32:11 +0800</pubDate>
@@ -255,25 +252,9 @@ Introduce # HNP问题第一次被提出是在这篇论文中 “Hardness of com
     </item>
     
     <item>
-<<<<<<< HEAD
-      <title>A New Elliptic Curve Based Analogue of Rsa</title>
-      <link>https://clingm.github.io/posts/a-new-elliptic-curve-based-analogue-of-rsa/</link>
-      <pubDate>Sun, 02 Oct 2022 15:50:47 +0800</pubDate>
-      
-      <guid>https://clingm.github.io/posts/a-new-elliptic-curve-based-analogue-of-rsa/</guid>
-      <description>refer: A New Elliptic Curve Based Analogue of RSA # 椭圆曲线 # 令 p 和 q 是素数，都大于3。并且满足$4a^3 + 27b^2 \not\equiv 0 \pmod{p}$。用$E_p(a, b)$表示模p参数为a,b的椭圆曲线。$y^2 \equiv x^3 + ax + b \pmod{p}$。</description>
-      
-    </item>
-    
-    <item>
-      <title>AMM Algorithm</title>
-      <link>https://clingm.github.io/posts/amm-algorithm/</link>
-      <pubDate>Sun, 02 Oct 2022 00:51:50 +0800</pubDate>
-=======
       <title>AMM Algorithm</title>
       <link>https://clingm.github.io/posts/amm-algorithm/</link>
       <pubDate>Mon, 03 Oct 2022 00:51:50 +0800</pubDate>
->>>>>>> 670f658 (...)
       
       <guid>https://clingm.github.io/posts/amm-algorithm/</guid>
       <description>refere： 1111.4877.pdf (arxiv.org) # AMM平方根提取算法可以被拓展到一般的$r^{th}$根提取问题上，并且要求
@@ -287,8 +268,6 @@ $$ (\delta^{\frac{s+1}{2}})^{2} \equiv \delta \pmod{p} $$
       
     </item>
     
-<<<<<<< HEAD
-=======
     <item>
       <title>A New Elliptic Curve Based Analogue of Rsa</title>
       <link>https://clingm.github.io/posts/a-new-elliptic-curve-based-analogue-of-rsa/</link>
@@ -299,6 +278,5 @@ $$ (\delta^{\frac{s+1}{2}})^{2} \equiv \delta \pmod{p} $$
       
     </item>
     
->>>>>>> 670f658 (...)
   </channel>
 </rss>
