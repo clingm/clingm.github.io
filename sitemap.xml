@@ -3,8 +3,25 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
+<<<<<<< HEAD
     <loc>https://clingm.github.io/</loc>
     <lastmod>2024-01-03T14:29:03+08:00</lastmod>
+=======
+    <loc>https://clingm.github.io/series/mlstart/</loc>
+    <lastmod>2024-01-21T21:52:06+08:00</lastmod>
+    <changefreq>always</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://clingm.github.io/series/</loc>
+    <lastmod>2024-01-21T21:52:06+08:00</lastmod>
+    <changefreq>always</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://clingm.github.io/</loc>
+    <lastmod>2024-01-21T21:52:06+08:00</lastmod>
+>>>>>>> 670f658 (...)
     <changefreq>always</changefreq>
     <priority>0.5</priority>
   </url>
@@ -42,9 +59,12 @@
     <changefreq>always</changefreq>
     <priority>0.5</priority>
   </url>
+<<<<<<< HEAD
   <url>
     <loc>https://clingm.github.io/series/</loc>
     <changefreq>always</changefreq>
     <priority>0.5</priority>
   </url>
+=======
+>>>>>>> 670f658 (...)
 </urlset>
