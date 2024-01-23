@@ -9,7 +9,20 @@
     <copyright>© 2024 tr0uble</copyright>
     <lastBuildDate>Mon, 13 Jun 2022 20:55:37 +0100</lastBuildDate><atom:link href="https://clingm.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Mechine Learning Start -- Linear</title>
+      <title>Machine Learning Start -- Decision Tree</title>
+      <link>https://clingm.github.io/posts/ml-start-decision-tree/</link>
+      <pubDate>Tue, 23 Jan 2024 18:53:18 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/ml-start-decision-tree/</guid>
+      <description>intro # 西瓜书的决策树部分，在这篇文章中，将主要实现书中的TreeGenerate算法以及各种选取 最优划分属性的方式。
+决策树在进行学习的时候有一个很要命的问题，就是过拟合。因为决策树会把所有的样本特征 都学习到，所以过拟合是很难避免的，虽然可以使用剪枝的方法来减少过拟合。不过这篇文章 并不会涉及到剪枝的内容。
+数据集依然使用西瓜书对应的西瓜数据集
+色泽 根蒂 敲声 纹理 脐部 触感 好瓜 0 青绿 蜷缩 浊响 清晰 凹陷 硬滑 是 1 乌黑 蜷缩 沉闷 清晰 凹陷 硬滑 是 2 乌黑 蜷缩 浊响 清晰 凹陷 硬滑 是 3 青绿 蜷缩 沉闷 清晰 凹陷 硬滑 是 4 浅白 蜷缩 浊响 清晰 凹陷 硬滑 是 5 青绿 稍蜷 浊响 清晰 稍凹 软粘 是 6 乌黑 稍蜷 浊响 稍糊 稍凹 软粘 是 7 乌黑 稍蜷 浊响 清晰 稍凹 硬滑 是 8 乌黑 稍蜷 沉闷 稍糊 稍凹 硬滑 否 9 青绿 硬挺 清脆 清晰 平坦 软粘 否 10 浅白 硬挺 清脆 模糊 平坦 硬滑 否 11 浅白 蜷缩 浊响 模糊 平坦 软粘 否 12 青绿 稍蜷 浊响 稍糊 凹陷 硬滑 否 13 浅白 稍蜷 沉闷 稍糊 凹陷 硬滑 否 14 乌黑 稍蜷 浊响 清晰 稍凹 软粘 否 15 浅白 蜷缩 浊响 模糊 平坦 硬滑 否 16 青绿 蜷缩 沉闷 稍糊 稍凹 硬滑 否 best feature to split # 划分数据集的方式有基于信息增益，信息增益率和基尼指数。笔者只实现了信息增益和基尼指数 ，因为信息增益率实现起来其实就和信息增益一样，只不过加了一个惩罚在里面。</description>
+      
+    </item>
+    
+    <item>
+      <title>Machine Learning Start -- Linear</title>
       <link>https://clingm.github.io/posts/ml-start-linear/</link>
       <pubDate>Sun, 21 Jan 2024 21:52:06 +0800</pubDate>
       
@@ -21,7 +34,7 @@ Linear Regression # basic model # 特征向量$x$，输出$y$，有 $$ \begin{al
     </item>
     
     <item>
-      <title>Mechine Learning Start</title>
+      <title>Machine Learning Start</title>
       <link>https://clingm.github.io/posts/ml-start/</link>
       <pubDate>Sun, 21 Jan 2024 20:02:14 +0800</pubDate>
       
