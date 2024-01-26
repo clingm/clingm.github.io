@@ -9,6 +9,19 @@
     <copyright>© 2024 tr0uble</copyright>
     <lastBuildDate>Mon, 13 Jun 2022 20:55:37 +0100</lastBuildDate><atom:link href="https://clingm.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Wallpaper Engine in KDE</title>
+      <link>https://clingm.github.io/posts/wallpaper-engine-in-kde/</link>
+      <pubDate>Thu, 25 Jan 2024 23:05:19 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/wallpaper-engine-in-kde/</guid>
+      <description>在体验过各种WM后，最终回到了KDE。现在感觉配置这配置那的已经没什么意思了， 还不如把重心放在学习和技术上，于是又装回了KDE，使用的配置都是默认的，唯独 做了改变的就是壁纸。毕竟是开机第一眼看到的东西还是要好好整一整的。好久之 前在B站抓到可以在KDE上使用Wallpaper，想到买了这个东西还没怎么用过，于是就 尝试使用一下。
+主要使用的是这个插件 wallpaper-engine-kde-plugin 按照github上的说明一步一步来安装就好了。
+在安装完插件后还要在Steam安装Wallpaper Engine，注意要在Steam的设置中兼容性 -&amp;gt; 为所有其他产品使用Steam Play给勾选上才能安装Wallpaper Engine。
+做好所有准备后就可以使用了。回到桌面右键，选择配置桌面和壁纸，壁纸类型 选择Wallpaper engine for kde，然后选择Steam Lib的位置，点击Library， 一般是在这个位置~/.local/share/Steam，如果之前有订阅过壁纸那么现在就可 以看到啦。</description>
+      
+    </item>
+    
+    <item>
       <title>Machine Learning Start -- Decision Tree</title>
       <link>https://clingm.github.io/posts/ml-start-decision-tree/</link>
       <pubDate>Tue, 23 Jan 2024 18:53:18 +0800</pubDate>
