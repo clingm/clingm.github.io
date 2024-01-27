@@ -9,6 +9,17 @@
     <copyright>© 2024 tr0uble</copyright>
     <lastBuildDate>Mon, 13 Jun 2022 20:55:37 +0100</lastBuildDate><atom:link href="https://clingm.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Machine Learning Start -- Kmeans</title>
+      <link>https://clingm.github.io/posts/ml-start-kmeans/</link>
+      <pubDate>Sat, 27 Jan 2024 17:03:21 +0800</pubDate>
+      
+      <guid>https://clingm.github.io/posts/ml-start-kmeans/</guid>
+      <description>instro # K均值聚类（K-Means clustering）是一种常见的无监督学习算法，用于将数据集划分为K个簇。
+算法伪代码如下 使用西瓜数据集4.0来对算法进行测试 main idea # 距离算法使用欧几里得距离，与sklearn和matlab一致 使用最大迭代次数和质心偏移量来控制算法迭代过程 使用簇内距离的平均值作为模型评估的标准 implement # def kmeans(k, X, max_iter=100): if isinstance(X, pd.DataFrame): X = X.to_numpy() # init vec centroids = X[np.random.choice(len(X), k, replace=False)] for _ in range(max_iter): # calc distance distances = np.</description>
+      
+    </item>
+    
+    <item>
       <title>Wallpaper Engine in KDE</title>
       <link>https://clingm.github.io/posts/wallpaper-engine-in-kde/</link>
       <pubDate>Thu, 25 Jan 2024 23:05:19 +0800</pubDate>
