@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  {{ partial "header.html" . }}
+  <body>
+    <div class="content">
+      {{ partial "head.html" . }}
+
+      <main class="list">
+        <div class="site-description">
+          {{- if isset .Site.Params "subtitle" -}}
+          <p>{{ .Site.Params.Subtitle | .Page.RenderString }}</p>
+          {{- end -}}
+        </div>
+
+        <section class="list-item">
+          <h1 class="title">欢迎来到我的博客</h1>
+          <p>这个网站是依靠github page搭建的博客小站。</p>
+          <h1 class="title">关于我</h1>
+          <p>目前是一名即将毕业的大学生，热爱学习，热爱运动，热爱编程。anything can be coding.</p>
+        </section>
+        <br>
+        {{ $posts := (where .Site.RegularPages "Section" "posts") }}
+        {{ $count := len $posts }}
+        <p>当前共有 {{ $count }} 篇文章。</p>
+      </main>
+      {{ partial "footer.html" . }}
+    </div>
+
+  </body>
+</html>
