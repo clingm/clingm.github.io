@@ -79,7 +79,7 @@ a {
 a:hover {
 /*  background-color: var(--darkMaincolor);
   color: black;*/
-  border-bottom: 2px solid var(--darkMaincolor);
+  border-bottom: 3px solid var(--darkMaincolor);
 }
 
 .site-description a {

@@ -4,7 +4,8 @@ date: 2023-12-31T14:32:11+08:00
 tags:
   - Essay
 mathjax: false
-description:
+description: 
+toc: true
 ---
 
 AstroNvim is an aesthetic and feature-rich Neovim configuration that focuses on extensibility and usability.

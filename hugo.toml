@@ -8,9 +8,11 @@ pygmentsstyle = "monokai"
 pygmentscodefences = true
 pygmentscodefencesguesssyntax = true
 
+enableGitInfo = true
+
 # disqusShortname = "yourDisqusShortname"
 
-paginate=6 # articles per page
+pagination.pagerSize=6 # articles per page
 
 [params]
 	mode="toggle" # color-mode → light,dark,toggle or auto
@@ -18,6 +20,8 @@ paginate=6 # articles per page
 	# subtitle = "我的个人blog，写的内容会比较杂。"
 	mathjax = true # enable MathJax support
 	katex = true # enable KaTeX support
+	customCSS = ["css/custom.css"] # 引入自定义的css样式
+	toc = true
 
 # Social Tags
 
@@ -43,3 +47,11 @@ weight = 2
 name = "标签"
 url = "/tags"
 weight = 3
+
+[[menu.main]]
+name = "关于"
+url = "/about"
+weight = 4
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
