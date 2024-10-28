@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Machine Learning Start -- Linear - Clingm&#39;s Blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="instro
+线性回归是在特征与输出之间构建一个线性方程。如$ y = \sum_{i=0}^{n}a_{i}x_{i} &#43; b$, $x, y$分别为特征向量和输出。
+$a$作为需要求解的系数。一般的线性回归适用于回归任务（连续值），对于分类任务则使用对数几率回归，又称
+逻辑斯特回归，使用对数几率函数$ f(x) = \frac{1}{1-e^{-x}} $。对于多分类任务则使用Softmax回归。
+线性回归问题，书本上给了两种求解方法：1. 最小二乘法 2. 梯度下降法。本篇文章将只实现最小二乘法，
+因为梯度下降在神经网络中更加适合
+Linear Regression
+basic model
+特征向量$x$，输出$y$，有
+$$
+\begin{aligned}
+y &amp;= a_0x_0 &#43; a_1x_1 &#43; \cdots &#43; a_{i-1}x_{n-1} &#43; b \\
+&amp;= \sum_{i=0}^{n-1}a_ix_i &#43; b
+\end{aligned}
+$$
+把$a$和$b$吸收入向量形式$ w=(a;b) $, 相应的，把数据集$D$表示为一个$m×(d&#43;1)$大小的矩阵，其中每行对应于一个示例，该行前d个元素对应于示例的d个属性值，最后一个元素恒置为1，即：
+$$
+\mathbf{X}=\begin{pmatrix}x_{11}&amp;x_{12}&amp;\ldots&amp;x_{1d}&amp;1\\
+x_{21}&amp;x_{22}&amp;\ldots&amp;x_{2d}&amp;1\\
+\vdots&amp;\vdots&amp;\ddots&amp;\vdots&amp;\vdots\\
+x_{m1}&amp;x_{m2}&amp;\ldots&amp;x_{md}&amp;1\end{pmatrix}=\begin{pmatrix}\boldsymbol{x}_1^\mathrm{T}&amp;1\\x_2^\mathrm{T}&amp;1\\ \vdots&amp;\vdots\\x_m^\mathrm{T}&amp;1\end{pmatrix}
+$$
+$$
+Y = Xw
+$$
+损失函数选择均方差损失
+$$
+\begin{aligned}
+L &amp;= \sum_{i=0}^{n-1}(y - \hat{y})^2 \\
+&amp;= \sum_{i=0}^{n-1}(y - \sum_{i=0}^{n-1}a_ix_i - b)^2 \\
+&amp;= (Y - Xw)^2
+\end{aligned}
+$$" />
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content="https://clingm.github.io/posts/machine-learning/ml-start-linear/">
+  <meta property="og:site_name" content="Clingm&#39;s Blog">
+  <meta property="og:title" content="Machine Learning Start -- Linear">
+  <meta property="og:description" content="instro 线性回归是在特征与输出之间构建一个线性方程。如$ y = \sum_{i=0}^{n}a_{i}x_{i} &#43; b$, $x, y$分别为特征向量和输出。 $a$作为需要求解的系数。一般的线性回归适用于回归任务（连续值），对于分类任务则使用对数几率回归，又称 逻辑斯特回归，使用对数几率函数$ f(x) = \frac{1}{1-e^{-x}} $。对于多分类任务则使用Softmax回归。
+线性回归问题，书本上给了两种求解方法：1. 最小二乘法 2. 梯度下降法。本篇文章将只实现最小二乘法， 因为梯度下降在神经网络中更加适合
+Linear Regression basic model 特征向量$x$，输出$y$，有 $$ \begin{aligned} y &amp;= a_0x_0 &#43; a_1x_1 &#43; \cdots &#43; a_{i-1}x_{n-1} &#43; b \\ &amp;= \sum_{i=0}^{n-1}a_ix_i &#43; b \end{aligned} $$
+把$a$和$b$吸收入向量形式$ w=(a;b) $, 相应的，把数据集$D$表示为一个$m×(d&#43;1)$大小的矩阵，其中每行对应于一个示例，该行前d个元素对应于示例的d个属性值，最后一个元素恒置为1，即：
+$$ \mathbf{X}=\begin{pmatrix}x_{11}&amp;x_{12}&amp;\ldots&amp;x_{1d}&amp;1\\ x_{21}&amp;x_{22}&amp;\ldots&amp;x_{2d}&amp;1\\ \vdots&amp;\vdots&amp;\ddots&amp;\vdots&amp;\vdots\\ x_{m1}&amp;x_{m2}&amp;\ldots&amp;x_{md}&amp;1\end{pmatrix}=\begin{pmatrix}\boldsymbol{x}_1^\mathrm{T}&amp;1\\x_2^\mathrm{T}&amp;1\\ \vdots&amp;\vdots\\x_m^\mathrm{T}&amp;1\end{pmatrix} $$
+$$ Y = Xw $$
+损失函数选择均方差损失
+$$ \begin{aligned} L &amp;= \sum_{i=0}^{n-1}(y - \hat{y})^2 \\ &amp;= \sum_{i=0}^{n-1}(y - \sum_{i=0}^{n-1}a_ix_i - b)^2 \\ &amp;= (Y - Xw)^2 \end{aligned} $$">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-01-21T21:52:06+08:00">
+    <meta property="article:modified_time" content="2024-10-28T19:24:25+08:00">
+    <meta property="article:tag" content="Machine-Learning">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Machine Learning Start -- Linear">
+  <meta name="twitter:description" content="instro 线性回归是在特征与输出之间构建一个线性方程。如$ y = \sum_{i=0}^{n}a_{i}x_{i} &#43; b$, $x, y$分别为特征向量和输出。 $a$作为需要求解的系数。一般的线性回归适用于回归任务（连续值），对于分类任务则使用对数几率回归，又称 逻辑斯特回归，使用对数几率函数$ f(x) = \frac{1}{1-e^{-x}} $。对于多分类任务则使用Softmax回归。
+线性回归问题，书本上给了两种求解方法：1. 最小二乘法 2. 梯度下降法。本篇文章将只实现最小二乘法， 因为梯度下降在神经网络中更加适合
+Linear Regression basic model 特征向量$x$，输出$y$，有 $$ \begin{aligned} y &amp;= a_0x_0 &#43; a_1x_1 &#43; \cdots &#43; a_{i-1}x_{n-1} &#43; b \\ &amp;= \sum_{i=0}^{n-1}a_ix_i &#43; b \end{aligned} $$
+把$a$和$b$吸收入向量形式$ w=(a;b) $, 相应的，把数据集$D$表示为一个$m×(d&#43;1)$大小的矩阵，其中每行对应于一个示例，该行前d个元素对应于示例的d个属性值，最后一个元素恒置为1，即：
+$$ \mathbf{X}=\begin{pmatrix}x_{11}&amp;x_{12}&amp;\ldots&amp;x_{1d}&amp;1\\ x_{21}&amp;x_{22}&amp;\ldots&amp;x_{2d}&amp;1\\ \vdots&amp;\vdots&amp;\ddots&amp;\vdots&amp;\vdots\\ x_{m1}&amp;x_{m2}&amp;\ldots&amp;x_{md}&amp;1\end{pmatrix}=\begin{pmatrix}\boldsymbol{x}_1^\mathrm{T}&amp;1\\x_2^\mathrm{T}&amp;1\\ \vdots&amp;\vdots\\x_m^\mathrm{T}&amp;1\end{pmatrix} $$
+$$ Y = Xw $$
+损失函数选择均方差损失
+$$ \begin{aligned} L &amp;= \sum_{i=0}^{n-1}(y - \hat{y})^2 \\ &amp;= \sum_{i=0}^{n-1}(y - \sum_{i=0}^{n-1}a_ix_i - b)^2 \\ &amp;= (Y - Xw)^2 \end{aligned} $$">
+<script src="https://clingm.github.io/js/feather.min.js"></script>
+	
+	
+        <link href="https://clingm.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://clingm.github.io/css/main.a4fb2a2bfee30ab5e4deb557e5c0d3e1a22e972fd4b8059217db4d3647b8ec52.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://clingm.github.io/css/dark.23f68d3ce4525ce2bf3f3085cf718c30981001b6eee182d17676da5827ffb3d0.css"  disabled />
+	
+
+	
+	
+		<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		</script>
+
+		
+		<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			tex2jax: {
+				inlineMath: [['$','$'], ['\\(','\\)']],
+				displayMath: [['$$','$$'], ['\[','\]']],
+				processEscapes: true,
+				processEnvironments: true,
+				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+				TeX: { equationNumbers: { autoNumber: "AMS" },
+						 extensions: ["AMSmath.js", "AMSsymbols.js"] }
+			}
+		});
+		</script>
+	
+
+	
+	
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+		
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+					renderMathInElement(document.body, {
+							delimiters: [
+									{left: "$$", right: "$$", display: true},
+									{left: "$", right: "$", display: false}
+							]
+					});
+			});
+			</script>
+	
+
+	
+		
+		
+		<link rel="stylesheet" type="text/css" href="https://clingm.github.io/css/custom.2391be1053021d99c6aee22f1c21cdfb7abf1fb6cf1d762376ad2f3bd7506461.css">
+		
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://clingm.github.io/">Clingm&#39;s Blog</a>
+	</div>
+	<nav>
+		
+		<a href="/">主页</a>
+		
+		<a href="/posts">文章</a>
+		
+		<a href="/tags">标签</a>
+		
+		<a href="/about">关于</a>
+		
+		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		<script src="https://clingm.github.io/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">Machine Learning Start -- Linear</h1>
+			<div class="meta">Posted on Jan 21, 2024<br>Updated on Oct 28, 2024</div>
+		</div>
+		
+
+		
+		<div class="toc">
+		<strong>Table of contents:</strong>
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#instro">instro</a></li>
+    <li><a href="#linear-regression">Linear Regression</a>
+      <ul>
+        <li><a href="#basic-model">basic model</a></li>
+        <li><a href="#solve">solve</a></li>
+        <li><a href="#test">test</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+		</div>
+
+		<section class="body">
+			<h2 id="instro">instro</h2>
+<p>线性回归是在特征与输出之间构建一个线性方程。如$ y = \sum_{i=0}^{n}a_{i}x_{i} + b$, $x, y$分别为特征向量和输出。
+$a$作为需要求解的系数。一般的线性回归适用于回归任务（连续值），对于分类任务则使用对数几率回归，又称
+逻辑斯特回归，使用对数几率函数$ f(x) = \frac{1}{1-e^{-x}} $。对于多分类任务则使用Softmax回归。</p>
+<p>线性回归问题，书本上给了两种求解方法：1. 最小二乘法 2. 梯度下降法。本篇文章将只实现最小二乘法，
+因为梯度下降在神经网络中更加适合</p>
+<h2 id="linear-regression">Linear Regression</h2>
+<h3 id="basic-model">basic model</h3>
+<p>特征向量$x$，输出$y$，有
+$$
+\begin{aligned}
+y &amp;= a_0x_0 + a_1x_1 + \cdots + a_{i-1}x_{n-1} + b \\
+&amp;= \sum_{i=0}^{n-1}a_ix_i + b
+\end{aligned}
+$$</p>
+<p>把$a$和$b$吸收入向量形式$ w=(a;b) $, 相应的，把数据集$D$表示为一个$m×(d+1)$大小的矩阵，其中每行对应于一个示例，该行前d个元素对应于示例的d个属性值，最后一个元素恒置为1，即：</p>
+<p>$$
+\mathbf{X}=\begin{pmatrix}x_{11}&amp;x_{12}&amp;\ldots&amp;x_{1d}&amp;1\\
+x_{21}&amp;x_{22}&amp;\ldots&amp;x_{2d}&amp;1\\
+\vdots&amp;\vdots&amp;\ddots&amp;\vdots&amp;\vdots\\
+x_{m1}&amp;x_{m2}&amp;\ldots&amp;x_{md}&amp;1\end{pmatrix}=\begin{pmatrix}\boldsymbol{x}_1^\mathrm{T}&amp;1\\x_2^\mathrm{T}&amp;1\\ \vdots&amp;\vdots\\x_m^\mathrm{T}&amp;1\end{pmatrix}
+$$</p>
+<p>$$
+Y = Xw
+$$</p>
+<p>损失函数选择均方差损失</p>
+<p>$$
+\begin{aligned}
+L &amp;= \sum_{i=0}^{n-1}(y - \hat{y})^2 \\
+&amp;= \sum_{i=0}^{n-1}(y - \sum_{i=0}^{n-1}a_ix_i - b)^2 \\
+&amp;= (Y - Xw)^2
+\end{aligned}
+$$</p>
+<h3 id="solve">solve</h3>
+<p>使用最小二乘法求解模型，令均方差损失最小，即求出极小值，分别对$a,b$求导, 即对$w$求导</p>
+<p>$$
+\begin{aligned}
+\frac{\partial{L}}{\partial{w}} &amp;= 0 \\
+X^{T}(Y - Xw) &amp;= 0 \\
+w &amp;= (X^{T}X)^{-1}X^{T}Y
+\end{aligned}
+$$</p>
+<h3 id="test">test</h3>
+<p>使用下面的代码生成需要的数据集</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">get_data_set</span>(m: int, wights: np<span style="color:#f92672">.</span>ndarray, bias: float) <span style="color:#f92672">-&gt;</span> Tuple[np<span style="color:#f92672">.</span>ndarray, <span style="color:#f92672">...</span>]:
+</span></span><span style="display:flex;"><span>    n <span style="color:#f92672">=</span> wights<span style="color:#f92672">.</span>size
+</span></span><span style="display:flex;"><span>    X <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>random<span style="color:#f92672">.</span>rand(m, n)
+</span></span><span style="display:flex;"><span>    Y <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>array(
+</span></span><span style="display:flex;"><span>        [np<span style="color:#f92672">.</span>dot(wights, X[i]) <span style="color:#f92672">+</span> bias <span style="color:#f92672">+</span> random<span style="color:#f92672">.</span>random() <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.01</span> <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(m)]
+</span></span><span style="display:flex;"><span>    )
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> X, Y
+</span></span></code></pre></div><p>其中<code>random.random() * 0.01</code>是作为error项，目的是不要让样本的分布直接呈现线性关系</p>
+<p>使用下面的代码来实现最小二乘法求解</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">solve</span>(X, Y) <span style="color:#f92672">-&gt;</span> np<span style="color:#f92672">.</span>ndarray:
+</span></span><span style="display:flex;"><span>    X_T <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>transpose(X)
+</span></span><span style="display:flex;"><span>    w <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>matmul(np<span style="color:#f92672">.</span>linalg<span style="color:#f92672">.</span>inv(np<span style="color:#f92672">.</span>matmul(X_T, X)), np<span style="color:#f92672">.</span>matmul(X_T, Y))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> w
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">lsm</span>(X: np<span style="color:#f92672">.</span>ndarray, Y: np<span style="color:#f92672">.</span>ndarray):
+</span></span><span style="display:flex;"><span>    m, n <span style="color:#f92672">=</span> X<span style="color:#f92672">.</span>shape
+</span></span><span style="display:flex;"><span>    X <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>concatenate((X, np<span style="color:#f92672">.</span>ones((<span style="color:#ae81ff">1</span>, m))<span style="color:#f92672">.</span>T), axis<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    Y <span style="color:#f92672">=</span> Y<span style="color:#f92672">.</span>reshape((m, <span style="color:#ae81ff">1</span>))
+</span></span><span style="display:flex;"><span>    w <span style="color:#f92672">=</span> solve(X, Y)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> w<span style="color:#f92672">.</span>flatten()
+</span></span></code></pre></div><p>以6维特征来进行测试</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>featrue_nums <span style="color:#f92672">=</span> <span style="color:#ae81ff">6</span>
+</span></span><span style="display:flex;"><span>real_b <span style="color:#f92672">=</span> random<span style="color:#f92672">.</span>random()
+</span></span><span style="display:flex;"><span>real_a <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>random<span style="color:#f92672">.</span>rand(featrue_nums)
+</span></span><span style="display:flex;"><span>X, Y <span style="color:#f92672">=</span> get_data_set(<span style="color:#ae81ff">10</span>, real_a, real_b)
+</span></span><span style="display:flex;"><span>w <span style="color:#f92672">=</span> lsm(X, Y)
+</span></span><span style="display:flex;"><span>print(w)
+</span></span><span style="display:flex;"><span>print(real_a, real_b)
+</span></span></code></pre></div><p>测试结果</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">[</span>0.43376235 0.78558162 0.20773861 0.88983048 0.80890781 0.40127196
+</span></span><span style="display:flex;"><span> 0.35963757<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[</span>0.43057936 0.79179205 0.20033821 0.87883885 0.8172409  0.40964536<span style="color:#f92672">]</span> 0.35893656235086113
+</span></span></code></pre></div>
+		</section>
+
+		<div class="post-tags">
+			
+			
+			<nav class="nav tags">
+				<ul class="tags">
+					
+					<li><a href="/tags/machine-learning">Machine-Learning</a></li>
+					
+				</ul>
+			</nav>
+			
+			
+		</div>
+		</article>
+</main>
+
+
+        
+       
+
+<footer>
+  <div style="display:flex"><a class="soc" href="https://github.com/clingm" rel="me" title="GitHub"><i data-feather="github"></i></a>
+    <a class="border"></a></div>
+  <div class="footer-info">
+    2024  © Clingm |  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+<script>
+  feather.replace()
+</script></div>
+    </body>
+</html>

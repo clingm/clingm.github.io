@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Start to Use AstroNvim - Clingm&#39;s Blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="AstroNvim is an aesthetic and feature-rich Neovim configuration that focuses on extensibility and usability.
+最近把原先的LzayVim换成了AstroNvim，用了一段时间感觉还不错
+why AstroNvim
+首先引用以下AstroNvim官网的话
+
+We found other Neovim configurations either being powerful out of the box but hard to customize, or easy to customize but minimal out of the box functionality. AstroNvim aims to find the middle ground with a great out of the box experience while empowering the user to make tweaks where they want." />
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content="https://clingm.github.io/posts/essay/start-to-use-astronvim/">
+  <meta property="og:site_name" content="Clingm&#39;s Blog">
+  <meta property="og:title" content="Start to Use AstroNvim">
+  <meta property="og:description" content="AstroNvim is an aesthetic and feature-rich Neovim configuration that focuses on extensibility and usability.
+最近把原先的LzayVim换成了AstroNvim，用了一段时间感觉还不错
+why AstroNvim 首先引用以下AstroNvim官网的话
+We found other Neovim configurations either being powerful out of the box but hard to customize, or easy to customize but minimal out of the box functionality. AstroNvim aims to find the middle ground with a great out of the box experience while empowering the user to make tweaks where they want.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2023-12-31T14:32:11+08:00">
+    <meta property="article:modified_time" content="2024-10-28T19:24:25+08:00">
+    <meta property="article:tag" content="Essay">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Start to Use AstroNvim">
+  <meta name="twitter:description" content="AstroNvim is an aesthetic and feature-rich Neovim configuration that focuses on extensibility and usability.
+最近把原先的LzayVim换成了AstroNvim，用了一段时间感觉还不错
+why AstroNvim 首先引用以下AstroNvim官网的话
+We found other Neovim configurations either being powerful out of the box but hard to customize, or easy to customize but minimal out of the box functionality. AstroNvim aims to find the middle ground with a great out of the box experience while empowering the user to make tweaks where they want.">
+<script src="https://clingm.github.io/js/feather.min.js"></script>
+	
+	
+        <link href="https://clingm.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://clingm.github.io/css/main.a4fb2a2bfee30ab5e4deb557e5c0d3e1a22e972fd4b8059217db4d3647b8ec52.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://clingm.github.io/css/dark.23f68d3ce4525ce2bf3f3085cf718c30981001b6eee182d17676da5827ffb3d0.css"  disabled />
+	
+
+	
+	
+		<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		</script>
+
+		
+		<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			tex2jax: {
+				inlineMath: [['$','$'], ['\\(','\\)']],
+				displayMath: [['$$','$$'], ['\[','\]']],
+				processEscapes: true,
+				processEnvironments: true,
+				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+				TeX: { equationNumbers: { autoNumber: "AMS" },
+						 extensions: ["AMSmath.js", "AMSsymbols.js"] }
+			}
+		});
+		</script>
+	
+
+	
+	
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+		
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+					renderMathInElement(document.body, {
+							delimiters: [
+									{left: "$$", right: "$$", display: true},
+									{left: "$", right: "$", display: false}
+							]
+					});
+			});
+			</script>
+	
+
+	
+		
+		
+		<link rel="stylesheet" type="text/css" href="https://clingm.github.io/css/custom.2391be1053021d99c6aee22f1c21cdfb7abf1fb6cf1d762376ad2f3bd7506461.css">
+		
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://clingm.github.io/">Clingm&#39;s Blog</a>
+	</div>
+	<nav>
+		
+		<a href="/">主页</a>
+		
+		<a href="/posts">文章</a>
+		
+		<a href="/tags">标签</a>
+		
+		<a href="/about">关于</a>
+		
+		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		<script src="https://clingm.github.io/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">Start to Use AstroNvim</h1>
+			<div class="meta">Posted on Dec 31, 2023<br>Updated on Oct 28, 2024</div>
+		</div>
+		
+
+		
+		<div class="toc">
+		<strong>Table of contents:</strong>
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#why-astronvim">why AstroNvim</a></li>
+    <li><a href="#how-astronvim-work">How AstroNvim Work</a></li>
+    <li><a href="#make-astronvim-more-powerful">Make AstroNvim More Powerful</a>
+      <ul>
+        <li><a href="#markdown-preview">markdown-preview</a></li>
+        <li><a href="#toggleterm">ToggleTerm</a></li>
+      </ul>
+    </li>
+    <li><a href="#make-astronvim-more-beautiful">Make AstroNvim More Beautiful</a>
+      <ul>
+        <li><a href="#lualine">lualine</a></li>
+        <li><a href="#miniindentscope">mini.indentscope</a></li>
+        <li><a href="#heirline-winbar">heirline-winbar</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+		</div>
+
+		<section class="body">
+			<p>AstroNvim is an aesthetic and feature-rich Neovim configuration that focuses on extensibility and usability.</p>
+<p>最近把原先的LzayVim换成了AstroNvim，用了一段时间感觉还不错</p>
+<h2 id="why-astronvim">why AstroNvim</h2>
+<p>首先引用以下AstroNvim官网的话</p>
+<blockquote>
+<p>We found other Neovim configurations either being powerful out of the box but hard to customize, or easy to customize but minimal out of the box functionality. AstroNvim aims to find the middle ground with a great out of the box experience while empowering the user to make tweaks where they want.</p>
+</blockquote>
+<p>在熟悉AstroNvim的配置方法后感觉确实如此，AstroNvim做到了方便配置和功能足够多，开箱即用这两点。</p>
+<p>先前使用的LazyVim是极简的配置，但是对于我这种仅仅是使用Neovim作为主要编辑器的用户还是有点过于简单了。</p>
+<h2 id="how-astronvim-work">How AstroNvim Work</h2>
+<p>在这一节我会简单的介绍以下AstroNvim客制化的一些东西（以我自己粗浅的理解</p>
+<p>在安装之后会得到这么个目录结构</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>./lua
+</span></span><span style="display:flex;"><span>├── astronvim
+</span></span><span style="display:flex;"><span>│   ├── icons
+</span></span><span style="display:flex;"><span>│   └── utils
+</span></span><span style="display:flex;"><span>│       └── status
+</span></span><span style="display:flex;"><span>├── plugins
+</span></span><span style="display:flex;"><span>│   └── configs
+</span></span><span style="display:flex;"><span>└── resession
+</span></span><span style="display:flex;"><span>    └── extensions
+</span></span></code></pre></div><p><code>astronvim</code> 目录下的是AstroNvim客制化的东西，<code>plugins</code> 目录下是默认的插件配置。 这里主要介绍以下AstroNvim是如何加载我们用户的配置的。</p>
+<p>首先在<code>astronvim/lazy.lua</code>文件中有如下代码来加载user config，</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span><span style="color:#66d9ef">local</span> user_plugins <span style="color:#f92672">=</span> astronvim.user_opts <span style="color:#e6db74">&#34;plugins&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> _, config_dir <span style="color:#66d9ef">in</span> ipairs(astronvim.supported_configs) <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> vim.fn.isdirectory(config_dir <span style="color:#f92672">..</span> <span style="color:#e6db74">&#34;/lua/user/plugins&#34;</span>) <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">then</span> user_plugins <span style="color:#f92672">=</span> { import <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;user.plugins&#34;</span> } <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">local</span> spec <span style="color:#f92672">=</span> astronvim.updater.options.pin_plugins <span style="color:#f92672">and</span> { { import <span style="color:#f92672">=</span> astronvim.updater.snapshot.module } } <span style="color:#f92672">or</span> {}
+</span></span><span style="display:flex;"><span>vim.list_extend(spec, { { import <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;plugins&#34;</span> }, user_plugins })
+</span></span></code></pre></div><p>再来看<code>user_opts函数</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span><span style="color:#75715e">--- User configuration entry point to override the default options of a configuration table with a user configuration file or table in the user/init.lua user settings</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">---@param module string The module path of the override setting</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">---@param default? any The default value that will be overridden</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">---@param extend? boolean # Whether extend the default settings or overwrite them with the user settings entirely (default: true)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">---@return any # The new configuration settings with the user overrides applied</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">astronvim</span>.<span style="color:#a6e22e">user_opts</span>(module, default, extend)
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">-- default to extend = true</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> extend <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> <span style="color:#66d9ef">then</span> extend <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span> <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">-- if no default table is provided set it to an empty table</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> default <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> <span style="color:#66d9ef">then</span> default <span style="color:#f92672">=</span> {} <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">-- try to load a module file if it exists</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">local</span> user_module_settings <span style="color:#f92672">=</span> load_module_file(<span style="color:#e6db74">&#34;user.&#34;</span> <span style="color:#f92672">..</span> module)
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">-- if no user module file is found, try to load an override from the user settings table from user/init.lua</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> user_module_settings <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> <span style="color:#66d9ef">then</span> user_module_settings <span style="color:#f92672">=</span> user_setting_table(module) <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">-- if a user override was found call the configuration engine</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> user_module_settings <span style="color:#f92672">~=</span> <span style="color:#66d9ef">nil</span> <span style="color:#66d9ef">then</span> default <span style="color:#f92672">=</span> func_or_extend(user_module_settings, default, extend) <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">-- return the final configuration table with any overrides applied</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> default
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>再向上看<code>load_module_file</code>, <code>user_setting_table</code>, <code>func_or_extend</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span><span style="color:#75715e">--- Looks to see if a module path references a lua file in a configuration folder and tries to load it. If there is an error loading the file, write an error and continue</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">---@param module string The module path to try and load</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">---@return table|nil # The loaded module if successful or nil</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">local</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">load_module_file</span>(module)
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">-- placeholder for final return value</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">local</span> found_file <span style="color:#f92672">=</span> <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">-- search through each of the supported configuration locations</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">for</span> _, config_path <span style="color:#66d9ef">in</span> ipairs(astronvim.supported_configs) <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- convert the module path to a file path (example user.init -&gt; user/init.lua)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">local</span> module_path <span style="color:#f92672">=</span> config_path <span style="color:#f92672">..</span> <span style="color:#e6db74">&#34;/lua/&#34;</span> <span style="color:#f92672">..</span> module:gsub(<span style="color:#e6db74">&#34;%.&#34;</span>, <span style="color:#e6db74">&#34;/&#34;</span>) <span style="color:#f92672">..</span> <span style="color:#e6db74">&#34;.lua&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- check if there is a readable file, if so, set it as found</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> vim.fn.filereadable(module_path) <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">then</span> found_file <span style="color:#f92672">=</span> module_path <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">-- if we found a readable lua file, try to load it</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">local</span> out <span style="color:#f92672">=</span> <span style="color:#66d9ef">nil</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> found_file <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- try to load the file</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">local</span> status_ok, loaded_module <span style="color:#f92672">=</span> pcall(require, module)
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- if successful at loading, set the return variable</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> status_ok <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>      out <span style="color:#f92672">=</span> loaded_module
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- if unsuccessful, throw an error</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>      vim.api.nvim_err_writeln(<span style="color:#e6db74">&#34;Error loading file: &#34;</span> <span style="color:#f92672">..</span> found_file <span style="color:#f92672">..</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n\n</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">..</span> loaded_module)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">-- return the loaded module or nil if no file found</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> out
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span><span style="color:#75715e">--- Search the user settings (user/init.lua table) for a table with a module like path string</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- @param module the module path like string to look up in the user settings table</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- @return the value of the table entry if exists or nil</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">local</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">user_setting_table</span>(module)
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">-- get the user settings table</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">local</span> settings <span style="color:#f92672">=</span> user_settings <span style="color:#f92672">or</span> {}
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">-- iterate over the path string split by &#39;.&#39; to look up the table value</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">for</span> tbl <span style="color:#66d9ef">in</span> string.gmatch(module, <span style="color:#e6db74">&#34;([^%.]+)&#34;</span>) <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    settings <span style="color:#f92672">=</span> settings[tbl]
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- if key doesn&#39;t exist, keep the nil value and stop searching</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> settings <span style="color:#f92672">==</span> <span style="color:#66d9ef">nil</span> <span style="color:#66d9ef">then</span> <span style="color:#66d9ef">break</span> <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">-- return the found settings</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> settings
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span><span style="color:#75715e">--- Main configuration engine logic for extending a default configuration table with either a function override or a table to merge into the default option</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- @param overrides the override definition, either a table or a function that takes a single parameter of the original table</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- @param default the default configuration table</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- @param extend boolean value to either extend the default or simply overwrite it if an override is provided</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- @return the new configuration table</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">local</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">func_or_extend</span>(overrides, default, extend)
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">-- if we want to extend the default with the provided override</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> extend <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- if the override is a table, use vim.tbl_deep_extend</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> type(overrides) <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;table&#34;</span> <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">local</span> opts <span style="color:#f92672">=</span> overrides <span style="color:#f92672">or</span> {}
+</span></span><span style="display:flex;"><span>      default <span style="color:#f92672">=</span> default <span style="color:#f92672">and</span> vim.tbl_deep_extend(<span style="color:#e6db74">&#34;force&#34;</span>, default, opts) <span style="color:#f92672">or</span> opts
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">-- if the override is  a function, call it with the default and overwrite default with the return value</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">elseif</span> type(overrides) <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;function&#34;</span> <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>      default <span style="color:#f92672">=</span> overrides(default)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">-- if extend is set to false and we have a provided override, simply override the default</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">elseif</span> overrides <span style="color:#f92672">~=</span> <span style="color:#66d9ef">nil</span> <span style="color:#66d9ef">then</span>
+</span></span><span style="display:flex;"><span>    default <span style="color:#f92672">=</span> overrides
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">-- return the modified default table</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">return</span> default
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><p>其实这些函数注释写的也很清楚，只需要在<code>user/plugins</code>目录创建对应于<code>lua/plugins</code>目录中插件相对应的文件 这里就可以自动寻找这些文件并且将其中的内容覆盖在默认的配置中。</p>
+<h2 id="make-astronvim-more-powerful">Make AstroNvim More Powerful</h2>
+<p>安装几个插件让AstroNvim更加强大</p>
+<h3 id="markdown-preview">markdown-preview</h3>
+<p>source : <a href="https://github.com/iamcco/markdown-preview.nvim">https://github.com/iamcco/markdown-preview.nvim</a></p>
+<p><code>user/plugins/markdown-preview.lua</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span><span style="color:#66d9ef">return</span> { <span style="color:#75715e">-- install without yarn or npm { &#34;iamcco/markdown-preview.nvim&#34;, cmd = { &#34;MarkdownPreviewToggle&#34;, &#34;MarkdownPreview&#34;, &#34;MarkdownPreviewStop&#34; }, ft = { &#34;markdown&#34; }, build = function() vim.fn[&#34;mkdp#util#install&#34;]() end, } }</span>
+</span></span></code></pre></div><h3 id="toggleterm">ToggleTerm</h3>
+<p>source : <a href="https://github.com/akinsho/toggleterm.nvim">https://github.com/akinsho/toggleterm.nvim</a></p>
+<p>虽然AstroNvim已经内置了ToggleTerm作为默认的Ternimal工具，但是并没有对其做custom config 因为我平时使用fish作为自己的shell（但是系统默认的shell还是bash，所以这里就只做了shell的更改。</p>
+<p><code>user/plugins/toggleterm.lua</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span><span style="color:#66d9ef">return</span>{ <span style="color:#e6db74">&#34;akinsho/toggleterm.nvim&#34;</span>, opts <span style="color:#f92672">=</span> { shell <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/bin/fish&#34;</span>, } }
+</span></span></code></pre></div><h2 id="make-astronvim-more-beautiful">Make AstroNvim More Beautiful</h2>
+<h3 id="lualine">lualine</h3>
+<p>source : <a href="https://github.com/nvim-lualine/lualine.nvim">https://github.com/nvim-lualine/lualine.nvim</a></p>
+<p>AstroNvim默认的状态栏是使用<a href="https://github.com/rebelot/heirline.nvim">heirline</a>构建的， 但是lualine更加好看和方便配置。</p>
+<p><code>user/plugins/ui.lua</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span>{ <span style="color:#e6db74">&#39;nvim-lualine/lualine.nvim&#39;</span>, dependencies <span style="color:#f92672">=</span> { <span style="color:#e6db74">&#39;nvim-tree/nvim-web-devicons&#39;</span> }, event <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;BufEnter&#34;</span>, config <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>() require(<span style="color:#e6db74">&#39;lualine&#39;</span>).setup { options <span style="color:#f92672">=</span> { theme <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;auto&#34;</span> } } <span style="color:#66d9ef">end</span>, },
+</span></span></code></pre></div><h3 id="miniindentscope">mini.indentscope</h3>
+<p>source : <a href="https://github.com/echasnovski/mini.indentscope">https://github.com/echasnovski/mini.indentscope</a></p>
+<p>缩进的高亮显示</p>
+<p><code>user/plugins/ui.lua</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span><span style="color:#75715e">-- Active indent guide and indent text objects. When you&#39;re browsing -- code, this highlights the current level of indentation, and animates -- the highlighting. { &#34;echasnovski/mini.indentscope&#34;, version = false, -- wait till new 0.7.0 release to put it back on semver event = &#34;User AstroFile&#34;, opts = { -- symbol = &#34;▏&#34;, symbol = &#34;│&#34;, options = { try_as_border = true }, }, init = function() vim.api.nvim_create_autocmd(&#34;FileType&#34;, { pattern = { &#34;help&#34;, &#34;startify&#34;, &#34;aerial&#34;, -- &#34;alpha&#34;, &#34;dashboard&#34;, &#34;lazy&#34;, &#34;neogitstatus&#34;, &#34;NvimTree&#34;, &#34;neo-tree&#34;, &#34;Trouble&#34;, }, callback = function() vim.b.miniindentscope_disable = true end, }) end, },</span>
+</span></span></code></pre></div><h3 id="heirline-winbar">heirline-winbar</h3>
+<p>类似vscode里winbar的效果。</p>
+<p><code>user/plugins/heirline.lua</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-lua" data-lang="lua"><span style="display:flex;"><span><span style="color:#66d9ef">return</span> { { <span style="color:#e6db74">&#34;rebelot/heirline.nvim&#34;</span>, opts <span style="color:#f92672">=</span> <span style="color:#66d9ef">function</span>(_, opts) <span style="color:#66d9ef">local</span> status <span style="color:#f92672">=</span> require <span style="color:#e6db74">&#34;astronvim.utils.status&#34;</span> opts.winbar <span style="color:#f92672">=</span> { <span style="color:#75715e">-- create custom winbar -- store the current buffer number init = function(self) self.bufnr = vim.api.nvim_get_current_buf() end, fallthrough = false, -- pick the correct winbar based on condition -- inactive winbar { condition = function() return not status.condition.is_active() end, -- show the path to the file relative to the working directory status.component.separated_path { path_func = status.provider.filename { modify = &#34;:.:h&#34; } }, -- add the file name and icon status.component.file_info { file_icon = { hl = status.hl.file_icon &#34;winbar&#34;, padding = { left = 0 } }, file_modified = false, file_read_only = false, hl = status.hl.get_attributes(&#34;winbarnc&#34;, true), surround = false, update = &#34;BufEnter&#34;, }, }, -- active winbar { -- show the path to the file relative to the working directory status.component.separated_path { path_func = status.provider.filename { modify = &#34;:.:h&#34; } }, -- add the file name and icon status.component.file_info { -- add file_info to breadcrumbs file_icon = { hl = status.hl.filetype_color, padding = { left = 0 } }, file_modified = false, file_read_only = false, hl = status.hl.get_attributes(&#34;winbar&#34;, true), surround = false, update = &#34;BufEnter&#34;, }, -- show the breadcrumbs status.component.breadcrumbs { icon = { hl = true }, hl = status.hl.get_attributes(&#34;winbar&#34;, true), prefix = true, padding = { left = 0 }, }, }, } return opts end, }, }</span>
+</span></span></code></pre></div>
+		</section>
+
+		<div class="post-tags">
+			
+			
+			<nav class="nav tags">
+				<ul class="tags">
+					
+					<li><a href="/tags/essay">Essay</a></li>
+					
+				</ul>
+			</nav>
+			
+			
+		</div>
+		</article>
+</main>
+
+
+        
+       
+
+<footer>
+  <div style="display:flex"><a class="soc" href="https://github.com/clingm" rel="me" title="GitHub"><i data-feather="github"></i></a>
+    <a class="border"></a></div>
+  <div class="footer-info">
+    2024  © Clingm |  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+<script>
+  feather.replace()
+</script></div>
+    </body>
+</html>

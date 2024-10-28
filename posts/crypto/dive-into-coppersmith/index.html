@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Dive Into Coppersmith - Clingm&#39;s Blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Introduction of Coppersmith’s Method
+1996年 Don Coppersmith 发表了两片论文，“Finding a Small Root of a Univariate Modular Equation”, “Finding a Small Root of a Bivariate Integer Equation; Factoring with High Bits Known”，第一篇讨论如何求单变量模方程的小根，第二篇讨论如何求双变量整数方程的小根，并且把整数方程拓展到了模方程。
+Coppersmith’s Method 在公钥密码学中有举足轻重的地位，在大多数RSA的攻击文章中都有涉及到。所以感觉还是不能就停留在平常打CTF比赛中随便调用一下 small_roots 就ok的程度，至少要知道其中的原理。
+这次的学习主要基于Steven Galbraith教授写的 “Mathematics of Public Key Cryptograph&quot; 这本书中的第19章的内容。
+For Modular Univariate Polynomials
+有多项式 $F(x)=s^d &#43; a_{d-1}x^{d-1} &#43; \cdots &#43; a_1x&#43;a_0$ 是一个首一的整系数的d次多项式。假设我们知道存在$x_0$使 $F(x_0)=0\ (mod\ M)$ 并且 $|x_0| &lt; M^{1/d}$。问题就是找到所有这样子的根。
+
+PS: 之后将使用 $F_M(x)$ 来表示模M的多项式，$F(x)$来表示整数多项式。
+
+Coppersmith’s Method 的核心思想是创建一个方程$G(x)$，而且 $G(x_0)=F_M(x_0)=0$，即$G(x)$拥有与$F_M(x)$相同的解，且$G(x)$的系数足够小可以直接算出$x_0$。" />
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content="https://clingm.github.io/posts/crypto/dive-into-coppersmith/">
+  <meta property="og:site_name" content="Clingm&#39;s Blog">
+  <meta property="og:title" content="Dive Into Coppersmith">
+  <meta property="og:description" content="Introduction of Coppersmith’s Method 1996年 Don Coppersmith 发表了两片论文，“Finding a Small Root of a Univariate Modular Equation”, “Finding a Small Root of a Bivariate Integer Equation; Factoring with High Bits Known”，第一篇讨论如何求单变量模方程的小根，第二篇讨论如何求双变量整数方程的小根，并且把整数方程拓展到了模方程。
+Coppersmith’s Method 在公钥密码学中有举足轻重的地位，在大多数RSA的攻击文章中都有涉及到。所以感觉还是不能就停留在平常打CTF比赛中随便调用一下 small_roots 就ok的程度，至少要知道其中的原理。
+这次的学习主要基于Steven Galbraith教授写的 “Mathematics of Public Key Cryptograph&#34; 这本书中的第19章的内容。
+For Modular Univariate Polynomials 有多项式 $F(x)=s^d &#43; a_{d-1}x^{d-1} &#43; \cdots &#43; a_1x&#43;a_0$ 是一个首一的整系数的d次多项式。假设我们知道存在$x_0$使 $F(x_0)=0\ (mod\ M)$ 并且 $|x_0| &lt; M^{1/d}$。问题就是找到所有这样子的根。
+PS: 之后将使用 $F_M(x)$ 来表示模M的多项式，$F(x)$来表示整数多项式。
+Coppersmith’s Method 的核心思想是创建一个方程$G(x)$，而且 $G(x_0)=F_M(x_0)=0$，即$G(x)$拥有与$F_M(x)$相同的解，且$G(x)$的系数足够小可以直接算出$x_0$。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2023-12-15T15:18:33+08:00">
+    <meta property="article:modified_time" content="2024-10-28T19:24:25+08:00">
+    <meta property="article:tag" content="Crypto">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Dive Into Coppersmith">
+  <meta name="twitter:description" content="Introduction of Coppersmith’s Method 1996年 Don Coppersmith 发表了两片论文，“Finding a Small Root of a Univariate Modular Equation”, “Finding a Small Root of a Bivariate Integer Equation; Factoring with High Bits Known”，第一篇讨论如何求单变量模方程的小根，第二篇讨论如何求双变量整数方程的小根，并且把整数方程拓展到了模方程。
+Coppersmith’s Method 在公钥密码学中有举足轻重的地位，在大多数RSA的攻击文章中都有涉及到。所以感觉还是不能就停留在平常打CTF比赛中随便调用一下 small_roots 就ok的程度，至少要知道其中的原理。
+这次的学习主要基于Steven Galbraith教授写的 “Mathematics of Public Key Cryptograph&#34; 这本书中的第19章的内容。
+For Modular Univariate Polynomials 有多项式 $F(x)=s^d &#43; a_{d-1}x^{d-1} &#43; \cdots &#43; a_1x&#43;a_0$ 是一个首一的整系数的d次多项式。假设我们知道存在$x_0$使 $F(x_0)=0\ (mod\ M)$ 并且 $|x_0| &lt; M^{1/d}$。问题就是找到所有这样子的根。
+PS: 之后将使用 $F_M(x)$ 来表示模M的多项式，$F(x)$来表示整数多项式。
+Coppersmith’s Method 的核心思想是创建一个方程$G(x)$，而且 $G(x_0)=F_M(x_0)=0$，即$G(x)$拥有与$F_M(x)$相同的解，且$G(x)$的系数足够小可以直接算出$x_0$。">
+<script src="https://clingm.github.io/js/feather.min.js"></script>
+	
+	
+        <link href="https://clingm.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://clingm.github.io/css/main.a4fb2a2bfee30ab5e4deb557e5c0d3e1a22e972fd4b8059217db4d3647b8ec52.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://clingm.github.io/css/dark.23f68d3ce4525ce2bf3f3085cf718c30981001b6eee182d17676da5827ffb3d0.css"  disabled />
+	
+
+	
+	
+		<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		</script>
+
+		
+		<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			tex2jax: {
+				inlineMath: [['$','$'], ['\\(','\\)']],
+				displayMath: [['$$','$$'], ['\[','\]']],
+				processEscapes: true,
+				processEnvironments: true,
+				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+				TeX: { equationNumbers: { autoNumber: "AMS" },
+						 extensions: ["AMSmath.js", "AMSsymbols.js"] }
+			}
+		});
+		</script>
+	
+
+	
+	
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+		
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+					renderMathInElement(document.body, {
+							delimiters: [
+									{left: "$$", right: "$$", display: true},
+									{left: "$", right: "$", display: false}
+							]
+					});
+			});
+			</script>
+	
+
+	
+		
+		
+		<link rel="stylesheet" type="text/css" href="https://clingm.github.io/css/custom.2391be1053021d99c6aee22f1c21cdfb7abf1fb6cf1d762376ad2f3bd7506461.css">
+		
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://clingm.github.io/">Clingm&#39;s Blog</a>
+	</div>
+	<nav>
+		
+		<a href="/">主页</a>
+		
+		<a href="/posts">文章</a>
+		
+		<a href="/tags">标签</a>
+		
+		<a href="/about">关于</a>
+		
+		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		<script src="https://clingm.github.io/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">Dive Into Coppersmith</h1>
+			<div class="meta">Posted on Dec 15, 2023<br>Updated on Oct 28, 2024</div>
+		</div>
+		
+
+		
+		<div class="toc">
+		<strong>Table of contents:</strong>
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction-of-coppersmiths-method">Introduction of Coppersmith’s Method</a></li>
+    <li><a href="#for-modular-univariate-polynomials">For Modular Univariate Polynomials</a>
+      <ul>
+        <li><a href="#the-simple-coppersmith-method">The Simple Coppersmith Method</a></li>
+        <li><a href="#the-full-coppersmith-method">The Full Coppersmith Method</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+		</div>
+
+		<section class="body">
+			<h2 id="introduction-of-coppersmiths-method">Introduction of Coppersmith’s Method</h2>
+<p>1996年 Don Coppersmith 发表了两片论文，“Finding a Small Root of a Univariate Modular Equation”, “Finding a Small Root of a Bivariate Integer Equation; Factoring with High Bits Known”，第一篇讨论如何求单变量模方程的小根，第二篇讨论如何求双变量整数方程的小根，并且把整数方程拓展到了模方程。</p>
+<p>Coppersmith’s Method 在公钥密码学中有举足轻重的地位，在大多数RSA的攻击文章中都有涉及到。所以感觉还是不能就停留在平常打CTF比赛中随便调用一下 <code>small_roots</code> 就ok的程度，至少要知道其中的原理。</p>
+<p>这次的学习主要基于Steven Galbraith教授写的 “Mathematics of Public Key Cryptograph&quot; 这本书中的第19章的内容。</p>
+<h2 id="for-modular-univariate-polynomials">For Modular Univariate Polynomials</h2>
+<p>有多项式 $F(x)=s^d + a_{d-1}x^{d-1} + \cdots + a_1x+a_0$ 是一个首一的整系数的d次多项式。假设我们知道存在$x_0$使 $F(x_0)=0\ (mod\ M)$ 并且 $|x_0| &lt; M^{1/d}$。问题就是找到所有这样子的根。</p>
+<blockquote>
+<p>PS: 之后将使用 $F_M(x)$ 来表示模M的多项式，$F(x)$来表示整数多项式。</p>
+</blockquote>
+<p>Coppersmith’s Method 的核心思想是创建一个方程$G(x)$，而且 $G(x_0)=F_M(x_0)=0$，即$G(x)$拥有与$F_M(x)$相同的解，且$G(x)$的系数足够小可以直接算出$x_0$。</p>
+<p><em>Example：</em></p>
+<p>M=17*19=323，$F(x)=x^2+33x+215x$ 。我们想找到 $F_M(x)=0$ 的解，当然可以先给出答案$x_0=3$，但是 $F(3) \ne 0$ 。根据Coppersmith’s Method 我们需要找到$G(x)$，这里也先给出 $G(x)=9F(x)-M(x+6)=9x^2-26x-3$。把3带进去发现$G(3)=0$。</p>
+<p>接下来为后面的一些符号作解释，$M,X \in \mathbb{N}$，$F(x)=\sum_{i=0}^{d}a_ix^i$ ，满足 $F_M(x)=0$ 的解$x_0$ 都小于 $M$，即M是$x_0$的上界。$F(X)=\sum^{d}_{i=0}a_ix^i$，再把它写成行向量</p>
+<p>$$ b_F=(a_0, a_1X, a_2X^2, \cdots, a_dX^d) $$</p>
+<p><em><strong>Howgrave-Graham</strong></em> 定理</p>
+<p>如上述所说的$F(x)$,$X$,$M$,$b_F$ , 如果 $||b_F|| &lt; M/\sqrt{d+1}$，那么 $F(x_0)=0$.</p>
+<p><em><strong>证明</strong></em></p>
+<p>有柯西不等式 $(\sum^{n}_{i=1}x_iy_i)^2 \le (\sum^{n}_{i=1}x_i)^2(\sum^{n}_{i=1}y_i)^2$ ，就是两个向量乘积的模小于向量模的乘积。当$y_i=1$，有 $$ \sum^{n}_{i=1}x_i \le \sqrt{n\sum_{i=1}^{n}x_i^2} $$</p>
+<p>现在 $$ \begin{aligned} |F(x_0)|&amp;=\left|\sum_{i=0}^da_ix_0^i\right|\le\sum_{i=0}^d|a_i||x_0|^i\le\sum_{i=0}^d|a_i|X^i\le\sqrt{d+1}|b_F|&lt;\sqrt{d+1}M/\sqrt{d+1}=M \end{aligned} $$</p>
+<p>在第三个不等式中用到了柯西不等式。所以 $-M&lt;F(x_0)&lt;M$，而且$F_M(x_0)=0$，得出$F(x_0)=0$。</p>
+<blockquote>
+<p>这个定理非常重要，后面找$G(x)$的核心基础就是HG定理(姑且这么叫它)。</p>
+</blockquote>
+<h3 id="the-simple-coppersmith-method">The Simple Coppersmith Method</h3>
+<p>令 $F(x)=\sum^{d}_{i=0}a_ix^i$是首一的多项式($a_d=1$)，我们假设至少有一个$x_0 &lt; X$，使$F_M(x_0)=0$，然后我们再建立d个单项方程$G_{Mi}(x)=Mx_i$，这样我们就有d+1个方程，这些方程都有一个共同解$x_0$（$G_{Mi}(x)$是模M的方程，所以对于任意的x都有$G_{Mi}(x)=0$）。将这些方程按行向量的形式组成一个格基$B$，$B$所张的格空间记为$L$ $$ \left.B=\left(\begin{array}{ccccc}M&amp;0&amp;\cdots&amp;0&amp;0\\0&amp;MX&amp;\cdots&amp;0&amp;0\\vdots&amp;&amp;&amp;\vdots&amp;\vdots\\0&amp;0&amp;\cdots&amp;MX^{d-1}&amp;0\\a_0&amp;a_1X&amp;\cdots&amp;a_{d-1}X^{d-1}&amp;X^d\end{array}\right.\right) $$</p>
+<p>由于是下三角矩阵，所以$det(L)=det(B)=M^dX^{d(d+1)/2}$</p>
+<p>然后对$B$作LLL规约，将规约后得到的第一行作为$G(x)$的系数。令$c_1(d)=2^{-1/2}(d+1)^{-1/d}$，如果$X&lt;c_1(d)M^{2/d(d+1)}$，那么$F_M(x)$的任意的根$x_0$都满足$G(x_0)=0$</p>
+<p><em><strong>证明</strong></em></p>
+<p>根据LLL,得到的第一行向量满足 $$ \begin{aligned}|\underline{b}_1|&amp;\le2^{(n-1)/4}\det(L)^{1/n}=2^{d/4}M^{d/(d+1)}X^{d/2}\end{aligned} $$</p>
+<p>我们还需要让$\underline{b}_1$满足HG定理 $$ 2^{d/4}M^{d/(d+1)}X^{d/2} &lt; M/\sqrt{d+1} $$</p>
+<p>把$X$单独写在一边得到 $$ X&lt;2^{-1/2}(d+1)^{-1/d}M^{2/d(d+1)} $$</p>
+<blockquote>
+<p>总结一下：通过LLL取第一行向量作为$G(x)$，那么$G_M(x_0)=0$，在此之上$X &lt; c_1(d)M^{2/d(d+1)}$，即满足HG定理，那么$G(x_0)=0$，于是我们只用在$G(x)$上求解$x_0$即可。</p>
+</blockquote>
+<p><em><strong>Example</strong></em></p>
+<p>M=10001，$F(x)=x^3+10x^2+5000x-222$，$x_0=4$</p>
+<h3 id="the-full-coppersmith-method">The Full Coppersmith Method</h3>
+<p>上面讲到的方法可以进行更好的改进，所以我把上面称为Simple Coppersmith Method，观察上面对与可解的$x_0$的限制，或者说是对$X$的限制</p>
+<p>$$ 2^{d/4}M^{d/(d+1)}X^{d/2} &lt; M/\sqrt{d+1} $$</p>
+<p>对其进行简化得到$M^dX^{d(d+1)/2}=det(L)&lt; M^{d+1}$，有两种方法来提升$X$的大小。1.通过添加<code>x-shift Polynomials</code> $x^iF(x)$在增大格的基的维数，同时又不增加$M$的幂数。2. 通过$F_{M^{k}}(x)^{k}=0$增大$M$的幂数。</p>
+<p>在上个例子中，把$M=10001,d=3$带入</p>
+<p>$$ M^dX^{d(d+1)/2}=det(L)&lt; M^{d+1} $$</p>
+<p>得到 $2^{3/4}(M^3X^6)^{1/4} \le M/\sqrt{4}$。计算出$X=2.07$。但我们这个计算出来的是在LLL最坏的情况下，一般LLL出来的最短向量会比理论的小，所以实际的$X$会比理论的大一些。</p>
+<p>接下来考虑向$B$里添加两个x-shift Polynomials $xF(x),x^2F(x)$，得到新的$B$</p>
+<p>$$ \left.B=\left(\begin{array}{cccccc}M&amp;0&amp;0&amp;0&amp;0&amp;0\\0&amp;MX&amp;0&amp;0&amp;0&amp;0\\0&amp;0&amp;MX^2&amp;0&amp;0&amp;0\-222&amp;5000X&amp;10X^2&amp;X^3&amp;0&amp;0\\0&amp;-222X&amp;5000X^2&amp;10X^3&amp;X^4&amp;0\\0&amp;0&amp;-222X^2&amp;5000X^3&amp;10X^4&amp;X^5\end{array}\right.\right) $$</p>
+<p>再把带入进之前的不等式计算出$X=3.11$，看到$X$确实变大了。由此可以推出较为一般的情况：如果加入d-1个x-shift Polynomials ($xF(x)-x^{d-1}F(x)$)，然后再用之前的方法可以计算出$X\approx M^{1/(2d-1)}$</p>
+<p>完整的Coppersmith定理结合了x-shift Polynomials 和 powers of $F(x)$。</p>
+<p><em><strong>Coppersmith定理</strong></em>： 令$0 &lt; \epsilon &lt; min{0.18, 1/d}$，$F_M(x)$至少有一个根$x_0$满足$|x_0| &lt; \frac{1}{2}M^{1/d-\epsilon}$, 那么$x_0$可以在多项式时间内找到。</p>
+<p><em><strong>证明</strong></em> 令$h&gt;1$为一个取决于$d$和$\epsilon$的整数，并且由下面的等式决定。考虑对应于多项式$G_{ij}=M^{h-1-j}F(x)^jx^i\ for\ 0\le i &lt; d, 0\le j&lt;h$构造的格$L$，$G_{ij}\equiv 0\mod{M^{h-1}}$。$L$的维度等于$dh$。由于$L$还是一个下三角矩阵，所以可以计算行列式 $$ \det(L)=M^{(h-1)hd/2}X^{(dh-1)dh/2} $$</p>
+<p>对$L$进行LLL规约得到的第一行向量$\underline{b}_1$满足 $$ |\underline{b}_1|&lt;2^{(dh-1)/4}\det(L)^{1/dh}=2^{(dh-1)/4}M^{(h-1)/2}X^{(dh-1)/2} $$</p>
+<p>该向量对应于$dh-1$次多项式$G(x)$，而且$G_{M^{h-1}}(x_0)=0$。如果$||\underline{b}_1||&lt;M^{h-1}/\sqrt{dh}$，即满足HG定理那么$G(x_0)=0$，就可以求解$x_0$了。</p>
+<p>接下来证明为何$|x_0|&lt;\frac{1}{2}M^{1/d-\epsilon}$。</p>
+<blockquote>
+<p>其实这里俺也没看懂（🐶</p>
+</blockquote>
+<p>$$ \sqrt{dh}2^{(dh-1)/4}M^{(h-1)/2}X^{(dh-1)/2}&lt;M^{h-1} $$</p>
+<p>把M除过去得 $$ \sqrt{dh}2^{(dh-1)/4}X^{(dh-1)/2}&lt;M^{(h-1)/2} $$</p>
+<p>$$ c(d,h)X&lt;M^{(h-1)/(dh-1)} $$</p>
+<p>$$ c(d,h)=(\sqrt{dh}2^{(dh-1)/4})^{2/(dh-1)}=\sqrt{2}(dh)^{1/(dh-1)} $$</p>
+<p>然后先看 $$ \begin{aligned}\frac{h-1}{dh-1}=\frac{1}{d}-\frac{d-1}{d(dh-1)}\end{aligned} $$</p>
+<p>令$(d-1)/(d(dh-1))=\epsilon$得 $$ h=((d-1)/(d\epsilon)+1)/d\approx1/(d\epsilon) $$</p>
+<p>注意$dh=1+(d-1)/(d\epsilon)$所以$c(d,h)=\sqrt{2}(1+(d-1)/(d\epsilon))^{d\epsilon/(d-1)}$，当$\epsilon$趋近0时收敛于$\sqrt{2}$。应为要求$X&lt;\frac{1}{2}M^{1/d-\epsilon}$要求$\frac{1}{2}\le\frac{1}{c(d,h)}$。$x=d\epsilon/(d-1)$相当于$(1+1/x)^x&lt;\sqrt{2}$，对于$0\le x&lt;0.18$成立。因此假设$\epsilon\le(d-1)/d$。</p>
+<p>把h向上取证，如果使得 $$ |x_0| &lt; \frac{1}{2}M^{1/d-\epsilon} $$</p>
+<p>就可以使用LLL和多项式求根解出$x_0$。</p>
+
+		</section>
+
+		<div class="post-tags">
+			
+			
+			<nav class="nav tags">
+				<ul class="tags">
+					
+					<li><a href="/tags/crypto">Crypto</a></li>
+					
+				</ul>
+			</nav>
+			
+			
+		</div>
+		</article>
+</main>
+
+
+        
+       
+
+<footer>
+  <div style="display:flex"><a class="soc" href="https://github.com/clingm" rel="me" title="GitHub"><i data-feather="github"></i></a>
+    <a class="border"></a></div>
+  <div class="footer-info">
+    2024  © Clingm |  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+<script>
+  feather.replace()
+</script></div>
+    </body>
+</html>

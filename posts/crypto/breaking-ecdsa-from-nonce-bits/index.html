@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Breaking Ecdsa From Nonce Bits - Clingm&#39;s Blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="
+如果对HNP不太了解，可以先看一下我的另一篇文章HNP
+
+Preview
+先简单回顾一下HNP和ECDSA。
+Hidden Number problem（HNP） ：有一个对外保密的数$\alpha$和对外公开的模数$n$。随机的选择$t_i$计算$s_i=\alpha t_i\ mod\ n$，并且泄漏出$s_i$的最高有效位，就可以利用$CVP$的方法去恢复$\alpha$。
+ECDSA ：在有限域$\mathbb{F}p$上选择椭圆曲线$E\left(\mathbb{F}_{p}\right)$，以及阶为$n$的子群的基点$G$。私钥为$0\leq d &lt; n$，公钥为$dG=Q$。 签名：
+
+选择nonce为随机数$k$
+计算明文的$hash$，$h=Hash(m)$
+计算$r=(kG)_x$，x表示$kG$的x坐标
+计算$s = k^{-1} \cdot (h&#43;d\cdot r)\ mod\ n$
+签名为$(r, s)$
+
+ECDSA as a HNP
+由ECDSA的签名过程，重写一下公式。
+$$ -s^{-1}\cdot h &#43; k\equiv s^{-1}\cdot r \cdot d \pmod{n} $$
+与HNP问题对应一下，令
+$$ \begin{aligned} \alpha=d \\ t_i=s^{-1}\cdot r \\ a_i = s^{-1}\cdot h \end{aligned} $$
+由于nonce相较于$a_i$来说较小，所以
+$$ \begin{aligned} MSB_{\alpha,k}(t_i) &amp;= MSB_k(\alpha \cdot t_i\ mod\ n) \\ &amp;= MSB_k(d\cdot s^{-1}\cdot r) \\ &amp;= MSB_k(-a_i &#43; k) \\ &amp;= n-a_i \end{aligned} $$" />
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content="https://clingm.github.io/posts/crypto/breaking-ecdsa-from-nonce-bits/">
+  <meta property="og:site_name" content="Clingm&#39;s Blog">
+  <meta property="og:title" content="Breaking Ecdsa From Nonce Bits">
+  <meta property="og:description" content="如果对HNP不太了解，可以先看一下我的另一篇文章HNP
+Preview 先简单回顾一下HNP和ECDSA。
+Hidden Number problem（HNP） ：有一个对外保密的数$\alpha$和对外公开的模数$n$。随机的选择$t_i$计算$s_i=\alpha t_i\ mod\ n$，并且泄漏出$s_i$的最高有效位，就可以利用$CVP$的方法去恢复$\alpha$。
+ECDSA ：在有限域$\mathbb{F}p$上选择椭圆曲线$E\left(\mathbb{F}_{p}\right)$，以及阶为$n$的子群的基点$G$。私钥为$0\leq d &lt; n$，公钥为$dG=Q$。 签名：
+选择nonce为随机数$k$ 计算明文的$hash$，$h=Hash(m)$ 计算$r=(kG)_x$，x表示$kG$的x坐标 计算$s = k^{-1} \cdot (h&#43;d\cdot r)\ mod\ n$ 签名为$(r, s)$ ECDSA as a HNP 由ECDSA的签名过程，重写一下公式。
+$$ -s^{-1}\cdot h &#43; k\equiv s^{-1}\cdot r \cdot d \pmod{n} $$
+与HNP问题对应一下，令
+$$ \begin{aligned} \alpha=d \\ t_i=s^{-1}\cdot r \\ a_i = s^{-1}\cdot h \end{aligned} $$
+由于nonce相较于$a_i$来说较小，所以
+$$ \begin{aligned} MSB_{\alpha,k}(t_i) &amp;= MSB_k(\alpha \cdot t_i\ mod\ n) \\ &amp;= MSB_k(d\cdot s^{-1}\cdot r) \\ &amp;= MSB_k(-a_i &#43; k) \\ &amp;= n-a_i \end{aligned} $$">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2022-11-22T15:48:05+08:00">
+    <meta property="article:modified_time" content="2024-10-28T19:24:25+08:00">
+    <meta property="article:tag" content="Crypto">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Breaking Ecdsa From Nonce Bits">
+  <meta name="twitter:description" content="如果对HNP不太了解，可以先看一下我的另一篇文章HNP
+Preview 先简单回顾一下HNP和ECDSA。
+Hidden Number problem（HNP） ：有一个对外保密的数$\alpha$和对外公开的模数$n$。随机的选择$t_i$计算$s_i=\alpha t_i\ mod\ n$，并且泄漏出$s_i$的最高有效位，就可以利用$CVP$的方法去恢复$\alpha$。
+ECDSA ：在有限域$\mathbb{F}p$上选择椭圆曲线$E\left(\mathbb{F}_{p}\right)$，以及阶为$n$的子群的基点$G$。私钥为$0\leq d &lt; n$，公钥为$dG=Q$。 签名：
+选择nonce为随机数$k$ 计算明文的$hash$，$h=Hash(m)$ 计算$r=(kG)_x$，x表示$kG$的x坐标 计算$s = k^{-1} \cdot (h&#43;d\cdot r)\ mod\ n$ 签名为$(r, s)$ ECDSA as a HNP 由ECDSA的签名过程，重写一下公式。
+$$ -s^{-1}\cdot h &#43; k\equiv s^{-1}\cdot r \cdot d \pmod{n} $$
+与HNP问题对应一下，令
+$$ \begin{aligned} \alpha=d \\ t_i=s^{-1}\cdot r \\ a_i = s^{-1}\cdot h \end{aligned} $$
+由于nonce相较于$a_i$来说较小，所以
+$$ \begin{aligned} MSB_{\alpha,k}(t_i) &amp;= MSB_k(\alpha \cdot t_i\ mod\ n) \\ &amp;= MSB_k(d\cdot s^{-1}\cdot r) \\ &amp;= MSB_k(-a_i &#43; k) \\ &amp;= n-a_i \end{aligned} $$">
+<script src="https://clingm.github.io/js/feather.min.js"></script>
+	
+	
+        <link href="https://clingm.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://clingm.github.io/css/main.a4fb2a2bfee30ab5e4deb557e5c0d3e1a22e972fd4b8059217db4d3647b8ec52.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://clingm.github.io/css/dark.23f68d3ce4525ce2bf3f3085cf718c30981001b6eee182d17676da5827ffb3d0.css"  disabled />
+	
+
+	
+	
+		<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		</script>
+
+		
+		<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			tex2jax: {
+				inlineMath: [['$','$'], ['\\(','\\)']],
+				displayMath: [['$$','$$'], ['\[','\]']],
+				processEscapes: true,
+				processEnvironments: true,
+				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+				TeX: { equationNumbers: { autoNumber: "AMS" },
+						 extensions: ["AMSmath.js", "AMSsymbols.js"] }
+			}
+		});
+		</script>
+	
+
+	
+	
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+		
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+					renderMathInElement(document.body, {
+							delimiters: [
+									{left: "$$", right: "$$", display: true},
+									{left: "$", right: "$", display: false}
+							]
+					});
+			});
+			</script>
+	
+
+	
+		
+		
+		<link rel="stylesheet" type="text/css" href="https://clingm.github.io/css/custom.2391be1053021d99c6aee22f1c21cdfb7abf1fb6cf1d762376ad2f3bd7506461.css">
+		
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://clingm.github.io/">Clingm&#39;s Blog</a>
+	</div>
+	<nav>
+		
+		<a href="/">主页</a>
+		
+		<a href="/posts">文章</a>
+		
+		<a href="/tags">标签</a>
+		
+		<a href="/about">关于</a>
+		
+		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		<script src="https://clingm.github.io/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">Breaking Ecdsa From Nonce Bits</h1>
+			<div class="meta">Posted on Nov 22, 2022<br>Updated on Oct 28, 2024</div>
+		</div>
+		
+
+		
+		<div class="toc">
+		<strong>Table of contents:</strong>
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#preview">Preview</a></li>
+    <li><a href="#ecdsa-as-a-hnp">ECDSA as a HNP</a></li>
+    <li><a href="#solving-the-hnp-with-lattices">Solving the HNP with lattices</a></li>
+    <li><a href="#example--demo">Example &amp; Demo</a>
+      <ul>
+        <li><a href="#test-result">test result</a></li>
+      </ul>
+    </li>
+    <li><a href="#reference">Reference</a></li>
+  </ul>
+</nav>
+		</div>
+
+		<section class="body">
+			<blockquote>
+<p>如果对HNP不太了解，可以先看一下我的另一篇文章<a href="https://clingm.github.io/2022/11/18/Hidden-Number-Problem/">HNP</a></p>
+</blockquote>
+<h2 id="preview">Preview</h2>
+<p>先简单回顾一下HNP和ECDSA。</p>
+<p><strong>Hidden Number problem（HNP）</strong> ：有一个对外保密的数$\alpha$和对外公开的模数$n$。随机的选择$t_i$计算$s_i=\alpha t_i\ mod\ n$，并且泄漏出$s_i$的最高有效位，就可以利用$CVP$的方法去恢复$\alpha$。</p>
+<p><strong>ECDSA</strong> ：在有限域$\mathbb{F}p$上选择椭圆曲线$E\left(\mathbb{F}_{p}\right)$，以及阶为$n$的子群的基点$G$。私钥为$0\leq d &lt; n$，公钥为$dG=Q$。 签名：</p>
+<ul>
+<li>选择nonce为随机数$k$</li>
+<li>计算明文的$hash$，$h=Hash(m)$</li>
+<li>计算$r=(kG)_x$，x表示$kG$的x坐标</li>
+<li>计算$s = k^{-1} \cdot (h+d\cdot r)\ mod\ n$</li>
+<li>签名为$(r, s)$</li>
+</ul>
+<h2 id="ecdsa-as-a-hnp">ECDSA as a HNP</h2>
+<p>由ECDSA的签名过程，重写一下公式。</p>
+<p>$$ -s^{-1}\cdot h + k\equiv s^{-1}\cdot r \cdot d \pmod{n} $$</p>
+<p>与HNP问题对应一下，令</p>
+<p>$$ \begin{aligned} \alpha=d \\ t_i=s^{-1}\cdot r \\ a_i = s^{-1}\cdot h \end{aligned} $$</p>
+<p>由于nonce相较于$a_i$来说较小，所以</p>
+<p>$$ \begin{aligned} MSB_{\alpha,k}(t_i) &amp;= MSB_k(\alpha \cdot t_i\ mod\ n) \\ &amp;= MSB_k(d\cdot s^{-1}\cdot r) \\ &amp;= MSB_k(-a_i + k) \\ &amp;= n-a_i \end{aligned} $$</p>
+<h2 id="solving-the-hnp-with-lattices">Solving the HNP with lattices</h2>
+<p>在之前讲的HNP中，Boneh and Venkatesan给出了这样的格</p>
+<p>$$ \left[\begin{array}{cccccc} n &amp; 0 &amp; 0 &amp; \cdots &amp; 0 &amp; 0 \\ 0 &amp; n &amp; 0 &amp; \cdots &amp; 0 &amp; 0 \\ &amp; \vdots &amp; &amp; &amp; \cdots &amp; \\ 0 &amp; 0 &amp; 0 &amp; \cdots &amp; n &amp; 0 \\ t_{0} &amp; t_{1} &amp; t_{2} &amp; \cdots &amp; t_{m-1} &amp; 1 / n \end{array}\right] $$</p>
+<p>但是在后来的研究中Kannan给出了改进后的格</p>
+<p>$$ \left[\begin{array}{ccccccc} n &amp; 0 &amp; 0 &amp; \cdots &amp; 0 &amp; 0 &amp; 0 \\ 0 &amp; n &amp; 0 &amp; \cdots &amp; 0 &amp; 0 &amp; 0 \\ &amp; \vdots &amp; &amp; &amp; \vdots &amp; &amp; \\ 0 &amp; 0 &amp; 0 &amp; \cdots &amp; n &amp; 0 &amp; 0 \\ t_{0} &amp; t_{1} &amp; t_{2} &amp; \cdots &amp; t_{m-1} &amp; 2^{\ell} / n &amp; 0 \\ a_{0} &amp; a_{1} &amp; a_{2} &amp; \cdots &amp; a_{m-1} &amp; 0 &amp; 2^{\ell} \end{array}\right] $$</p>
+<blockquote>
+<p>$\ell$是nonce的位长度，$2^{\ell}$就是nonce的上界。</p>
+</blockquote>
+<p>在这个格中存在一个向量</p>
+<p>$$ v_k=\left(k_{0}, k_{1}, \ldots, k_{m-1}, 2^{\ell} \cdot \alpha / n, 2^{\ell}\right) $$</p>
+<blockquote>
+<p>用到数第二行向量乘$\alpha$加上最后一行，$t_i\alpha+a_i=-a_i+k_i+a_i=k_i$。</p>
+</blockquote>
+<p>这个向量在格中是很短的。它的模$||vk|| \leq \sqrt{m+2}\cdot 2^{\ell}$。但是格中还有一个更短的向量</p>
+<p>$$ (0, 0, \cdots,0, 2^{\ell}, 0) $$</p>
+<p>所以在利用LLL算法之后，要找的向量并不再第一行。</p>
+<h2 id="example--demo">Example &amp; Demo</h2>
+<pre><code>from sage.all import *
+from hashlib import sha1
+import time
+
+
+# use secp128r1 curve to test
+# The parameters:
+_p = 0xfffffffdffffffffffffffffffffffff
+_b = 0xe87579c11079f43dd824993c2cee5ed3
+_a = -0x3
+_Gx = 0x161ff7528b899b2d0c28607ca52c5b86
+_Gy = 0xcf5ac8395bafeb13c02da292dded7a83
+order = 340282366762482138443322565580356624661
+E = EllipticCurve(GF(_p), [_a, _b])
+G = E(_Gx, _Gy)
+
+# The Lattice attack paramters
+# n = ceil(log(order, 2))
+# k = ceil(sqrt(n)) + ceil(log(n, 2))
+# print(f&quot;The number of significant bits = {k}&quot;)
+# m = 2*ceil(sqrt(n))
+m = 24
+print(f&quot;about {m} signatures&quot;)
+
+
+# Ecdsa sign Algorithm
+def EcdsaSign(number, k):
+    r = ZZ((k*G)[0])
+    s = (inverse_mod(k, order) * (number + d*r)) % order
+    return (ZZ(r), ZZ(s))
+
+# This function is not used in this test
+def string_to_number(str_msg:str, hash:callable):
+    &quot;&quot;&quot;parameters:
+    str_msg: the massage be converted to number
+    hash: callable hash function
+    &quot;&quot;&quot;
+    return int(hash(str_msg.encode()).hexdigest(), 16)
+
+def generator():
+    &quot;&quot;&quot;Return a_i , t_i , msb, h
+    a_i = s^(-1) * h
+    t_i = s^(-1) * r
+    msb = -a_i % order
+    h: the message to be signed
+    &quot;&quot;&quot;
+    h = randint(0, 2**128) % order
+    k = randint(1, 2**120) % order
+
+    r, s = EcdsaSign(h, k)
+
+    a_i = (inverse_mod(s, order) * h) % order
+    t_i = (inverse_mod(s, order) * r) % order
+
+    return t_i, a_i, -a_i % order, h
+
+
+## Solving the HNP with Boneh and Venkatesan's lattice
+def build_basis(oracle_inputs):
+    &quot;&quot;&quot;Returns a basis using the HNP game parameters and inputs to our oracle
+    &quot;&quot;&quot;
+    basis_vectors = []
+    for i in range(m):
+        p_vector = [0] * (m+1)
+        p_vector[i] = order
+        basis_vectors.append(p_vector)
+    basis_vectors.append(list(oracle_inputs) + [QQ(1)/QQ(order)])
+    return Matrix(QQ, basis_vectors)
+
+def approximate_closest_vector(basis, v):
+    &quot;&quot;&quot;Returns an approximate CVP solution using Babai's nearest plane algorithm.
+    &quot;&quot;&quot;
+    BL = basis.LLL()
+    G, _ = BL.gram_schmidt()
+    _, n = BL.dimensions()
+    small = vector(ZZ, v)
+    for i in reversed(range(n)):
+        c = QQ(small * G[i]) / QQ(G[i] * G[i])
+        c = c.round()
+        small -= BL[i] * c
+    return (v - small).coefficients()
+
+def Boneh_Venkatesan_method():
+    # print(&quot;[+] using Boneh and Venkatesan's method to recover the private key&quot;)
+    inputs = []
+    answers = []
+    for _ in range(m):
+        t_i, a_i, msb, h = generator()
+        inputs.append(t_i)
+        answers.append(msb)
+
+    time0 = time.time()
+    lattice = build_basis(inputs)
+    u = vector(ZZ, list(answers) + [0])
+    v = approximate_closest_vector(lattice, u)
+
+    recovered_alpha = (v[-1] * order) % order
+
+    spend = time.time() - time0
+    # print(&quot;spend %.3fs&quot; % spend)
+
+    # assert recovered_alpha == d
+    if recovered_alpha == d:
+        # print(&quot;Recovered alpha! Alpha is %d&quot; % recovered_alpha)
+        return 1, spend
+    else:
+        # print(&quot;fault to recover!&quot;)
+        return 0, spend
+
+    
+
+
+def build_Kannan_basis(t_i, a_i):
+    &quot;&quot;&quot;Returns a basis using the HNP game parameters and inputs to our oracle
+    &quot;&quot;&quot;
+    basis_vectors = []
+    for i in range(m):
+        p_vector = [0] * (m+2)
+        p_vector[i] = order
+        basis_vectors.append(p_vector)
+    basis_vectors.append(list(t_i) + [QQ(2**120)/QQ(order)] + [0])
+    basis_vectors.append(list(a_i) + [0] + [QQ(2**120)])
+    return Matrix(QQ, basis_vectors)
+
+def Kannan_method():
+    # print(&quot;\n[+] using Kannan's method to recover the private key&quot;)
+    inputs = []
+    answers = []
+    hs = []
+    for _ in range(m):
+        t_i, a_i, msb, h = generator()
+        inputs.append(t_i)
+        answers.append(a_i)
+        hs.append(h)
+    
+    time0 = time.time()
+    lattice = build_Kannan_basis(inputs, answers)
+    # print(&quot;Solving SVP using lattice with basis:\n%s\n&quot; % str(lattice))
+    L = lattice.LLL()
+    # print(L)
+    ks = L[1]
+
+    spend = time.time() - time0
+    # print(&quot;spend %.3fs&quot; % spend)
+
+    if (-answers[0] + ZZ(ks[0])) % order == (inputs[0] * d) % order:
+        # print(f&quot;Recovered nonce! {ks}&quot;)
+        recovered_d = ( (-answers[0] + ZZ(ks[0])) * inverse_mod(inputs[0], order) ) % order
+        assert recovered_d == d
+        # print(&quot;Recovered private key! private key is %d&quot; % recovered_d)
+        return 1, spend
+    else:
+        # print(&quot;fault to recover!&quot;)
+        return 0, spend
+    
+
+if __name__ == &quot;__main__&quot;:
+    method1_spend = []
+    method1_success = 0
+    method2_spend = []
+    method2_success = 0
+
+    for _ in range(20):
+        d = randint(1, order-1)
+        # print(f&quot;the privet key is {d}&quot;)
+        pubkey = d*G
+
+        flag0, spend0 = Boneh_Venkatesan_method()
+        flag1, spend1 = Kannan_method()
+
+        method1_success += flag0
+        method2_success += flag1
+        method1_spend.append(spend0)
+        method2_spend.append(spend1)
+    
+    print(&quot;[+] Boneh_Venkatesan_method:&quot;)
+    print(f&quot;successed: {method1_success}/20\ntime spend: {sum(method1_spend)/20}&quot;)
+    print(&quot;[+] Kannan_method:&quot;)
+    print(f&quot;successed: {method2_success}/20\ntime spend: {sum(method2_spend)/20}&quot;)
+</code></pre>
+<h3 id="test-result">test result</h3>
+<ul>
+<li>
+<p>当k的位数很小，比如只有几十位长甚至几位长，然后调小m，会发现Boneh_Venkatesan_method和Kannan_method的时间相差不大，但是前者的正确率更高。</p>
+</li>
+<li>
+<p>当k的位数比较大，比如有一百多甚至一百二十多，为了保证正确率需要调大m，这个时候Kannan_method的正确率以及速度都比Boneh_Venkatesan_method要表现的好。</p>
+</li>
+</ul>
+<blockquote>
+<p>当然我这里只是20次为一组，测试结果肯定是不太准确的。</p>
+</blockquote>
+<h2 id="reference">Reference</h2>
+<ul>
+<li>On Bounded Distance Decoding with Predicate: Breaking the “Lattice Barrier” for the Hidden Number Problem by Martin R. Albrecht and Nadia Heninger</li>
+<li><a href="https://blog.soreatu.com/posts/intended-solution-to-nhp-in-gxzyctf-2020/#writeup">Intended Solution to NHP in GxzyCTF 2020</a> by Soreat_u</li>
+</ul>
+
+		</section>
+
+		<div class="post-tags">
+			
+			
+			<nav class="nav tags">
+				<ul class="tags">
+					
+					<li><a href="/tags/crypto">Crypto</a></li>
+					
+				</ul>
+			</nav>
+			
+			
+		</div>
+		</article>
+</main>
+
+
+        
+       
+
+<footer>
+  <div style="display:flex"><a class="soc" href="https://github.com/clingm" rel="me" title="GitHub"><i data-feather="github"></i></a>
+    <a class="border"></a></div>
+  <div class="footer-info">
+    2024  © Clingm |  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+<script>
+  feather.replace()
+</script></div>
+    </body>
+</html>

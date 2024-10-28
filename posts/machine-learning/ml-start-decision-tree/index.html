@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Machine Learning Start -- Decision Tree - Clingm&#39;s Blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="intro
+西瓜书的决策树部分，在这篇文章中，将主要实现书中的TreeGenerate算法以及各种选取
+最优划分属性的方式。
+决策树在进行学习的时候有一个很要命的问题，就是过拟合。因为决策树会把所有的样本特征
+都学习到，所以过拟合是很难避免的，虽然可以使用剪枝的方法来减少过拟合。不过这篇文章
+并不会涉及到剪枝的内容。
+数据集依然使用西瓜书对应的西瓜数据集
+    色泽  根蒂  敲声  纹理  脐部  触感 好瓜
+0   青绿  蜷缩  浊响  清晰  凹陷  硬滑  是
+1   乌黑  蜷缩  沉闷  清晰  凹陷  硬滑  是
+2   乌黑  蜷缩  浊响  清晰  凹陷  硬滑  是
+3   青绿  蜷缩  沉闷  清晰  凹陷  硬滑  是
+4   浅白  蜷缩  浊响  清晰  凹陷  硬滑  是
+5   青绿  稍蜷  浊响  清晰  稍凹  软粘  是
+6   乌黑  稍蜷  浊响  稍糊  稍凹  软粘  是
+7   乌黑  稍蜷  浊响  清晰  稍凹  硬滑  是
+8   乌黑  稍蜷  沉闷  稍糊  稍凹  硬滑  否
+9   青绿  硬挺  清脆  清晰  平坦  软粘  否
+10  浅白  硬挺  清脆  模糊  平坦  硬滑  否
+11  浅白  蜷缩  浊响  模糊  平坦  软粘  否
+12  青绿  稍蜷  浊响  稍糊  凹陷  硬滑  否
+13  浅白  稍蜷  沉闷  稍糊  凹陷  硬滑  否
+14  乌黑  稍蜷  浊响  清晰  稍凹  软粘  否
+15  浅白  蜷缩  浊响  模糊  平坦  硬滑  否
+16  青绿  蜷缩  沉闷  稍糊  稍凹  硬滑  否
+best feature to split
+划分数据集的方式有基于信息增益，信息增益率和基尼指数。笔者只实现了信息增益和基尼指数
+，因为信息增益率实现起来其实就和信息增益一样，只不过加了一个惩罚在里面。" />
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content="https://clingm.github.io/posts/machine-learning/ml-start-decision-tree/">
+  <meta property="og:site_name" content="Clingm&#39;s Blog">
+  <meta property="og:title" content="Machine Learning Start -- Decision Tree">
+  <meta property="og:description" content="intro 西瓜书的决策树部分，在这篇文章中，将主要实现书中的TreeGenerate算法以及各种选取 最优划分属性的方式。
+决策树在进行学习的时候有一个很要命的问题，就是过拟合。因为决策树会把所有的样本特征 都学习到，所以过拟合是很难避免的，虽然可以使用剪枝的方法来减少过拟合。不过这篇文章 并不会涉及到剪枝的内容。
+数据集依然使用西瓜书对应的西瓜数据集
+色泽 根蒂 敲声 纹理 脐部 触感 好瓜 0 青绿 蜷缩 浊响 清晰 凹陷 硬滑 是 1 乌黑 蜷缩 沉闷 清晰 凹陷 硬滑 是 2 乌黑 蜷缩 浊响 清晰 凹陷 硬滑 是 3 青绿 蜷缩 沉闷 清晰 凹陷 硬滑 是 4 浅白 蜷缩 浊响 清晰 凹陷 硬滑 是 5 青绿 稍蜷 浊响 清晰 稍凹 软粘 是 6 乌黑 稍蜷 浊响 稍糊 稍凹 软粘 是 7 乌黑 稍蜷 浊响 清晰 稍凹 硬滑 是 8 乌黑 稍蜷 沉闷 稍糊 稍凹 硬滑 否 9 青绿 硬挺 清脆 清晰 平坦 软粘 否 10 浅白 硬挺 清脆 模糊 平坦 硬滑 否 11 浅白 蜷缩 浊响 模糊 平坦 软粘 否 12 青绿 稍蜷 浊响 稍糊 凹陷 硬滑 否 13 浅白 稍蜷 沉闷 稍糊 凹陷 硬滑 否 14 乌黑 稍蜷 浊响 清晰 稍凹 软粘 否 15 浅白 蜷缩 浊响 模糊 平坦 硬滑 否 16 青绿 蜷缩 沉闷 稍糊 稍凹 硬滑 否 best feature to split 划分数据集的方式有基于信息增益，信息增益率和基尼指数。笔者只实现了信息增益和基尼指数 ，因为信息增益率实现起来其实就和信息增益一样，只不过加了一个惩罚在里面。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-01-23T18:53:18+08:00">
+    <meta property="article:modified_time" content="2024-10-28T19:24:25+08:00">
+    <meta property="article:tag" content="Machine-Learning">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Machine Learning Start -- Decision Tree">
+  <meta name="twitter:description" content="intro 西瓜书的决策树部分，在这篇文章中，将主要实现书中的TreeGenerate算法以及各种选取 最优划分属性的方式。
+决策树在进行学习的时候有一个很要命的问题，就是过拟合。因为决策树会把所有的样本特征 都学习到，所以过拟合是很难避免的，虽然可以使用剪枝的方法来减少过拟合。不过这篇文章 并不会涉及到剪枝的内容。
+数据集依然使用西瓜书对应的西瓜数据集
+色泽 根蒂 敲声 纹理 脐部 触感 好瓜 0 青绿 蜷缩 浊响 清晰 凹陷 硬滑 是 1 乌黑 蜷缩 沉闷 清晰 凹陷 硬滑 是 2 乌黑 蜷缩 浊响 清晰 凹陷 硬滑 是 3 青绿 蜷缩 沉闷 清晰 凹陷 硬滑 是 4 浅白 蜷缩 浊响 清晰 凹陷 硬滑 是 5 青绿 稍蜷 浊响 清晰 稍凹 软粘 是 6 乌黑 稍蜷 浊响 稍糊 稍凹 软粘 是 7 乌黑 稍蜷 浊响 清晰 稍凹 硬滑 是 8 乌黑 稍蜷 沉闷 稍糊 稍凹 硬滑 否 9 青绿 硬挺 清脆 清晰 平坦 软粘 否 10 浅白 硬挺 清脆 模糊 平坦 硬滑 否 11 浅白 蜷缩 浊响 模糊 平坦 软粘 否 12 青绿 稍蜷 浊响 稍糊 凹陷 硬滑 否 13 浅白 稍蜷 沉闷 稍糊 凹陷 硬滑 否 14 乌黑 稍蜷 浊响 清晰 稍凹 软粘 否 15 浅白 蜷缩 浊响 模糊 平坦 硬滑 否 16 青绿 蜷缩 沉闷 稍糊 稍凹 硬滑 否 best feature to split 划分数据集的方式有基于信息增益，信息增益率和基尼指数。笔者只实现了信息增益和基尼指数 ，因为信息增益率实现起来其实就和信息增益一样，只不过加了一个惩罚在里面。">
+<script src="https://clingm.github.io/js/feather.min.js"></script>
+	
+	
+        <link href="https://clingm.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://clingm.github.io/css/main.a4fb2a2bfee30ab5e4deb557e5c0d3e1a22e972fd4b8059217db4d3647b8ec52.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://clingm.github.io/css/dark.23f68d3ce4525ce2bf3f3085cf718c30981001b6eee182d17676da5827ffb3d0.css"  disabled />
+	
+
+	
+	
+		<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		</script>
+
+		
+		<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			tex2jax: {
+				inlineMath: [['$','$'], ['\\(','\\)']],
+				displayMath: [['$$','$$'], ['\[','\]']],
+				processEscapes: true,
+				processEnvironments: true,
+				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+				TeX: { equationNumbers: { autoNumber: "AMS" },
+						 extensions: ["AMSmath.js", "AMSsymbols.js"] }
+			}
+		});
+		</script>
+	
+
+	
+	
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+		
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+					renderMathInElement(document.body, {
+							delimiters: [
+									{left: "$$", right: "$$", display: true},
+									{left: "$", right: "$", display: false}
+							]
+					});
+			});
+			</script>
+	
+
+	
+		
+		
+		<link rel="stylesheet" type="text/css" href="https://clingm.github.io/css/custom.2391be1053021d99c6aee22f1c21cdfb7abf1fb6cf1d762376ad2f3bd7506461.css">
+		
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://clingm.github.io/">Clingm&#39;s Blog</a>
+	</div>
+	<nav>
+		
+		<a href="/">主页</a>
+		
+		<a href="/posts">文章</a>
+		
+		<a href="/tags">标签</a>
+		
+		<a href="/about">关于</a>
+		
+		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		<script src="https://clingm.github.io/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">Machine Learning Start -- Decision Tree</h1>
+			<div class="meta">Posted on Jan 23, 2024<br>Updated on Oct 28, 2024</div>
+		</div>
+		
+
+		
+		<div class="toc">
+		<strong>Table of contents:</strong>
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#intro">intro</a></li>
+    <li><a href="#best-feature-to-split">best feature to split</a>
+      <ul>
+        <li><a href="#gain">Gain</a></li>
+        <li><a href="#gini-index">Gini index</a></li>
+      </ul>
+    </li>
+    <li><a href="#generate-tree">generate tree</a></li>
+  </ul>
+</nav>
+		</div>
+
+		<section class="body">
+			<h2 id="intro">intro</h2>
+<p>西瓜书的决策树部分，在这篇文章中，将主要实现书中的<code>TreeGenerate</code>算法以及各种选取
+最优划分属性的方式。</p>
+<p>决策树在进行学习的时候有一个很要命的问题，就是过拟合。因为决策树会把所有的样本特征
+都学习到，所以过拟合是很难避免的，虽然可以使用剪枝的方法来减少过拟合。不过这篇文章
+并不会涉及到剪枝的内容。</p>
+<p>数据集依然使用西瓜书对应的西瓜数据集</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>    色泽  根蒂  敲声  纹理  脐部  触感 好瓜
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">0</span>   青绿  蜷缩  浊响  清晰  凹陷  硬滑  是
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">1</span>   乌黑  蜷缩  沉闷  清晰  凹陷  硬滑  是
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">2</span>   乌黑  蜷缩  浊响  清晰  凹陷  硬滑  是
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">3</span>   青绿  蜷缩  沉闷  清晰  凹陷  硬滑  是
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">4</span>   浅白  蜷缩  浊响  清晰  凹陷  硬滑  是
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">5</span>   青绿  稍蜷  浊响  清晰  稍凹  软粘  是
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">6</span>   乌黑  稍蜷  浊响  稍糊  稍凹  软粘  是
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">7</span>   乌黑  稍蜷  浊响  清晰  稍凹  硬滑  是
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">8</span>   乌黑  稍蜷  沉闷  稍糊  稍凹  硬滑  否
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">9</span>   青绿  硬挺  清脆  清晰  平坦  软粘  否
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">10</span>  浅白  硬挺  清脆  模糊  平坦  硬滑  否
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">11</span>  浅白  蜷缩  浊响  模糊  平坦  软粘  否
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">12</span>  青绿  稍蜷  浊响  稍糊  凹陷  硬滑  否
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">13</span>  浅白  稍蜷  沉闷  稍糊  凹陷  硬滑  否
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">14</span>  乌黑  稍蜷  浊响  清晰  稍凹  软粘  否
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">15</span>  浅白  蜷缩  浊响  模糊  平坦  硬滑  否
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">16</span>  青绿  蜷缩  沉闷  稍糊  稍凹  硬滑  否
+</span></span></code></pre></div><h2 id="best-feature-to-split">best feature to split</h2>
+<p>划分数据集的方式有基于信息增益，信息增益率和基尼指数。笔者只实现了信息增益和基尼指数
+，因为信息增益率实现起来其实就和信息增益一样，只不过加了一个惩罚在里面。</p>
+<h3 id="gain">Gain</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">Entropy</span>(label: pd<span style="color:#f92672">.</span>DataFrame) <span style="color:#f92672">-&gt;</span> float:
+</span></span><span style="display:flex;"><span>    _, counts <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>unique(label, return_counts<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    total <span style="color:#f92672">=</span> len(label)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    ent <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> count <span style="color:#f92672">in</span> counts:
+</span></span><span style="display:flex;"><span>        prop <span style="color:#f92672">=</span> count <span style="color:#f92672">/</span> total
+</span></span><span style="display:flex;"><span>        ent <span style="color:#f92672">+=</span> <span style="color:#f92672">-</span>prop <span style="color:#f92672">*</span> np<span style="color:#f92672">.</span>log2(prop)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> ent
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">Gain</span>(dataset: pd<span style="color:#f92672">.</span>DataFrame, feature_index: int) <span style="color:#f92672">-&gt;</span> float:
+</span></span><span style="display:flex;"><span>    total_samples_num <span style="color:#f92672">=</span> dataset<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>    feature_values <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>unique(dataset<span style="color:#f92672">.</span>iloc[:, feature_index])
+</span></span><span style="display:flex;"><span>    gain <span style="color:#f92672">=</span> Entropy(dataset<span style="color:#f92672">.</span>iloc[:, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>])
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> value <span style="color:#f92672">in</span> feature_values:
+</span></span><span style="display:flex;"><span>        subset <span style="color:#f92672">=</span> dataset[dataset<span style="color:#f92672">.</span>iloc[:, feature_index] <span style="color:#f92672">==</span> value]
+</span></span><span style="display:flex;"><span>        sub_smaples_num <span style="color:#f92672">=</span> subset<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>        gain <span style="color:#f92672">-=</span> sub_smaples_num <span style="color:#f92672">/</span> total_samples_num <span style="color:#f92672">*</span> Entropy(subset<span style="color:#f92672">.</span>iloc[:, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>])
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> gain
+</span></span></code></pre></div><p>以上代码是用来计算<code>Gain(D, a)</code>，测试结果和西瓜书上的一致</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>Ent(D) <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.9975025463691152</span>
+</span></span><span style="display:flex;"><span>Gain(D, 色泽) <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.10812516526536525</span>
+</span></span><span style="display:flex;"><span>Gain(D, 根蒂) <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.14267495956679277</span>
+</span></span><span style="display:flex;"><span>Gain(D, 敲声) <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.14078143361499584</span>
+</span></span><span style="display:flex;"><span>Gain(D, 纹理) <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.3805918973682685</span>
+</span></span><span style="display:flex;"><span>Gain(D, 脐部) <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.2891587828416789</span>
+</span></span><span style="display:flex;"><span>Gain(D, 触感) <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.006046489176565528</span>
+</span></span></code></pre></div><p>选取<code>Gain</code>最大的作为最优划分属性 <code>纹理</code>。然后实现寻找最大的信息增益</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__split_with_gain</span>(dataset: pd<span style="color:#f92672">.</span>DataFrame) <span style="color:#f92672">-&gt;</span> Tuple[int, float]:
+</span></span><span style="display:flex;"><span>    features_num <span style="color:#f92672">=</span> dataset<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    max_gain <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span>
+</span></span><span style="display:flex;"><span>    best_feature <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> feature_index <span style="color:#f92672">in</span> range(features_num):
+</span></span><span style="display:flex;"><span>        gain <span style="color:#f92672">=</span> Gain(dataset, feature_index)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> gain <span style="color:#f92672">&gt;</span> max_gain:
+</span></span><span style="display:flex;"><span>            max_gain <span style="color:#f92672">=</span> gain
+</span></span><span style="display:flex;"><span>            best_feature <span style="color:#f92672">=</span> feature_index
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> best_feature <span style="color:#f92672">==</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> np<span style="color:#f92672">.</span>random<span style="color:#f92672">.</span>randint(<span style="color:#ae81ff">0</span>, features_num <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>), <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> best_feature, max_gain
+</span></span></code></pre></div><h3 id="gini-index">Gini index</h3>
+<p>内容与上面一致，直接贴代码了</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">Gini</span>(label: pd<span style="color:#f92672">.</span>DataFrame) <span style="color:#f92672">-&gt;</span> float:
+</span></span><span style="display:flex;"><span>    _, counts <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>unique(label, return_counts<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    total <span style="color:#f92672">=</span> len(label)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    gini <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> count <span style="color:#f92672">in</span> counts:
+</span></span><span style="display:flex;"><span>        prop <span style="color:#f92672">=</span> count <span style="color:#f92672">/</span> total
+</span></span><span style="display:flex;"><span>        gini <span style="color:#f92672">-=</span> prop<span style="color:#f92672">**</span><span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> gini
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">Gini_index</span>(dataset: pd<span style="color:#f92672">.</span>DataFrame, feature_index: int) <span style="color:#f92672">-&gt;</span> float:
+</span></span><span style="display:flex;"><span>    total_samples_num <span style="color:#f92672">=</span> dataset<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>    feature_values <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>unique(dataset<span style="color:#f92672">.</span>iloc[:, feature_index])
+</span></span><span style="display:flex;"><span>    gini_index <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> value <span style="color:#f92672">in</span> feature_values:
+</span></span><span style="display:flex;"><span>        subset <span style="color:#f92672">=</span> dataset[dataset<span style="color:#f92672">.</span>iloc[:, feature_index] <span style="color:#f92672">==</span> value]
+</span></span><span style="display:flex;"><span>        sub_smaples_num <span style="color:#f92672">=</span> subset<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>        gini_index <span style="color:#f92672">+=</span> sub_smaples_num <span style="color:#f92672">/</span> total_samples_num <span style="color:#f92672">*</span> Gini(subset<span style="color:#f92672">.</span>iloc[:, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>])
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> gini_index
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__split_with_gini</span>(dataset: pd<span style="color:#f92672">.</span>DataFrame) <span style="color:#f92672">-&gt;</span> Tuple[int, float]:
+</span></span><span style="display:flex;"><span>    features_num <span style="color:#f92672">=</span> dataset<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    min_gini <span style="color:#f92672">=</span> float(<span style="color:#e6db74">&#34;inf&#34;</span>)
+</span></span><span style="display:flex;"><span>    best_feature <span style="color:#f92672">=</span> <span style="color:#66d9ef">None</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> feature_index <span style="color:#f92672">in</span> range(features_num):
+</span></span><span style="display:flex;"><span>        gini_index <span style="color:#f92672">=</span> Gini_index(dataset, feature_index)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> gini_index <span style="color:#f92672">&lt;</span> min_gini:
+</span></span><span style="display:flex;"><span>            min_gini <span style="color:#f92672">=</span> gini_index
+</span></span><span style="display:flex;"><span>            best_feature <span style="color:#f92672">=</span> feature_index
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> best_feature <span style="color:#f92672">==</span> <span style="color:#66d9ef">None</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> np<span style="color:#f92672">.</span>random<span style="color:#f92672">.</span>randint(<span style="color:#ae81ff">0</span>, features_num <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>), <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> best_feature, min_gini
+</span></span></code></pre></div><h2 id="generate-tree">generate tree</h2>
+<p>我选择使用多重字典来作为树的数据结构</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">TreeGenerate</span>(dataset: pd<span style="color:#f92672">.</span>DataFrame, criterion: str <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;gini&#34;</span>):
+</span></span><span style="display:flex;"><span>    classes, classes_num <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>unique(dataset<span style="color:#f92672">.</span>iloc[:, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>], return_counts<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> len(classes_num) <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> classes[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>    is_all_same <span style="color:#f92672">=</span> len(dataset[dataset<span style="color:#f92672">.</span>duplicated(keep<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)]) <span style="color:#f92672">==</span> len(dataset)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> dataset<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">or</span> is_all_same:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> dataset<span style="color:#f92672">.</span>iloc[:, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>value_counts()<span style="color:#f92672">.</span>idxmax()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> criterion <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;gini&#34;</span>:
+</span></span><span style="display:flex;"><span>        feature_to_split, c <span style="color:#f92672">=</span> __split_with_gini(dataset)
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;最优划分属性：</span><span style="color:#e6db74">{</span>features[feature_to_split]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Gini_index：</span><span style="color:#e6db74">{</span>c<span style="color:#e6db74">}</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> criterion <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;gain&#34;</span>:
+</span></span><span style="display:flex;"><span>        feature_to_split, c <span style="color:#f92672">=</span> __split_with_gain(dataset)
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;最优划分属性：</span><span style="color:#e6db74">{</span>features[feature_to_split]<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Gain：</span><span style="color:#e6db74">{</span>c<span style="color:#e6db74">}</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    feature_values <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>unique(dataset<span style="color:#f92672">.</span>iloc[:, feature_to_split])
+</span></span><span style="display:flex;"><span>    Tree <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> value <span style="color:#f92672">in</span> feature_values:
+</span></span><span style="display:flex;"><span>        subset <span style="color:#f92672">=</span> pd<span style="color:#f92672">.</span>DataFrame(dataset[dataset<span style="color:#f92672">.</span>iloc[:, feature_to_split] <span style="color:#f92672">==</span> value])
+</span></span><span style="display:flex;"><span>        Tree[value] <span style="color:#f92672">=</span> TreeGenerate(subset, criterion)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> Tree
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(TreeGenerate(dataset, criterion<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;gain&#34;</span>))
+</span></span><span style="display:flex;"><span>print(TreeGenerate(dataset, criterion<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;gini&#34;</span>))
+</span></span></code></pre></div><p>运行结果</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>最优划分属性：纹理
+</span></span><span style="display:flex;"><span>Gain：0.3805918973682685
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>最优划分属性：根蒂
+</span></span><span style="display:flex;"><span>Gain：0.45810589515712374
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>最优划分属性：色泽
+</span></span><span style="display:flex;"><span>Gain：0.2516291673878229
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>最优划分属性：触感
+</span></span><span style="display:flex;"><span>Gain：1.0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>最优划分属性：触感
+</span></span><span style="display:flex;"><span>Gain：0.7219280948873623
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span><span style="color:#e6db74">&#39;模糊&#39;</span>: <span style="color:#e6db74">&#39;否&#39;</span>, <span style="color:#e6db74">&#39;清晰&#39;</span>: <span style="color:#f92672">{</span><span style="color:#e6db74">&#39;硬挺&#39;</span>: <span style="color:#e6db74">&#39;否&#39;</span>, <span style="color:#e6db74">&#39;稍蜷&#39;</span>: <span style="color:#f92672">{</span><span style="color:#e6db74">&#39;乌黑&#39;</span>: <span style="color:#f92672">{</span><span style="color:#e6db74">&#39;硬滑&#39;</span>: <span style="color:#e6db74">&#39;是&#39;</span>, <span style="color:#e6db74">&#39;软粘&#39;</span>: <span style="color:#e6db74">&#39;否&#39;</span><span style="color:#f92672">}</span>, <span style="color:#e6db74">&#39;青绿&#39;</span>: <span style="color:#e6db74">&#39;是&#39;</span><span style="color:#f92672">}</span>, <span style="color:#e6db74">&#39;蜷缩&#39;</span>: <span style="color:#e6db74">&#39;是&#39;</span><span style="color:#f92672">}</span>, <span style="color:#e6db74">&#39;稍糊&#39;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;硬滑&#39;</span>: <span style="color:#e6db74">&#39;否&#39;</span>, <span style="color:#e6db74">&#39;软粘&#39;</span>: <span style="color:#e6db74">&#39;是&#39;</span><span style="color:#f92672">}}</span>
+</span></span><span style="display:flex;"><span>最优划分属性：纹理
+</span></span><span style="display:flex;"><span>Gini_index：0.2771241830065359
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>最优划分属性：根蒂
+</span></span><span style="display:flex;"><span>Gini_index：0.14814814814814814
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>最优划分属性：色泽
+</span></span><span style="display:flex;"><span>Gini_index：0.3333333333333333
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>最优划分属性：触感
+</span></span><span style="display:flex;"><span>Gini_index：0.0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>最优划分属性：触感
+</span></span><span style="display:flex;"><span>Gini_index：0.0
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">{</span><span style="color:#e6db74">&#39;模糊&#39;</span>: <span style="color:#e6db74">&#39;否&#39;</span>, <span style="color:#e6db74">&#39;清晰&#39;</span>: <span style="color:#f92672">{</span><span style="color:#e6db74">&#39;硬挺&#39;</span>: <span style="color:#e6db74">&#39;否&#39;</span>, <span style="color:#e6db74">&#39;稍蜷&#39;</span>: <span style="color:#f92672">{</span><span style="color:#e6db74">&#39;乌黑&#39;</span>: <span style="color:#f92672">{</span><span style="color:#e6db74">&#39;硬滑&#39;</span>: <span style="color:#e6db74">&#39;是&#39;</span>, <span style="color:#e6db74">&#39;软粘&#39;</span>: <span style="color:#e6db74">&#39;否&#39;</span><span style="color:#f92672">}</span>, <span style="color:#e6db74">&#39;青绿&#39;</span>: <span style="color:#e6db74">&#39;是&#39;</span><span style="color:#f92672">}</span>, <span style="color:#e6db74">&#39;蜷缩&#39;</span>: <span style="color:#e6db74">&#39;是&#39;</span><span style="color:#f92672">}</span>, <span style="color:#e6db74">&#39;稍糊&#39;</span>: <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;硬滑&#39;</span>: <span style="color:#e6db74">&#39;否&#39;</span>, <span style="color:#e6db74">&#39;软粘&#39;</span>: <span style="color:#e6db74">&#39;是&#39;</span><span style="color:#f92672">}}</span>
+</span></span></code></pre></div><p>使用信息增益和基尼指数得到的结果是一样的。与书上不同的是，在<code>纹理=清晰 -&gt; 根蒂=稍蜷</code>
+这个分支没有<code>色泽=浅白</code>分支，可是数据集中确实没有<code>纹理=清晰, 根蒂=稍蜷, 色泽=浅白</code>的数据。
+不知道是不是书上搞错了。</p>
+
+		</section>
+
+		<div class="post-tags">
+			
+			
+			<nav class="nav tags">
+				<ul class="tags">
+					
+					<li><a href="/tags/machine-learning">Machine-Learning</a></li>
+					
+				</ul>
+			</nav>
+			
+			
+		</div>
+		</article>
+</main>
+
+
+        
+       
+
+<footer>
+  <div style="display:flex"><a class="soc" href="https://github.com/clingm" rel="me" title="GitHub"><i data-feather="github"></i></a>
+    <a class="border"></a></div>
+  <div class="footer-info">
+    2024  © Clingm |  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+<script>
+  feather.replace()
+</script></div>
+    </body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>A New Elliptic Curve Based Analogue of Rsa - Clingm&#39;s Blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="refer: A New Elliptic Curve Based Analogue of RSA
+椭圆曲线
+令 p 和 q 是素数，都大于3。并且满足$4a^3 &#43; 27b^2 \not\equiv 0 \pmod{p}$。用$E_p(a, b)$表示模p参数为a,b的椭圆曲线。$y^2 \equiv x^3 &#43; ax &#43; b \pmod{p}$。
+椭圆曲线的加法计算定义为
+$$ P&#43;Q=R \tag 1 $$
+设$P=(x_1, y_1)，Q=(x_2,y_2)，R=(x_3, y_3)$
+$$ x3 \equiv \lambda^2-x_1-x_2 \mod{p} \tag 2 $$
+$$ y_3\equiv \lambda(x_1-x_3) - y_1 \pmod{p} $$
+$$ \lambda \equiv \begin{cases} \frac{y_1-y_2}{x_1-x_2} &amp; if x_1 \not\equiv x_2 \pmod{p} \\ \\ \frac{3x_1^2 &#43; a}{2y_1} &amp; ifx1=x2 \pmod{p} \end{cases} $$" />
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content="https://clingm.github.io/posts/crypto/a-new-elliptic-curve-based-analogue-of-rsa/">
+  <meta property="og:site_name" content="Clingm&#39;s Blog">
+  <meta property="og:title" content="A New Elliptic Curve Based Analogue of Rsa">
+  <meta property="og:description" content="refer: A New Elliptic Curve Based Analogue of RSA 椭圆曲线 令 p 和 q 是素数，都大于3。并且满足$4a^3 &#43; 27b^2 \not\equiv 0 \pmod{p}$。用$E_p(a, b)$表示模p参数为a,b的椭圆曲线。$y^2 \equiv x^3 &#43; ax &#43; b \pmod{p}$。
+椭圆曲线的加法计算定义为
+$$ P&#43;Q=R \tag 1 $$
+设$P=(x_1, y_1)，Q=(x_2,y_2)，R=(x_3, y_3)$
+$$ x3 \equiv \lambda^2-x_1-x_2 \mod{p} \tag 2 $$
+$$ y_3\equiv \lambda(x_1-x_3) - y_1 \pmod{p} $$
+$$ \lambda \equiv \begin{cases} \frac{y_1-y_2}{x_1-x_2} &amp; if x_1 \not\equiv x_2 \pmod{p} \\ \\ \frac{3x_1^2 &#43; a}{2y_1} &amp; ifx1=x2 \pmod{p} \end{cases} $$">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2022-10-02T15:50:47+08:00">
+    <meta property="article:modified_time" content="2024-10-28T19:24:25+08:00">
+    <meta property="article:tag" content="Crypto">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="A New Elliptic Curve Based Analogue of Rsa">
+  <meta name="twitter:description" content="refer: A New Elliptic Curve Based Analogue of RSA 椭圆曲线 令 p 和 q 是素数，都大于3。并且满足$4a^3 &#43; 27b^2 \not\equiv 0 \pmod{p}$。用$E_p(a, b)$表示模p参数为a,b的椭圆曲线。$y^2 \equiv x^3 &#43; ax &#43; b \pmod{p}$。
+椭圆曲线的加法计算定义为
+$$ P&#43;Q=R \tag 1 $$
+设$P=(x_1, y_1)，Q=(x_2,y_2)，R=(x_3, y_3)$
+$$ x3 \equiv \lambda^2-x_1-x_2 \mod{p} \tag 2 $$
+$$ y_3\equiv \lambda(x_1-x_3) - y_1 \pmod{p} $$
+$$ \lambda \equiv \begin{cases} \frac{y_1-y_2}{x_1-x_2} &amp; if x_1 \not\equiv x_2 \pmod{p} \\ \\ \frac{3x_1^2 &#43; a}{2y_1} &amp; ifx1=x2 \pmod{p} \end{cases} $$">
+<script src="https://clingm.github.io/js/feather.min.js"></script>
+	
+	
+        <link href="https://clingm.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://clingm.github.io/css/main.a4fb2a2bfee30ab5e4deb557e5c0d3e1a22e972fd4b8059217db4d3647b8ec52.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://clingm.github.io/css/dark.23f68d3ce4525ce2bf3f3085cf718c30981001b6eee182d17676da5827ffb3d0.css"  disabled />
+	
+
+	
+	
+		<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		</script>
+
+		
+		<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			tex2jax: {
+				inlineMath: [['$','$'], ['\\(','\\)']],
+				displayMath: [['$$','$$'], ['\[','\]']],
+				processEscapes: true,
+				processEnvironments: true,
+				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+				TeX: { equationNumbers: { autoNumber: "AMS" },
+						 extensions: ["AMSmath.js", "AMSsymbols.js"] }
+			}
+		});
+		</script>
+	
+
+	
+	
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+		
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+					renderMathInElement(document.body, {
+							delimiters: [
+									{left: "$$", right: "$$", display: true},
+									{left: "$", right: "$", display: false}
+							]
+					});
+			});
+			</script>
+	
+
+	
+		
+		
+		<link rel="stylesheet" type="text/css" href="https://clingm.github.io/css/custom.2391be1053021d99c6aee22f1c21cdfb7abf1fb6cf1d762376ad2f3bd7506461.css">
+		
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://clingm.github.io/">Clingm&#39;s Blog</a>
+	</div>
+	<nav>
+		
+		<a href="/">主页</a>
+		
+		<a href="/posts">文章</a>
+		
+		<a href="/tags">标签</a>
+		
+		<a href="/about">关于</a>
+		
+		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		<script src="https://clingm.github.io/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">A New Elliptic Curve Based Analogue of Rsa</h1>
+			<div class="meta">Posted on Oct 2, 2022<br>Updated on Oct 28, 2024</div>
+		</div>
+		
+
+		
+		<div class="toc">
+		<strong>Table of contents:</strong>
+		<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#refer-a-new-elliptic-curve-based-analogue-of-rsahttpslinkspringercomcontentpdf1010073-540-48285-7_4pdf">refer: <a href="https://link.springer.com/content/pdf/10.1007/3-540-48285-7_4.pdf">A New Elliptic Curve Based Analogue of RSA</a></a></li>
+      </ul>
+    </li>
+    <li><a href="#椭圆曲线">椭圆曲线</a></li>
+    <li><a href="#椭圆曲线的互补群">椭圆曲线的互补群</a></li>
+    <li><a href="#加密解密">加密解密</a></li>
+    <li><a href="#example">Example</a></li>
+  </ul>
+</nav>
+		</div>
+
+		<section class="body">
+			<h3 id="refer-a-new-elliptic-curve-based-analogue-of-rsahttpslinkspringercomcontentpdf1010073-540-48285-7_4pdf">refer: <a href="https://link.springer.com/content/pdf/10.1007/3-540-48285-7_4.pdf">A New Elliptic Curve Based Analogue of RSA</a></h3>
+<h2 id="椭圆曲线">椭圆曲线</h2>
+<p>令 p 和 q 是素数，都大于3。并且满足$4a^3 + 27b^2 \not\equiv 0 \pmod{p}$。用$E_p(a, b)$表示模p参数为a,b的椭圆曲线。$y^2 \equiv x^3 + ax + b \pmod{p}$。</p>
+<p>椭圆曲线的加法计算定义为</p>
+<p>$$ P+Q=R \tag 1 $$</p>
+<p>设$P=(x_1, y_1)，Q=(x_2,y_2)，R=(x_3, y_3)$</p>
+<p>$$ x3 \equiv \lambda^2-x_1-x_2 \mod{p} \tag 2 $$</p>
+<p>$$ y_3\equiv \lambda(x_1-x_3) - y_1 \pmod{p} $$</p>
+<p>$$ \lambda \equiv \begin{cases} \frac{y_1-y_2}{x_1-x_2} &amp; if x_1 \not\equiv x_2 \pmod{p} \\ \\ \frac{3x_1^2 + a}{2y_1} &amp; ifx1=x2 \pmod{p} \end{cases} $$</p>
+<p>椭圆曲线的阶表示为</p>
+<p>$$ |E_p(a, b)| = 1 + \sum_{x=1}^p((\frac{z}{p}) + 1) $$</p>
+<p>$(\frac{z}{p})$是椭圆曲线的勒让德符号，$z\equiv x^3 + ax + b\pmod{p}$。勒让德符号的值为1, 0, -1。</p>
+<p>很容易证明：</p>
+<p>(1) y有两个值对于一个x，当z是关于p的一个二次剩余</p>
+<p>(2) y 有一个值对于一个x，当$z \equiv 0 \pmod{p}$</p>
+<p>(3) y 不存在对于一个x， 当z是关于p的一个二次非剩余</p>
+<p>对一个很大的p使用这个方法显然是不够有效的。更加有效的计算椭圆曲线的阶的算法是<a href="https://en.wikipedia.org/wiki/Schoof%27s_algorithm"><strong>Schoof’s algorithm</strong></a>，在 <a href="https://en.wikipedia.org/wiki/Counting_points_on_elliptic_curves"><strong>维基百科</strong></a> 中也介绍了很多算法，但这篇主要是介绍A New Elliptic Curve Based Analogue of RSA这个密码系统就不多描述了。</p>
+<p>一个很重要的定理是Hasses 定理。令$E$是定义在$F_p$上的椭圆曲线，$E$上的点的数量也就是$E$的阶满足</p>
+<p>$$ |p+1-#E(F_p)| \leq 2 \sqrt{q} $$</p>
+<p>其中$#E(F_p)$表示椭圆曲线$E$的阶。有了Hasses定理，可以定义</p>
+<p>$$ |E_p(a,b)|=p+1+\alpha, \quad where\ |\alpha| \leq 2\sqrt{p} $$</p>
+<h2 id="椭圆曲线的互补群">椭圆曲线的互补群</h2>
+<p>令p是一个素数，a, b是椭圆曲线$E_p(a, b)$的参数。用$E_p(a,b)$来表示满足</p>
+<p>$$ y^2\equiv x^3+ax+b $$</p>
+<p>的所有整数对$(x,y)$，但y是非负整数。即y可以表示成</p>
+<p>$$ y\equiv u\sqrt{v} \pmod{p} $$</p>
+<p>u是一个非负整数，v是模p的一个二次非剩余定值。比如有$(x_1, y_1)=(x_1, u_1\sqrt{v})$，</p>
+<p>$(x_2, y_2)=(x_2,u_2\sqrt{v})$。</p>
+<p>互补群的阶被这样给出</p>
+<p>$$ |\overline{E_p(a,b)}|=1+\sum_{x=1}^p(1-(\frac{z}{p})) $$</p>
+<p>运用Hasses定理</p>
+<p>$$ |\overline{E_p(a,b)}|=p+1-\alpha $$</p>
+<h2 id="加密解密">加密解密</h2>
+<p>选择两个素数p, q。令n=pq。在$Z_n$上选择一个椭圆曲线。椭圆曲线的参数满足</p>
+<p>$$ \gcd(4a^3+27b^2, n)=1 $$</p>
+<p>令</p>
+<p>$$ |E_p(a,b)|=p+1+\alpha，|\overline{E_p(a,b)}|=p+1-\alpha \\ |E_q(a,b)|=p+1+\beta，|\overline{E_q(a,b)}|=p+1-\beta $$</p>
+<p>将明文编码成坐标(x, y)的横坐标x。$y\equiv \sqrt{x^3+ax+b} \pmod{n}$ ，注意开根是在模n的意义下开根。</p>
+<p>加密表示为</p>
+<p>$$ (s,t)\equiv (x,y)*e \pmod{n} $$</p>
+<p>s为密文。</p>
+<p>解密表示为i</p>
+<p>$$ (x,y)\equiv (s, t)*d_i \pmod{n} $$</p>
+<p>其中e和d的选择</p>
+<p><img src="https://s2.loli.net/2022/10/02/UzQdZp8mFKCB7LR.png" alt="https://s2.loli.net/2022/10/02/UzQdZp8mFKCB7LR.png"></p>
+<p>$$ w\equiv s^3+as+b \pmod{n} $$</p>
+<p>但这篇论文很奇怪的地方在，如果要确定e，那么要知道N，N是从w的值来决定是那种情况，可是还没加密呢，哪来的s，哪来的w？后来查阅资料找到了另一种确定e的方法</p>
+<p><img src="https://s2.loli.net/2022/10/02/NnWgUwaGukqjD1t.png" alt="https://s2.loli.net/2022/10/02/NnWgUwaGukqjD1t.png"></p>
+<p>这里就非常的清楚$gcd(e, (p^2-tp^2)(q^2-tq^2))=1$。$t_p=-\alpha,t_q=-\beta$</p>
+<p>虽然是椭圆曲线问题，但是此密码的安全性仍然是基于大整数分解和计算椭圆曲线阶的难题。与RSA相似。</p>
+<h2 id="example">Example</h2>
+<pre><code>from sage.all import *
+from sage.all_cmdline import *
+from Crypto.Util.number import *
+from sympy import nthroot_mod
+
+Nbits = 256
+
+plaintext = bytes_to_long(b&quot;hello world&quot;)
+
+def gen_pubkey(p, q):
+    n = p*q
+
+    a = getRandomInteger(Nbits // 2)
+    b = getRandomInteger(Nbits // 2)
+
+    assert gcd(4*a**3 + 27*b**2, n) == 1
+    
+    e = getPrime(256)
+    orderp = EllipticCurve(GF(p), [a, b]).order()
+    orderq = EllipticCurve(GF(q), [a, b]).order()
+    tp = p + 1 - orderp
+    tq = q + 1 - orderq
+    assert gcd(e, (p**2 - tp**2)*(q**2 - tq**2))
+
+    public_key = (n, a, b, e)
+	
+    return public_key
+
+def gen_prikey(cipher, p, q, a, b, tp, tq):
+    cx = cipher[0]
+    u = cx**3 + a*cx + b % n
+    up = legendre_symbol(u, p)
+    uq = legendre_symbol(u, q)
+    assert up == uq == 1
+    d = inverse_mod(e, lcm(p+1-tp, q+1-tq))
+
+    return d
+
+p, q = getPrime(Nbits), getPrime(Nbits)
+n, a, b, e = gen_pubkey(256)
+ciphertext = e * plaintext
+
+print(&quot;public key:&quot;)
+print(f&quot;n = {n}\na = {a}\nb = {b}\ne = {e}&quot;)
+print(&quot;cipher:&quot;)
+print(ciphertext)
+
+orderp = EllipticCurve(GF(p), [a, b]).order()
+orderq = EllipticCurve(GF(q), [a, b]).order()
+tp = p + 1 - orderp
+tq = q + 1 - orderq
+
+d = gen_prikey(ciphertext, p, q, a, b, tp, tq)
+
+m = d * ciphertext
+print(long_to_bytes(int(m[0])))
+</code></pre>
+
+		</section>
+
+		<div class="post-tags">
+			
+			
+			<nav class="nav tags">
+				<ul class="tags">
+					
+					<li><a href="/tags/crypto">Crypto</a></li>
+					
+				</ul>
+			</nav>
+			
+			
+		</div>
+		</article>
+</main>
+
+
+        
+       
+
+<footer>
+  <div style="display:flex"><a class="soc" href="https://github.com/clingm" rel="me" title="GitHub"><i data-feather="github"></i></a>
+    <a class="border"></a></div>
+  <div class="footer-info">
+    2024  © Clingm |  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+<script>
+  feather.replace()
+</script></div>
+    </body>
+</html>

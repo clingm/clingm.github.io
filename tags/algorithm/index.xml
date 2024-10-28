@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Algorithm on Clingm&#39;s Blog</title>
+    <link>https://clingm.github.io/tags/algorithm/</link>
+    <description>Recent content in Algorithm on Clingm&#39;s Blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>© Clingm</copyright>
+    <lastBuildDate>Mon, 28 Oct 2024 19:24:25 +0800</lastBuildDate>
+    <atom:link href="https://clingm.github.io/tags/algorithm/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>AMM Algorithm</title>
+      <link>https://clingm.github.io/posts/algorithm/amm-algorithm/</link>
+      <pubDate>Mon, 03 Oct 2022 00:51:50 +0800</pubDate>
+      <guid>https://clingm.github.io/posts/algorithm/amm-algorithm/</guid>
+      <description>&lt;h3 id=&#34;refere11114877pdf-arxivorghttpsarxivorgpdf11114877pdf&#34;&gt;refere：&lt;a href=&#34;https://arxiv.org/pdf/1111.4877.pdf&#34;&gt;1111.4877.pdf (arxiv.org)&lt;/a&gt;&lt;/h3&gt;&#xA;&lt;p&gt;AMM平方根提取算法可以被拓展到一般的$r^{th}$根提取问题上，并且要求&lt;/p&gt;&#xA;&lt;p&gt;$r\mid p -1，(m, r)=1$&lt;/p&gt;&#xA;&lt;h2 id=&#34;amm算法的核心观点暨在有限域f_p上开2次方的方法&#34;&gt;AMM算法的核心观点暨在有限域$F_p$上开2次方的方法&lt;/h2&gt;&#xA;&lt;p&gt;AMM在有限域$F_p$中开平方根，这要求$p$是一个素数，那么$p$就可以写成$2^t\cdot s$的形式，其中$s$是奇数。对于一个二次剩余$\delta$和二次非剩余$\rho$，我们有&lt;/p&gt;&#xA;&lt;p&gt;$$ (\delta^{s})^{2^{t - 1}}\equiv1\pmod{p}，(\rho^{s})^{2^{t - 1}}\equiv-1\pmod{p} $$&lt;/p&gt;&#xA;&lt;p&gt;如果$t=1$，$\delta^{s}\equiv1\pmod{p}$，两边乘$\delta$得到&lt;/p&gt;&#xA;&lt;p&gt;$$ (\delta^{\frac{s+1}{2}})^{2} \equiv \delta \pmod{p} $$&lt;/p&gt;&#xA;&lt;p&gt;所以$\delta^{\frac{s+1}{2}}$就是一个根。&lt;/p&gt;&#xA;&lt;p&gt;当$t\geq 2$，那么 $(δ^s)^{2^{t−2}} (mod p)\in { 1, −1}$（虽然在是不知道这是为什么，可能是将他当成一个新的二次（非）剩余），引入$k_1={0, 1}$，表示成&lt;/p&gt;&#xA;&lt;p&gt;$$ (\delta^s)^{2^{t-2}}(\rho^s)^{2^{t-1}\cdot k_1}\equiv1\pmod{p} $$&lt;/p&gt;&#xA;&lt;p&gt;当 $(δ^s)^{2^{t−2}} \equiv1(mod p)$，$k_1=0$，$k_1=1$&lt;/p&gt;&#xA;&lt;p&gt;然后我们继续对上面的式子开方， $(δ^s)^{2^{t−3}}(\rho^s)^{2^{t-2}\cdot k_1} \pmod{p}\in { 1, −1}$，并引入$k_2$&lt;/p&gt;&#xA;&lt;p&gt;$$ (\delta^s)^{2^{t-3}}(\rho^s)^{2^{t-2}\cdot k_1}(\rho^s)^{2^{t-1}\cdot k_2}\equiv1\pmod{p} $$&lt;/p&gt;&#xA;&lt;p&gt;一直这样下去得到&lt;/p&gt;&#xA;&lt;p&gt;$$ (\delta^s)(\rho^s)^{2k_1+2^2k_2+\cdots+2^{t-1}k_{t-1}}\equiv1\pmod{p} $$&lt;/p&gt;&#xA;&lt;p&gt;因此我们有&lt;/p&gt;&#xA;&lt;p&gt;$$ (\delta^{\frac{s+1}{2}})^2[(\rho^s)^{k_1+2k_2+\cdots+2^{t-2}k_{t-1}}]^2\equiv \delta \pmod{p} $$&lt;/p&gt;&#xA;&lt;p&gt;算法的过程&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;https://s2.loli.net/2022/10/02/RWchA1vrIe6wjMH.png&#34; alt=&#34;Untitled.png&#34;&gt;&lt;/p&gt;&#xA;&lt;h3 id=&#34;example&#34;&gt;Example:&lt;/h3&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://www.notion.so/AMM-e0e456024cf54c28a1663c6ea231eee3&#34;&gt;AMM算法开二次方根&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;amm算法在f_pm上开2次方&#34;&gt;AMM算法在$F_{p^m}$上开2次方&lt;/h2&gt;&#xA;&lt;p&gt;AMM方法在$F_p$和$F_{p^m}$上的不同在于，不能通过勒让德符号来判断一个二次非剩余&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

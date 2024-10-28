@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Hitcon Ctf 2022 Babysss - Clingm&#39;s Blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="
+周末抽时间看了一下HITCON的题，不愧是顶尖的比赛。由于水平比较菜，在比赛期间就做出来这么一道题（实际上就周六早上看了一下，下午赶ddl，周日打安洵杯）。maple3142师傅和lyc师傅出的题目质量都很高，这个星期再复现学习一下。
+
+chall.py
+from random import SystemRandom
+from Crypto.Cipher import AES
+from hashlib import sha256
+from secret import flag
+
+rand = SystemRandom()
+
+
+def polyeval(poly, x):
+    return sum([a * x**i for i, a in enumerate(poly)])
+
+
+DEGREE = 128
+SHARES_FOR_YOU = 8  # I am really stingy :)
+
+poly = [rand.getrandbits(64) for _ in range(DEGREE &#43; 1)]
+
+shares = []
+for _ in range(SHARES_FOR_YOU):
+    x = rand.getrandbits(16)
+    y = polyeval(poly, x)
+    shares.append((x, y))
+print(shares)
+
+secret = polyeval(poly, 0x48763)
+key = sha256(str(secret).encode()).digest()[:16]
+cipher = AES.new(key, AES.MODE_CTR)
+print(cipher.encrypt(flag))
+print(cipher.nonce)
+
+output.txt" />
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content="https://clingm.github.io/posts/crypto/hitcon-ctf-2022-babysss/">
+  <meta property="og:site_name" content="Clingm&#39;s Blog">
+  <meta property="og:title" content="Hitcon Ctf 2022 Babysss">
+  <meta property="og:description" content="周末抽时间看了一下HITCON的题，不愧是顶尖的比赛。由于水平比较菜，在比赛期间就做出来这么一道题（实际上就周六早上看了一下，下午赶ddl，周日打安洵杯）。maple3142师傅和lyc师傅出的题目质量都很高，这个星期再复现学习一下。
+chall.py
+from random import SystemRandom from Crypto.Cipher import AES from hashlib import sha256 from secret import flag rand = SystemRandom() def polyeval(poly, x): return sum([a * x**i for i, a in enumerate(poly)]) DEGREE = 128 SHARES_FOR_YOU = 8 # I am really stingy :) poly = [rand.getrandbits(64) for _ in range(DEGREE &#43; 1)] shares = [] for _ in range(SHARES_FOR_YOU): x = rand.getrandbits(16) y = polyeval(poly, x) shares.append((x, y)) print(shares) secret = polyeval(poly, 0x48763) key = sha256(str(secret).encode()).digest()[:16] cipher = AES.new(key, AES.MODE_CTR) print(cipher.encrypt(flag)) print(cipher.nonce) output.txt">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2022-11-28T15:46:12+08:00">
+    <meta property="article:modified_time" content="2024-10-28T19:24:25+08:00">
+    <meta property="article:tag" content="Crypto">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Hitcon Ctf 2022 Babysss">
+  <meta name="twitter:description" content="周末抽时间看了一下HITCON的题，不愧是顶尖的比赛。由于水平比较菜，在比赛期间就做出来这么一道题（实际上就周六早上看了一下，下午赶ddl，周日打安洵杯）。maple3142师傅和lyc师傅出的题目质量都很高，这个星期再复现学习一下。
+chall.py
+from random import SystemRandom from Crypto.Cipher import AES from hashlib import sha256 from secret import flag rand = SystemRandom() def polyeval(poly, x): return sum([a * x**i for i, a in enumerate(poly)]) DEGREE = 128 SHARES_FOR_YOU = 8 # I am really stingy :) poly = [rand.getrandbits(64) for _ in range(DEGREE &#43; 1)] shares = [] for _ in range(SHARES_FOR_YOU): x = rand.getrandbits(16) y = polyeval(poly, x) shares.append((x, y)) print(shares) secret = polyeval(poly, 0x48763) key = sha256(str(secret).encode()).digest()[:16] cipher = AES.new(key, AES.MODE_CTR) print(cipher.encrypt(flag)) print(cipher.nonce) output.txt">
+<script src="https://clingm.github.io/js/feather.min.js"></script>
+	
+	
+        <link href="https://clingm.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://clingm.github.io/css/main.a4fb2a2bfee30ab5e4deb557e5c0d3e1a22e972fd4b8059217db4d3647b8ec52.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://clingm.github.io/css/dark.23f68d3ce4525ce2bf3f3085cf718c30981001b6eee182d17676da5827ffb3d0.css"  disabled />
+	
+
+	
+	
+		<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		</script>
+
+		
+		<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			tex2jax: {
+				inlineMath: [['$','$'], ['\\(','\\)']],
+				displayMath: [['$$','$$'], ['\[','\]']],
+				processEscapes: true,
+				processEnvironments: true,
+				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+				TeX: { equationNumbers: { autoNumber: "AMS" },
+						 extensions: ["AMSmath.js", "AMSsymbols.js"] }
+			}
+		});
+		</script>
+	
+
+	
+	
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+		
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+					renderMathInElement(document.body, {
+							delimiters: [
+									{left: "$$", right: "$$", display: true},
+									{left: "$", right: "$", display: false}
+							]
+					});
+			});
+			</script>
+	
+
+	
+		
+		
+		<link rel="stylesheet" type="text/css" href="https://clingm.github.io/css/custom.2391be1053021d99c6aee22f1c21cdfb7abf1fb6cf1d762376ad2f3bd7506461.css">
+		
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://clingm.github.io/">Clingm&#39;s Blog</a>
+	</div>
+	<nav>
+		
+		<a href="/">主页</a>
+		
+		<a href="/posts">文章</a>
+		
+		<a href="/tags">标签</a>
+		
+		<a href="/about">关于</a>
+		
+		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		<script src="https://clingm.github.io/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">Hitcon Ctf 2022 Babysss</h1>
+			<div class="meta">Posted on Nov 28, 2022<br>Updated on Oct 28, 2024</div>
+		</div>
+		
+
+		
+		<div class="toc">
+		<strong>Table of contents:</strong>
+		<nav id="TableOfContents"></nav>
+		</div>
+
+		<section class="body">
+			<blockquote>
+<p>周末抽时间看了一下HITCON的题，不愧是顶尖的比赛。由于水平比较菜，在比赛期间就做出来这么一道题（实际上就周六早上看了一下，下午赶ddl，周日打安洵杯）。<a href="https://blog.maple3142.net/">maple3142</a>师傅和lyc师傅出的题目质量都很高，这个星期再复现学习一下。</p>
+</blockquote>
+<p>chall.py</p>
+<pre><code>from random import SystemRandom
+from Crypto.Cipher import AES
+from hashlib import sha256
+from secret import flag
+
+rand = SystemRandom()
+
+
+def polyeval(poly, x):
+    return sum([a * x**i for i, a in enumerate(poly)])
+
+
+DEGREE = 128
+SHARES_FOR_YOU = 8  # I am really stingy :)
+
+poly = [rand.getrandbits(64) for _ in range(DEGREE + 1)]
+
+shares = []
+for _ in range(SHARES_FOR_YOU):
+    x = rand.getrandbits(16)
+    y = polyeval(poly, x)
+    shares.append((x, y))
+print(shares)
+
+secret = polyeval(poly, 0x48763)
+key = sha256(str(secret).encode()).digest()[:16]
+cipher = AES.new(key, AES.MODE_CTR)
+print(cipher.encrypt(flag))
+print(cipher.nonce)
+</code></pre>
+<p>output.txt</p>
+<pre><code>[(41458, 3015894889650529600470920314593280408459518223054415623846810748413393737686521849609926975694824777687791824408686652245102687392987299828716863372946074882798754477101786150262288970710451710086966378817944448615584285684364802621112755627795146504720812935041851556318832824799502759754100408717888912062197676588256634343721633045179136302533777168978134770315363985448879229514802330846792965525004570768212871252658334277172395338054448791891165981203069346039654617938169527772805687564575525262812469960675835101499054296722994451502140787064163668418661661374437567033971648550576296023422536253955229), (3389, 188433716494377932944071544153838579057591833387651830021721770473524507947811754295899393634645349682360212761145039355690817927625249659010181081209481357850193656763556243022791637306094953982811471415645267589939465925098159204147714779617946431727015863707468081949286110249296858079354949234074465541940264775783884708819566758872542606519408358277173683256608326688673226933790117016596834640875497643330432185114931410656582728964222203181026468387428893233826461), (20016, 100434774699078525844435127144579870564983915777345068724291926367405061427748836490810414860997895358378538088786283372231649911113841061354335739776409724471256377867811133591349442950556374825868587940833009529662869081130218551306459690738900795035660420986807973542512081415453215211908130387754214098414826747340962722685373241806099462750595976574593799013733614097923338311883793416643213898201680852118540438376386415411317989072583126108177482838299109479175882214603698768498421016054035672774286507312986602290254323930575001551875601243671354491241420409219), (50683, 444545881882748849210617532697661279371689521082184772844723908765173319859389018743414369945234307906596253496624659734919646710483514374218993496994560985318096082923429834553341897367168830049334302307406087637232329348570485341223211629167329394484624055745054495405880099706580380696671879365741197827080224977821589102425678989782880274304484630899425664722718972847034030888019348402685383311095030884356731112886316823960378572796288532824588478234949384868912708000223119984161992105752059185137674711077940232530298853451166664700609238496874366152042676602089571801873748042888046623717879084695143810047335029), (6445, 101461065764578261241074518788237888467081270902741849861528201922043223477790661159690684156056890167304291810116447916457265705130707166062372766839626095333813681671546097679623755546322833727082145873422243641505450049118758544298328784536759107951763715458884889255549767465897671061295486677353893450789955616926292534325337544782386120469581214993770910137353221116457111551538222138388416162630076391624447865248920466274175229034129561913505977209131490066291917549232913771218316393849495621818397), (1359, 301175604076484656987097022479686300460199620068959954988990822483114048418823291831080744590394713639405681060973359346474547015206086229256524657214311815578895906855833813636970640902962286472992468394831014254279137613828904924898823470285520515090889491445149243620044782726415898188702226878029241518020146726699446397961112596830223444821094650508662477147134721631935528182772284099429814417490160457082241680661), (45286, 244867719210730952183489456726726432791149629831242968845409984537752132549250274779516590253042559196452609852176114909791657154092483479876795482861784431886143414585698773882088948703730268947925790809436449512089696895048994874003651088538416399435467483409931121063976149037130454114161175715871108284419975118570732022104749321213013756795645219060997019373915339235627535694458093194617642834806820772479160496966470147893963746139947337914575231526069667124822677688977724313174612816604463495630041075005651663546036363128325535621487658461744362098985183050127661470315454320073092665472364666768205258769), (5649, 4766101906865350375503575239791521167258753430948472304582908507542293595346756303331383584550516424087839316050412570112796817549423179461056531056102741963677007097061600281918678364910813585444151640384802648969082273001142879806475184857246441212406056540028447374033197873299250076862108042582790928405869475508762352345569281589853917902601519294573327847401601789315980414998055948162169170771240383220643819333682845459742335249254576151835966500230706707674854493184181354958093926469960861)]
+b'G$\xf5\x9e\xa9\xb1e\xb5\x86w\xdfz\xbeP\xecJ\xb8wT&lt;&lt;\x84\xc5v\xb4\x02Z\xa4\xed\x8fB\x00[\xc0\x02\xf9\xc0x\x16\xf9\xa4\x02\xb8\xbb'
+b'\x8f\xa5z\xb4mZ\x97\xe9'
+</code></pre>
+<p>题目考察的是<a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir’s Secret Sharing</a>。但是正常的Shamir’s Secret Sharing是在有限域$GF(p)$下进行的，题目中是在整数域$\mathbb{Z}$下进行，由此就会产生安全问题。</p>
+<p>令</p>
+<p>$$ poly=a_0\cdot x^0 + a_1 \cdot x^1 + a_2\cdot x^2 + \cdots +a_{128}\cdot x^{128} = y $$</p>
+<p>我们对这个多项式分别模$x, x^2, \cdots, x^{129}$，可以得到</p>
+<p>$$ \begin{aligned} a_0 &amp;\equiv y \pmod{x} \ a_0 + a_1\cdot x &amp;\equiv y \pmod{x^2}\ a_0 + a_1\cdot x + a_2 \cdot x^2 &amp;\equiv y \pmod{x^3} \ &amp;\vdots \ a_0 + a_1\cdot{x}+\cdots+a_{128}\cdot{x^{128}} &amp;\equiv y \pmod{x^{129}} \end{aligned} $$</p>
+<p>已知的是$x$和$y$，就可以从上至下依次还原$a_0, a_1, a_2, \cdots, a_{128}$。但是要注意的是题目中$a_i$为64bits而$x$为16bits，根据比特关系，对于每一个$a_i$至少需要4组同余方程才能用CRT得到正确比特长度的系数$a_i$。题目给出了8组多项式，所以可以正确的恢复所有的$a_i$。</p>
+<p>exp.py</p>
+<pre><code>from sage.all import *
+from sage.all_cmdline import *
+from Crypto.Cipher import AES
+from hashlib import sha256
+
+DEGREE = 128
+
+with open('./output.txt', 'r') as f:
+    shared = eval(f.readline().strip())
+ct = b'G$\xf5\x9e\xa9\xb1e\xb5\x86w\xdfz\xbeP\xecJ\xb8wT&lt;&lt;\x84\xc5v\xb4\x02Z\xa4\xed\x8fB\x00[\xc0\x02\xf9\xc0x\x16\xf9\xa4\x02\xb8\xbb'
+nonce = b'\x8f\xa5z\xb4mZ\x97\xe9'
+
+x_list = [i[0] for i in shared]
+y_list = [i[1] for i in shared]
+
+poly = []
+
+def polyeval(poly, x):
+    return sum([a * x**i for i, a in enumerate(poly)])
+
+def recover_poly(i): # i 是要恢复系数的位置
+    an = []
+    mn = []
+    for n in range(8):
+        an.append(((y_list[n] % x_list[n]**(i+1)) - (polyeval(poly, x_list[n])) % x_list[n]**(i+1)) // x_list[n]**i)
+        mn.append(x_list[n])
+    return CRT_list(an, mn)
+
+for i in range(DEGREE+1):
+    poly.append(recover_poly(i))
+
+for i in range(8): # 验证正确性
+    assert polyeval(poly, x_list[i]) == y_list[i]
+
+secret = polyeval(poly, 0x48763)
+key = sha256(str(secret).encode()).digest()[:16]
+cipher = AES.new(key, AES.MODE_CTR, nonce=nonce)
+print(cipher.decrypt(ct))
+</code></pre>
+<p>flag <code>hitcon{doing_SSS_in_integers_is_not_good_:(}</code></p>
+<p>根据flag的内容，我这种解法应该是预期解。</p>
+
+		</section>
+
+		<div class="post-tags">
+			
+			
+			<nav class="nav tags">
+				<ul class="tags">
+					
+					<li><a href="/tags/crypto">Crypto</a></li>
+					
+				</ul>
+			</nav>
+			
+			
+		</div>
+		</article>
+</main>
+
+
+        
+       
+
+<footer>
+  <div style="display:flex"><a class="soc" href="https://github.com/clingm" rel="me" title="GitHub"><i data-feather="github"></i></a>
+    <a class="border"></a></div>
+  <div class="footer-info">
+    2024  © Clingm |  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+<script>
+  feather.replace()
+</script></div>
+    </body>
+</html>

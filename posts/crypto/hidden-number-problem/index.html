@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Hidden Number Problem - Clingm&#39;s Blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="
+在最近的很多比赛都遇到了这个Hidden Number Problem(HNP)，所以抽个时间来仔细学习一下，然后马上要HGAME2023了，正好准备一下题目给新生写。
+
+Introduce
+HNP问题第一次被提出是在这篇论文中 “Hardness of computing the most significant bits of secret keys in Diffie-Hellman and related schemes” by Dan Boneh and Ramarathnam Venkatesan。HNP问题本来是用来研究Diffie-Hellman共享密钥中的最高有效位是否与整个秘密一样难以计算？并且D. Boneh和R. Venkatesan还展示了一种有效的算法，用于在有足够大的位泄漏的情况下恢复密钥。
+
+这个方法用到了格和格基规约的算法，一开始学习格密码时把重点放在了基于格的密钥系统的学习上，但格终究是数学上的东西，数学说白了就是一个工具，那么格自然也是一个工具，只不过我们把格这个有力的工具用在了密码分析上而已。
+
+How is the HNP defined
+论文中首先提出了most significant bits（MSB）的定义。首先令$p$是一个素数，$n$是$p$的二进制位数，即$n=log_2(p)$，用$x\ mod\ p$来表示一个定义在有限域的数$a \in GF(p)$，即$x \equiv a \pmod{p}$。定义$MSB_k(x)$的值为$t$并且 $(t-1)\cdot p/2^k\leq x &lt;t \cdot p/2^k$，或者更简单的定义 $$ MSB_k(x)=z,\quad |x-z|&lt; p/2^k $$
+About the $MSB_k(x)$
+一看到most signficant bits可能很多人都会想当然的认为是$x$的最高$k$位。其实不然，根据定义，可以写一个小demo
+from random import randint
+from sage.all import *
+from Crypto.Util.number import getPrime
+# Some parameters of the game, chosen for simplicity.
+
+# p - A prime number for our field.
+p = getPrime(128)
+
+# n - The number of bits in `p`.
+n = ceil(log(p, 2))
+
+# k - The number of significant bits revealed by the oracle.
+# Using parameters from Thereom 1.
+k = ceil(sqrt(n)) &#43; ceil(log(n, 2))
+print(f&quot;The number of significant bits = {k}&quot;)
+
+def msb(query):
+    &quot;&quot;&quot;Returns the MSB of query based on the global paramters p, k.
+    &quot;&quot;&quot;
+    while True:
+        z = randint(1, p-1)
+        answer = abs(query - z)
+        if answer &lt; p / 2**(k&#43;1):
+            break
+    return z
+
+x = randint(1, p-1)
+print(f&quot;x = {x}&quot;)
+print(f&quot;MSB&#39;s output = {msb(x)}&quot;)
+print(f&quot;most k bit of x = {x &gt;&gt; (n - k)}&quot;)
+
+&#39;&#39;&#39;
+The number of significant bits = 19
+x = 54914319491231438995398843041850226262
+MSB&#39;s output = 54914493779494223381640832877194242316
+|MSB(x) - x| = 124182961411716441204715130169529
+most k bit of x = 84608
+&#39;&#39;&#39;
+
+如何去理解这个$MSB_k(x)$呢，不难得出以下几点：" />
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content="https://clingm.github.io/posts/crypto/hidden-number-problem/">
+  <meta property="og:site_name" content="Clingm&#39;s Blog">
+  <meta property="og:title" content="Hidden Number Problem">
+  <meta property="og:description" content="在最近的很多比赛都遇到了这个Hidden Number Problem(HNP)，所以抽个时间来仔细学习一下，然后马上要HGAME2023了，正好准备一下题目给新生写。
+Introduce HNP问题第一次被提出是在这篇论文中 “Hardness of computing the most significant bits of secret keys in Diffie-Hellman and related schemes” by Dan Boneh and Ramarathnam Venkatesan。HNP问题本来是用来研究Diffie-Hellman共享密钥中的最高有效位是否与整个秘密一样难以计算？并且D. Boneh和R. Venkatesan还展示了一种有效的算法，用于在有足够大的位泄漏的情况下恢复密钥。
+这个方法用到了格和格基规约的算法，一开始学习格密码时把重点放在了基于格的密钥系统的学习上，但格终究是数学上的东西，数学说白了就是一个工具，那么格自然也是一个工具，只不过我们把格这个有力的工具用在了密码分析上而已。
+How is the HNP defined 论文中首先提出了most significant bits（MSB）的定义。首先令$p$是一个素数，$n$是$p$的二进制位数，即$n=log_2(p)$，用$x\ mod\ p$来表示一个定义在有限域的数$a \in GF(p)$，即$x \equiv a \pmod{p}$。定义$MSB_k(x)$的值为$t$并且 $(t-1)\cdot p/2^k\leq x &lt;t \cdot p/2^k$，或者更简单的定义 $$ MSB_k(x)=z,\quad |x-z|&lt; p/2^k $$
+About the $MSB_k(x)$
+一看到most signficant bits可能很多人都会想当然的认为是$x$的最高$k$位。其实不然，根据定义，可以写一个小demo
+from random import randint from sage.all import * from Crypto.Util.number import getPrime # Some parameters of the game, chosen for simplicity. # p - A prime number for our field. p = getPrime(128) # n - The number of bits in `p`. n = ceil(log(p, 2)) # k - The number of significant bits revealed by the oracle. # Using parameters from Thereom 1. k = ceil(sqrt(n)) &#43; ceil(log(n, 2)) print(f&#34;The number of significant bits = {k}&#34;) def msb(query): &#34;&#34;&#34;Returns the MSB of query based on the global paramters p, k. &#34;&#34;&#34; while True: z = randint(1, p-1) answer = abs(query - z) if answer &lt; p / 2**(k&#43;1): break return z x = randint(1, p-1) print(f&#34;x = {x}&#34;) print(f&#34;MSB&#39;s output = {msb(x)}&#34;) print(f&#34;most k bit of x = {x &gt;&gt; (n - k)}&#34;) &#39;&#39;&#39; The number of significant bits = 19 x = 54914319491231438995398843041850226262 MSB&#39;s output = 54914493779494223381640832877194242316 |MSB(x) - x| = 124182961411716441204715130169529 most k bit of x = 84608 &#39;&#39;&#39; 如何去理解这个$MSB_k(x)$呢，不难得出以下几点：">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2022-11-18T15:49:12+08:00">
+    <meta property="article:modified_time" content="2024-10-28T19:24:25+08:00">
+    <meta property="article:tag" content="Crypto">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Hidden Number Problem">
+  <meta name="twitter:description" content="在最近的很多比赛都遇到了这个Hidden Number Problem(HNP)，所以抽个时间来仔细学习一下，然后马上要HGAME2023了，正好准备一下题目给新生写。
+Introduce HNP问题第一次被提出是在这篇论文中 “Hardness of computing the most significant bits of secret keys in Diffie-Hellman and related schemes” by Dan Boneh and Ramarathnam Venkatesan。HNP问题本来是用来研究Diffie-Hellman共享密钥中的最高有效位是否与整个秘密一样难以计算？并且D. Boneh和R. Venkatesan还展示了一种有效的算法，用于在有足够大的位泄漏的情况下恢复密钥。
+这个方法用到了格和格基规约的算法，一开始学习格密码时把重点放在了基于格的密钥系统的学习上，但格终究是数学上的东西，数学说白了就是一个工具，那么格自然也是一个工具，只不过我们把格这个有力的工具用在了密码分析上而已。
+How is the HNP defined 论文中首先提出了most significant bits（MSB）的定义。首先令$p$是一个素数，$n$是$p$的二进制位数，即$n=log_2(p)$，用$x\ mod\ p$来表示一个定义在有限域的数$a \in GF(p)$，即$x \equiv a \pmod{p}$。定义$MSB_k(x)$的值为$t$并且 $(t-1)\cdot p/2^k\leq x &lt;t \cdot p/2^k$，或者更简单的定义 $$ MSB_k(x)=z,\quad |x-z|&lt; p/2^k $$
+About the $MSB_k(x)$
+一看到most signficant bits可能很多人都会想当然的认为是$x$的最高$k$位。其实不然，根据定义，可以写一个小demo
+from random import randint from sage.all import * from Crypto.Util.number import getPrime # Some parameters of the game, chosen for simplicity. # p - A prime number for our field. p = getPrime(128) # n - The number of bits in `p`. n = ceil(log(p, 2)) # k - The number of significant bits revealed by the oracle. # Using parameters from Thereom 1. k = ceil(sqrt(n)) &#43; ceil(log(n, 2)) print(f&#34;The number of significant bits = {k}&#34;) def msb(query): &#34;&#34;&#34;Returns the MSB of query based on the global paramters p, k. &#34;&#34;&#34; while True: z = randint(1, p-1) answer = abs(query - z) if answer &lt; p / 2**(k&#43;1): break return z x = randint(1, p-1) print(f&#34;x = {x}&#34;) print(f&#34;MSB&#39;s output = {msb(x)}&#34;) print(f&#34;most k bit of x = {x &gt;&gt; (n - k)}&#34;) &#39;&#39;&#39; The number of significant bits = 19 x = 54914319491231438995398843041850226262 MSB&#39;s output = 54914493779494223381640832877194242316 |MSB(x) - x| = 124182961411716441204715130169529 most k bit of x = 84608 &#39;&#39;&#39; 如何去理解这个$MSB_k(x)$呢，不难得出以下几点：">
+<script src="https://clingm.github.io/js/feather.min.js"></script>
+	
+	
+        <link href="https://clingm.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://clingm.github.io/css/main.a4fb2a2bfee30ab5e4deb557e5c0d3e1a22e972fd4b8059217db4d3647b8ec52.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://clingm.github.io/css/dark.23f68d3ce4525ce2bf3f3085cf718c30981001b6eee182d17676da5827ffb3d0.css"  disabled />
+	
+
+	
+	
+		<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		</script>
+
+		
+		<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			tex2jax: {
+				inlineMath: [['$','$'], ['\\(','\\)']],
+				displayMath: [['$$','$$'], ['\[','\]']],
+				processEscapes: true,
+				processEnvironments: true,
+				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+				TeX: { equationNumbers: { autoNumber: "AMS" },
+						 extensions: ["AMSmath.js", "AMSsymbols.js"] }
+			}
+		});
+		</script>
+	
+
+	
+	
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+		
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+					renderMathInElement(document.body, {
+							delimiters: [
+									{left: "$$", right: "$$", display: true},
+									{left: "$", right: "$", display: false}
+							]
+					});
+			});
+			</script>
+	
+
+	
+		
+		
+		<link rel="stylesheet" type="text/css" href="https://clingm.github.io/css/custom.2391be1053021d99c6aee22f1c21cdfb7abf1fb6cf1d762376ad2f3bd7506461.css">
+		
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://clingm.github.io/">Clingm&#39;s Blog</a>
+	</div>
+	<nav>
+		
+		<a href="/">主页</a>
+		
+		<a href="/posts">文章</a>
+		
+		<a href="/tags">标签</a>
+		
+		<a href="/about">关于</a>
+		
+		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		<script src="https://clingm.github.io/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">Hidden Number Problem</h1>
+			<div class="meta">Posted on Nov 18, 2022<br>Updated on Oct 28, 2024</div>
+		</div>
+		
+
+		
+		<div class="toc">
+		<strong>Table of contents:</strong>
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduce">Introduce</a></li>
+    <li><a href="#how-is-the-hnp-defined">How is the HNP defined</a></li>
+    <li><a href="#main-results">Main Results</a>
+      <ul>
+        <li><a href="#theorem-1">Theorem 1</a></li>
+        <li><a href="#theorem-2">Theorem 2</a></li>
+      </ul>
+    </li>
+    <li><a href="#proof">Proof</a></li>
+    <li><a href="#example--demo">Example &amp; Demo</a></li>
+    <li><a href="#refer-to">Refer to</a></li>
+  </ul>
+</nav>
+		</div>
+
+		<section class="body">
+			<blockquote>
+<p>在最近的很多比赛都遇到了这个Hidden Number Problem(HNP)，所以抽个时间来仔细学习一下，然后马上要HGAME2023了，正好准备一下题目给新生写。</p>
+</blockquote>
+<h2 id="introduce">Introduce</h2>
+<p>HNP问题第一次被提出是在这篇论文中 <a href="https://crypto.stanford.edu/~dabo/pubs/abstracts/dhmsb.html">“Hardness of computing the most significant bits of secret keys in Diffie-Hellman and related schemes” by Dan Boneh and Ramarathnam Venkatesan</a>。HNP问题本来是用来研究Diffie-Hellman共享密钥中的最高有效位是否与整个秘密一样难以计算？并且D. Boneh和R. Venkatesan还展示了一种有效的算法，用于在有足够大的位泄漏的情况下恢复密钥。</p>
+<blockquote>
+<p>这个方法用到了格和格基规约的算法，一开始学习格密码时把重点放在了基于格的密钥系统的学习上，但格终究是数学上的东西，数学说白了就是一个工具，那么格自然也是一个工具，只不过我们把格这个有力的工具用在了密码分析上而已。</p>
+</blockquote>
+<h2 id="how-is-the-hnp-defined">How is the HNP defined</h2>
+<p>论文中首先提出了most significant bits（MSB）的定义。首先令$p$是一个素数，$n$是$p$的二进制位数，即$n=log_2(p)$，用$x\ mod\ p$来表示一个定义在有限域的数$a \in GF(p)$，即$x \equiv a \pmod{p}$。定义$MSB_k(x)$的值为$t$并且 $(t-1)\cdot p/2^k\leq x &lt;t \cdot p/2^k$，或者更简单的定义 $$ MSB_k(x)=z,\quad |x-z|&lt; p/2^k $$</p>
+<p><strong>About the $MSB_k(x)$</strong></p>
+<p>一看到most signficant bits可能很多人都会想当然的认为是$x$的最高$k$位。其实不然，根据定义，可以写一个小demo</p>
+<pre><code>from random import randint
+from sage.all import *
+from Crypto.Util.number import getPrime
+# Some parameters of the game, chosen for simplicity.
+
+# p - A prime number for our field.
+p = getPrime(128)
+
+# n - The number of bits in `p`.
+n = ceil(log(p, 2))
+
+# k - The number of significant bits revealed by the oracle.
+# Using parameters from Thereom 1.
+k = ceil(sqrt(n)) + ceil(log(n, 2))
+print(f&quot;The number of significant bits = {k}&quot;)
+
+def msb(query):
+    &quot;&quot;&quot;Returns the MSB of query based on the global paramters p, k.
+    &quot;&quot;&quot;
+    while True:
+        z = randint(1, p-1)
+        answer = abs(query - z)
+        if answer &lt; p / 2**(k+1):
+            break
+    return z
+
+x = randint(1, p-1)
+print(f&quot;x = {x}&quot;)
+print(f&quot;MSB's output = {msb(x)}&quot;)
+print(f&quot;most k bit of x = {x &gt;&gt; (n - k)}&quot;)
+
+'''
+The number of significant bits = 19
+x = 54914319491231438995398843041850226262
+MSB's output = 54914493779494223381640832877194242316
+|MSB(x) - x| = 124182961411716441204715130169529
+most k bit of x = 84608
+'''
+</code></pre>
+<p>如何去理解这个$MSB_k(x)$呢，不难得出以下几点：</p>
+<ul>
+<li>
+<p>根据$MSB_k(x)$的定义，有$u=x$是一定满足$|x-u|\leq\frac{p}{2^{k+1}}$的，那么$u=x$一定是$MSB$的一个输出，为什么是一个呢，因为这个不等式肯定是多解的。</p>
+</li>
+<li>
+<p>当$k$增大时，不等式的右边$\frac{p}{2^{k+1}}$和会快速的缩减，意味着不等式左边的$z$也就是$MSB$的输出要接近$x$。$k$越大，$MSB_k(x)$越接近$x$。</p>
+</li>
+</ul>
+<blockquote>
+<p>由于$k$越大，$MSB_k(x)$越接近$x$，也就是说，对于越大的$k$，我们得到的数就泄漏了越多的$x$的有效位。</p>
+</blockquote>
+<p>然后定义Hidden Number Problem（HNP）：确定$p$和$k$，已知$MSB_k(\alpha g^x\ mod \ p)$求$\alpha$。</p>
+<blockquote>
+<p>论文中提到如果可以请求到正确的$MSB_k(\alpha\cdot t\ mod\ p)$，这里$t=g^x$，那么恢复$\alpha$是一件简单的事情。</p>
+</blockquote>
+<h2 id="main-results">Main Results</h2>
+<p>这一节主要讲的是多大的k可以来解决HNP问题。直接上定理。</p>
+<h3 id="theorem-1">Theorem 1</h3>
+<p>令$\alpha$是定义在有限域$GF(p)$的一个数， $k=\lceil\sqrt{n}\rceil+\lceil\log n\rceil$，$\mathcal{O}(t)=\operatorname{MSB}_{k}(\alpha t \bmod p)$。存在一种算法A可以在多项式时间内解决HNP。</p>
+<p>$$ \underset{t_{1}, \ldots, t_{d}}{\operatorname{Pr}}\left[A\left(t_{1}, \ldots, t_{d}, \mathcal{O}\left(t_{1}\right), \ldots, \mathcal{O}\left(t_{d}\right)\right)=\alpha\right] \geq \frac{1}{2} $$</p>
+<p>其中$d=2\sqrt{n}$，$t_1,\cdots,t_d$是均匀的，独立的随机从$\mathbb{Z}_{p}^{*}$中选择。</p>
+<pre><code>这里均匀的，独立的随机选择应该是为了保证数据的不相关性。
+</code></pre>
+<h3 id="theorem-2">Theorem 2</h3>
+<p>设$k=\lceil\sqrt{n}\rceil+\lceil\log{n}\rceil$ ，给出一个有效的算法从$g^a, g^b$计算$MSB_k(g^{ab})$，存在一个算法可以在多项式时间内计算$g^{ab}$。也就是已知$MSB_k(g^{ab})$求$g^{ab}$。</p>
+<h2 id="proof">Proof</h2>
+<p>首先回顾一下格这个东西。格可以这个样子定义</p>
+<p>$$ L=\left{y: y=\sum_{i=1}^{d} t_{i} b_{i}, t_{i} \in \mathbb{Z}\right} $$</p>
+<p>$d$是格$L$的阶，${b_i}={b_1,\cdots,c_d}$是$L$的一组线性无关向量，被称为$L$的基，$\sum^{d}_{i=1}t_ib_i$是这个基的一个线性组合。利用LLL格基规约算法可以从一个给定的格$L$和一个点$v$（不必要是格上的点），找到一个最靠近$v$的格点。</p>
+<p>接下来证明Theorem 1。</p>
+<p>$d=2\lceil\sqrt{n}\rceil$，$k=k=\lceil\sqrt{n}\rceil+\lceil\log n\rceil$，然后假设我们已经获得了$d$个正确的MSB oracle $a_1, \cdots, a_d$，对应的输入为$t_1,\cdots,t_d$。根据MSB的定义，我们有对于所有的a和t</p>
+<p>$$ |\alpha t_i\ mod\ p-a_i|\leq p/2^k $$</p>
+<p>构造格$L$</p>
+<p>$$ \left(\begin{array}{cccccc} p &amp; 0 &amp; 0 &amp; \ldots &amp; 0 &amp; 0 \\ 0 &amp; p &amp; 0 &amp; \ldots &amp; 0 &amp; 0 \\ &amp; \vdots &amp; &amp; &amp; &amp; \vdots \\ 0 &amp; 0 &amp; 0 &amp; \ldots &amp; p &amp; 0 \\ t_{1} &amp; t_{2} &amp; t_{3} &amp; \ldots &amp; t_{d} &amp; 1 / p \end{array}\right) $$</p>
+<p>注意对于最后一行乘$\alpha$后模$p$可以得到这样一个向量</p>
+<p>$$ v_{\alpha}=(r_1,\cdots,r_d,\alpha/p) $$</p>
+<p>说明$v_{\alpha}$确实存在与格$L$中，其中 $r_i=\alpha t_i\ mod\ p$，于是</p>
+<p>$$ |r_i - a_i|&lt;p/2^k\quad i\in[1,d] $$</p>
+<p>定义向量$u=(a_1,\cdots,a_d,0)$，那么向量$u$和$v_{\alpha}$的距离，即$||u-v_{\alpha}||$</p>
+<p>$$ ||u-v_{\alpha}||&lt;\sqrt{\sum^{d-1}_{i=1}(a_i-r_i)^2+(\frac{\alpha}{p})^2} \le \sqrt{d+1}p/2^k $$</p>
+<p>那么我们就可以用LLL和Babai算法来寻找到$v_{\alpha}$，对$v_{\alpha}$的最后一个元素乘$p$就求出了$\alpha$。</p>
+<h2 id="example--demo">Example &amp; Demo</h2>
+<p>demo from <a href="https://kel.bz/post/hnp/">kel</a>.</p>
+<pre><code>from random import randint
+from sage.all import *
+from Crypto.Util.number import getPrime
+# Some parameters of the game, chosen for simplicity.
+
+# p - A prime number for our field.
+p = getPrime(128)
+
+# n - The number of bits in `p`.
+n = ceil(log(p, 2))
+
+# k - The number of significant bits revealed by the oracle.
+# Using parameters from Thereom 1.
+k = ceil(sqrt(n)) + ceil(log(n, 2))
+print(f&quot;The number of significant bits = {k}&quot;)
+d = 2*ceil(sqrt(n))
+
+def msb(query):
+    &quot;&quot;&quot;Returns the MSB of query based on the global paramters p, k.
+    &quot;&quot;&quot;
+    while True:
+        z = randint(1, p-1)
+        answer = abs(query - z)
+        if answer &lt; p / 2**(k+1):
+            break
+    return z
+
+def create_oracle(alpha):
+    &quot;&quot;&quot;Returns a randomized MSB oracle using the specified alpha value.
+    &quot;&quot;&quot;
+    alpha = alpha
+    def oracle():
+        random_t = randint(1, p-1)
+        return random_t, msb((alpha * random_t) % p)
+    return oracle
+
+def build_basis(oracle_inputs):
+    &quot;&quot;&quot;Returns a basis using the HNP game parameters and inputs to our oracle
+    &quot;&quot;&quot;
+    basis_vectors = []
+    for i in range(d):
+        p_vector = [0] * (d+1)
+        p_vector[i] = p
+        basis_vectors.append(p_vector)
+    basis_vectors.append(list(oracle_inputs) + [QQ(1)/QQ(p)])
+    return Matrix(QQ, basis_vectors)
+
+def approximate_closest_vector(basis, v):
+    &quot;&quot;&quot;Returns an approximate CVP solution using Babai's nearest plane algorithm.
+    &quot;&quot;&quot;
+    BL = basis.LLL()
+    G, _ = BL.gram_schmidt()
+    _, n = BL.dimensions()
+    small = vector(ZZ, v)
+    for i in reversed(range(n)):
+        c = QQ(small * G[i]) / QQ(G[i] * G[i])
+        c = c.round()
+        small -= BL[i] * c
+    return (v - small).coefficients()
+
+# Hidden alpha scalar
+alpha = randint(1, p-1)
+
+# Create a MSB oracle using the secret alpha scalar
+oracle = create_oracle(alpha)
+
+# Using terminology from the paper: inputs = `t` values, answers = `a` values
+inputs, answers = zip(*[ oracle() for _ in range(d) ])
+
+# Build a basis using our oracle inputs
+lattice = build_basis(inputs)
+print(&quot;Solving CVP using lattice with basis:\n%s\n&quot; % str(lattice))
+
+# The non-lattice vector based on the oracle's answers
+u = vector(ZZ, list(answers) + [0])
+print(&quot;Vector of MSB oracle answers:\n%s\n&quot; % str(u))
+
+# Solve an approximate CVP to find a vector v which is likely to reveal alpha.
+v = approximate_closest_vector(lattice, u)
+print(&quot;Closest lattice vector:\n%s\n&quot; % str(v))
+
+# Confirm the recovered value of alpha matches the expected value of alpha.
+recovered_alpha = (v[-1] * p) % p
+assert recovered_alpha == alpha
+print(&quot;Recovered alpha! Alpha is %d&quot; % recovered_alpha)
+</code></pre>
+<h2 id="refer-to">Refer to</h2>
+<ul>
+<li><a href="https://kel.bz/post/hnp/">The Hidden Number Problem</a></li>
+<li>Hardness of computing the most significant bits of secret keys in Diffie-Hellman and related schemes” by Dan Boneh and Ramarathnam Venkatesan</li>
+</ul>
+
+		</section>
+
+		<div class="post-tags">
+			
+			
+			<nav class="nav tags">
+				<ul class="tags">
+					
+					<li><a href="/tags/crypto">Crypto</a></li>
+					
+				</ul>
+			</nav>
+			
+			
+		</div>
+		</article>
+</main>
+
+
+        
+       
+
+<footer>
+  <div style="display:flex"><a class="soc" href="https://github.com/clingm" rel="me" title="GitHub"><i data-feather="github"></i></a>
+    <a class="border"></a></div>
+  <div class="footer-info">
+    2024  © Clingm |  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+<script>
+  feather.replace()
+</script></div>
+    </body>
+</html>

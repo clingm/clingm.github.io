@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>省赛初赛小记 - Clingm&#39;s Blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="今年再次参加了浙江省赛，今年是第二次参赛了，与队内的web和bin大手子一起组了队，这次预赛的成绩还是不错的，拿到第6，决赛已经稳了。这篇blog就记录一下赛中解的Crypto题水一篇。
+小小数学家
+看到题目内容和附件，就直接按照描述所说，计算一坨算式即可，直接eval()了
+probs = open(&#39;flag.txt&#39;).readlines()
+flag = []
+for prob in probs:
+    prob = prob[:-3]
+    flag.append(int(eval(prob)))
+
+print(bytes(flag))
+
+
+EC_Party-III
+题目关键代码
+    p = getPrime(384)
+    q = getPrime(384)
+    n = p*q
+    d = getPrime(80)
+    e = inverse_mod(d, ord_p*ord_q)
+
+直接就想到了wiener attack，在EC中$Order(p) = p&#43;1&#43;\alpha$,alpha是一个小于$2\sqrt{p}$的数，本来是想要调一下的，但是发现不用改直接连分数就出了
+from sage.all import *
+from Crypto.Util.number import getPrime, long_to_bytes
+
+pk = [10517482889776460226798449006280081167663671198448544453304563030553066300585088657159799516828057458092448853052920, 10402402380108575947733278581108880071660185906203575453837669489513650182676772750843558327746184945922314875098996, 452239510514900186933709062848646640558105660312444312121851933676754687850508865659206624803226663304812888272594694285123823218948165607478144589871322148031514596122654196640778853480169180864412134209693877604844174450602155353, 137939931394124279393027766586199451754893501053862574760060288577053514723631473985259186063729745515767167268309839903521149677958518517988564142828176577685619561913731155508981456507557881596602396073589127827579264760182112015, (312312975924665463422872243489714243976133330669934414246404507993066820310886215600585539115436654843078716170526368558972800117033427241194242498913898005160762151892979826292737941332916578310350510245475526522735894588645243659, 422891099305786578397746684898210811095359530216631541482542541898542508551347882962281401572399110483550691802487377837504493122807091311281569558317360479103461652558448871769150783477147866528115922507893061101403528629595165327)]
+a, b, n, e, C = pk
+
+E = EllipticCurve(Zmod(n), [a, b])
+C = E(C)
+print(C)
+
+def attack1(N, e):
+    convergents = continued_fraction(ZZ(e) / ZZ(N)).convergents()
+    for c in convergents:
+        k = c.numerator()
+        d = c.denominator()
+        M = d*C
+        flag = long_to_bytes(int(M.xy()[0]))
+        try:
+            print(flag[:-16].decode())
+        except:
+            continue
+
+print(attack1(n, e))
+
+" />
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content="https://clingm.github.io/posts/crypto/zjss2023/">
+  <meta property="og:site_name" content="Clingm&#39;s Blog">
+  <meta property="og:title" content="省赛初赛小记">
+  <meta property="og:description" content="今年再次参加了浙江省赛，今年是第二次参赛了，与队内的web和bin大手子一起组了队，这次预赛的成绩还是不错的，拿到第6，决赛已经稳了。这篇blog就记录一下赛中解的Crypto题水一篇。
+小小数学家 看到题目内容和附件，就直接按照描述所说，计算一坨算式即可，直接eval()了
+probs = open(&#39;flag.txt&#39;).readlines() flag = [] for prob in probs: prob = prob[:-3] flag.append(int(eval(prob))) print(bytes(flag)) EC_Party-III 题目关键代码
+p = getPrime(384) q = getPrime(384) n = p*q d = getPrime(80) e = inverse_mod(d, ord_p*ord_q) 直接就想到了wiener attack，在EC中$Order(p) = p&#43;1&#43;\alpha$,alpha是一个小于$2\sqrt{p}$的数，本来是想要调一下的，但是发现不用改直接连分数就出了
+from sage.all import * from Crypto.Util.number import getPrime, long_to_bytes pk = [10517482889776460226798449006280081167663671198448544453304563030553066300585088657159799516828057458092448853052920, 10402402380108575947733278581108880071660185906203575453837669489513650182676772750843558327746184945922314875098996, 452239510514900186933709062848646640558105660312444312121851933676754687850508865659206624803226663304812888272594694285123823218948165607478144589871322148031514596122654196640778853480169180864412134209693877604844174450602155353, 137939931394124279393027766586199451754893501053862574760060288577053514723631473985259186063729745515767167268309839903521149677958518517988564142828176577685619561913731155508981456507557881596602396073589127827579264760182112015, (312312975924665463422872243489714243976133330669934414246404507993066820310886215600585539115436654843078716170526368558972800117033427241194242498913898005160762151892979826292737941332916578310350510245475526522735894588645243659, 422891099305786578397746684898210811095359530216631541482542541898542508551347882962281401572399110483550691802487377837504493122807091311281569558317360479103461652558448871769150783477147866528115922507893061101403528629595165327)] a, b, n, e, C = pk E = EllipticCurve(Zmod(n), [a, b]) C = E(C) print(C) def attack1(N, e): convergents = continued_fraction(ZZ(e) / ZZ(N)).convergents() for c in convergents: k = c.numerator() d = c.denominator() M = d*C flag = long_to_bytes(int(M.xy()[0])) try: print(flag[:-16].decode()) except: continue print(attack1(n, e))">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2023-11-04T15:22:00+08:00">
+    <meta property="article:modified_time" content="2024-10-28T19:24:25+08:00">
+    <meta property="article:tag" content="Crypto">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="省赛初赛小记">
+  <meta name="twitter:description" content="今年再次参加了浙江省赛，今年是第二次参赛了，与队内的web和bin大手子一起组了队，这次预赛的成绩还是不错的，拿到第6，决赛已经稳了。这篇blog就记录一下赛中解的Crypto题水一篇。
+小小数学家 看到题目内容和附件，就直接按照描述所说，计算一坨算式即可，直接eval()了
+probs = open(&#39;flag.txt&#39;).readlines() flag = [] for prob in probs: prob = prob[:-3] flag.append(int(eval(prob))) print(bytes(flag)) EC_Party-III 题目关键代码
+p = getPrime(384) q = getPrime(384) n = p*q d = getPrime(80) e = inverse_mod(d, ord_p*ord_q) 直接就想到了wiener attack，在EC中$Order(p) = p&#43;1&#43;\alpha$,alpha是一个小于$2\sqrt{p}$的数，本来是想要调一下的，但是发现不用改直接连分数就出了
+from sage.all import * from Crypto.Util.number import getPrime, long_to_bytes pk = [10517482889776460226798449006280081167663671198448544453304563030553066300585088657159799516828057458092448853052920, 10402402380108575947733278581108880071660185906203575453837669489513650182676772750843558327746184945922314875098996, 452239510514900186933709062848646640558105660312444312121851933676754687850508865659206624803226663304812888272594694285123823218948165607478144589871322148031514596122654196640778853480169180864412134209693877604844174450602155353, 137939931394124279393027766586199451754893501053862574760060288577053514723631473985259186063729745515767167268309839903521149677958518517988564142828176577685619561913731155508981456507557881596602396073589127827579264760182112015, (312312975924665463422872243489714243976133330669934414246404507993066820310886215600585539115436654843078716170526368558972800117033427241194242498913898005160762151892979826292737941332916578310350510245475526522735894588645243659, 422891099305786578397746684898210811095359530216631541482542541898542508551347882962281401572399110483550691802487377837504493122807091311281569558317360479103461652558448871769150783477147866528115922507893061101403528629595165327)] a, b, n, e, C = pk E = EllipticCurve(Zmod(n), [a, b]) C = E(C) print(C) def attack1(N, e): convergents = continued_fraction(ZZ(e) / ZZ(N)).convergents() for c in convergents: k = c.numerator() d = c.denominator() M = d*C flag = long_to_bytes(int(M.xy()[0])) try: print(flag[:-16].decode()) except: continue print(attack1(n, e))">
+<script src="https://clingm.github.io/js/feather.min.js"></script>
+	
+	
+        <link href="https://clingm.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://clingm.github.io/css/main.a4fb2a2bfee30ab5e4deb557e5c0d3e1a22e972fd4b8059217db4d3647b8ec52.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://clingm.github.io/css/dark.23f68d3ce4525ce2bf3f3085cf718c30981001b6eee182d17676da5827ffb3d0.css"  disabled />
+	
+
+	
+	
+		<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		</script>
+
+		
+		<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			tex2jax: {
+				inlineMath: [['$','$'], ['\\(','\\)']],
+				displayMath: [['$$','$$'], ['\[','\]']],
+				processEscapes: true,
+				processEnvironments: true,
+				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+				TeX: { equationNumbers: { autoNumber: "AMS" },
+						 extensions: ["AMSmath.js", "AMSsymbols.js"] }
+			}
+		});
+		</script>
+	
+
+	
+	
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+		
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+					renderMathInElement(document.body, {
+							delimiters: [
+									{left: "$$", right: "$$", display: true},
+									{left: "$", right: "$", display: false}
+							]
+					});
+			});
+			</script>
+	
+
+	
+		
+		
+		<link rel="stylesheet" type="text/css" href="https://clingm.github.io/css/custom.2391be1053021d99c6aee22f1c21cdfb7abf1fb6cf1d762376ad2f3bd7506461.css">
+		
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://clingm.github.io/">Clingm&#39;s Blog</a>
+	</div>
+	<nav>
+		
+		<a href="/">主页</a>
+		
+		<a href="/posts">文章</a>
+		
+		<a href="/tags">标签</a>
+		
+		<a href="/about">关于</a>
+		
+		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		<script src="https://clingm.github.io/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">省赛初赛小记</h1>
+			<div class="meta">Posted on Nov 4, 2023<br>Updated on Oct 28, 2024</div>
+		</div>
+		
+
+		
+		<div class="toc">
+		<strong>Table of contents:</strong>
+		<nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+		</div>
+
+		<section class="body">
+			<p>今年再次参加了浙江省赛，今年是第二次参赛了，与队内的web和bin大手子一起组了队，这次预赛的成绩还是不错的，拿到第6，决赛已经稳了。这篇blog就记录一下赛中解的Crypto题水一篇。</p>
+<h4 id="小小数学家">小小数学家</h4>
+<p>看到题目内容和附件，就直接按照描述所说，计算一坨算式即可，直接eval()了</p>
+<pre><code>probs = open('flag.txt').readlines()
+flag = []
+for prob in probs:
+    prob = prob[:-3]
+    flag.append(int(eval(prob)))
+
+print(bytes(flag))
+</code></pre>
+<p><img src="https://cdn.jsdelivr.net/gh/clingm/PicGo-image//img/image-20231104143931933.png" alt="image-20231104143931933"></p>
+<h4 id="ec_party-iii">EC_Party-III</h4>
+<p>题目关键代码</p>
+<pre><code>    p = getPrime(384)
+    q = getPrime(384)
+    n = p*q
+    d = getPrime(80)
+    e = inverse_mod(d, ord_p*ord_q)
+</code></pre>
+<p>直接就想到了wiener attack，在EC中$Order(p) = p+1+\alpha$,alpha是一个小于$2\sqrt{p}$的数，本来是想要调一下的，但是发现不用改直接连分数就出了</p>
+<pre><code>from sage.all import *
+from Crypto.Util.number import getPrime, long_to_bytes
+
+pk = [10517482889776460226798449006280081167663671198448544453304563030553066300585088657159799516828057458092448853052920, 10402402380108575947733278581108880071660185906203575453837669489513650182676772750843558327746184945922314875098996, 452239510514900186933709062848646640558105660312444312121851933676754687850508865659206624803226663304812888272594694285123823218948165607478144589871322148031514596122654196640778853480169180864412134209693877604844174450602155353, 137939931394124279393027766586199451754893501053862574760060288577053514723631473985259186063729745515767167268309839903521149677958518517988564142828176577685619561913731155508981456507557881596602396073589127827579264760182112015, (312312975924665463422872243489714243976133330669934414246404507993066820310886215600585539115436654843078716170526368558972800117033427241194242498913898005160762151892979826292737941332916578310350510245475526522735894588645243659, 422891099305786578397746684898210811095359530216631541482542541898542508551347882962281401572399110483550691802487377837504493122807091311281569558317360479103461652558448871769150783477147866528115922507893061101403528629595165327)]
+a, b, n, e, C = pk
+
+E = EllipticCurve(Zmod(n), [a, b])
+C = E(C)
+print(C)
+
+def attack1(N, e):
+    convergents = continued_fraction(ZZ(e) / ZZ(N)).convergents()
+    for c in convergents:
+        k = c.numerator()
+        d = c.denominator()
+        M = d*C
+        flag = long_to_bytes(int(M.xy()[0]))
+        try:
+            print(flag[:-16].decode())
+        except:
+            continue
+
+print(attack1(n, e))
+</code></pre>
+<p><img src="https://cdn.jsdelivr.net/gh/clingm/PicGo-image//img/image-20231104144602967.png" alt="image-20231104144602967"></p>
+<h4 id="基础数论">基础数论</h4>
+<pre><code>from secret import x,y
+from hashlib import md5
+from sympy import isprime,nextprime
+p = x**2 + y**2
+assert isprime(p) and x*y &gt; 0
+print(p)
+</code></pre>
+<p>两数平方和，Crypto CTF 有过一样的题，sagemath two_squares()直接秒</p>
+<p><img src="https://cdn.jsdelivr.net/gh/clingm/PicGo-image//img/image-20231104153647205.png" alt="image-20231104153647205"></p>
+
+		</section>
+
+		<div class="post-tags">
+			
+			
+			<nav class="nav tags">
+				<ul class="tags">
+					
+					<li><a href="/tags/crypto">Crypto</a></li>
+					
+				</ul>
+			</nav>
+			
+			
+		</div>
+		</article>
+</main>
+
+
+        
+       
+
+<footer>
+  <div style="display:flex"><a class="soc" href="https://github.com/clingm" rel="me" title="GitHub"><i data-feather="github"></i></a>
+    <a class="border"></a></div>
+  <div class="footer-info">
+    2024  © Clingm |  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+<script>
+  feather.replace()
+</script></div>
+    </body>
+</html>

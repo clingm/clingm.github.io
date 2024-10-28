@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Hitcon Ctf 2022 Superprime - Clingm&#39;s Blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="
+继续复现HITCON CTF 的赛题。争取近期全部复现完。
+
+源码
+chall.py
+from Crypto.Util.number import getPrime, isPrime, bytes_to_long
+
+def getSuperPrime(nbits):
+    while True:
+        p = getPrime(nbits)
+        pp = bytes_to_long(str(p).encode())
+        if isPrime(pp):
+            return p, pp
+
+
+p1, q1 = getSuperPrime(512)
+p2, q2 = getSuperPrime(512)
+p3, q3 = getSuperPrime(512)
+p4, q4 = getSuperPrime(512)
+p5, q5 = getSuperPrime(512)
+
+n1 = p1 * q1
+n2 = p2 * p3
+n3 = q2 * q3
+n4 = p4 * q5
+n5 = p5 * q4
+
+e = 65537
+c = bytes_to_long(open(&quot;flag.txt&quot;, &quot;rb&quot;).read().strip())
+for n in sorted([n1, n2, n3, n4, n5]):
+    c = pow(c, e, n)
+
+print(f&quot;{n1 = }&quot;)
+print(f&quot;{n2 = }&quot;)
+print(f&quot;{n3 = }&quot;)
+print(f&quot;{n4 = }&quot;)
+print(f&quot;{n5 = }&quot;)
+print(f&quot;{e = }&quot;)
+print(f&quot;{c = }&quot;)
+
+思路
+首先可以令" />
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content="https://clingm.github.io/posts/crypto/hitcon-ctf-2022-superprime/">
+  <meta property="og:site_name" content="Clingm&#39;s Blog">
+  <meta property="og:title" content="Hitcon Ctf 2022 Superprime">
+  <meta property="og:description" content="继续复现HITCON CTF 的赛题。争取近期全部复现完。
+源码 chall.py
+from Crypto.Util.number import getPrime, isPrime, bytes_to_long def getSuperPrime(nbits): while True: p = getPrime(nbits) pp = bytes_to_long(str(p).encode()) if isPrime(pp): return p, pp p1, q1 = getSuperPrime(512) p2, q2 = getSuperPrime(512) p3, q3 = getSuperPrime(512) p4, q4 = getSuperPrime(512) p5, q5 = getSuperPrime(512) n1 = p1 * q1 n2 = p2 * p3 n3 = q2 * q3 n4 = p4 * q5 n5 = p5 * q4 e = 65537 c = bytes_to_long(open(&#34;flag.txt&#34;, &#34;rb&#34;).read().strip()) for n in sorted([n1, n2, n3, n4, n5]): c = pow(c, e, n) print(f&#34;{n1 = }&#34;) print(f&#34;{n2 = }&#34;) print(f&#34;{n3 = }&#34;) print(f&#34;{n4 = }&#34;) print(f&#34;{n5 = }&#34;) print(f&#34;{e = }&#34;) print(f&#34;{c = }&#34;) 思路 首先可以令">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2022-11-30T15:42:47+08:00">
+    <meta property="article:modified_time" content="2024-10-28T19:24:25+08:00">
+    <meta property="article:tag" content="Crypto">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Hitcon Ctf 2022 Superprime">
+  <meta name="twitter:description" content="继续复现HITCON CTF 的赛题。争取近期全部复现完。
+源码 chall.py
+from Crypto.Util.number import getPrime, isPrime, bytes_to_long def getSuperPrime(nbits): while True: p = getPrime(nbits) pp = bytes_to_long(str(p).encode()) if isPrime(pp): return p, pp p1, q1 = getSuperPrime(512) p2, q2 = getSuperPrime(512) p3, q3 = getSuperPrime(512) p4, q4 = getSuperPrime(512) p5, q5 = getSuperPrime(512) n1 = p1 * q1 n2 = p2 * p3 n3 = q2 * q3 n4 = p4 * q5 n5 = p5 * q4 e = 65537 c = bytes_to_long(open(&#34;flag.txt&#34;, &#34;rb&#34;).read().strip()) for n in sorted([n1, n2, n3, n4, n5]): c = pow(c, e, n) print(f&#34;{n1 = }&#34;) print(f&#34;{n2 = }&#34;) print(f&#34;{n3 = }&#34;) print(f&#34;{n4 = }&#34;) print(f&#34;{n5 = }&#34;) print(f&#34;{e = }&#34;) print(f&#34;{c = }&#34;) 思路 首先可以令">
+<script src="https://clingm.github.io/js/feather.min.js"></script>
+	
+	
+        <link href="https://clingm.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://clingm.github.io/css/main.a4fb2a2bfee30ab5e4deb557e5c0d3e1a22e972fd4b8059217db4d3647b8ec52.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://clingm.github.io/css/dark.23f68d3ce4525ce2bf3f3085cf718c30981001b6eee182d17676da5827ffb3d0.css"  disabled />
+	
+
+	
+	
+		<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		</script>
+
+		
+		<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			tex2jax: {
+				inlineMath: [['$','$'], ['\\(','\\)']],
+				displayMath: [['$$','$$'], ['\[','\]']],
+				processEscapes: true,
+				processEnvironments: true,
+				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+				TeX: { equationNumbers: { autoNumber: "AMS" },
+						 extensions: ["AMSmath.js", "AMSsymbols.js"] }
+			}
+		});
+		</script>
+	
+
+	
+	
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+		
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+					renderMathInElement(document.body, {
+							delimiters: [
+									{left: "$$", right: "$$", display: true},
+									{left: "$", right: "$", display: false}
+							]
+					});
+			});
+			</script>
+	
+
+	
+		
+		
+		<link rel="stylesheet" type="text/css" href="https://clingm.github.io/css/custom.2391be1053021d99c6aee22f1c21cdfb7abf1fb6cf1d762376ad2f3bd7506461.css">
+		
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://clingm.github.io/">Clingm&#39;s Blog</a>
+	</div>
+	<nav>
+		
+		<a href="/">主页</a>
+		
+		<a href="/posts">文章</a>
+		
+		<a href="/tags">标签</a>
+		
+		<a href="/about">关于</a>
+		
+		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		<script src="https://clingm.github.io/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">Hitcon Ctf 2022 Superprime</h1>
+			<div class="meta">Posted on Nov 30, 2022<br>Updated on Oct 28, 2024</div>
+		</div>
+		
+
+		
+		<div class="toc">
+		<strong>Table of contents:</strong>
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#源码">源码</a></li>
+    <li><a href="#思路">思路</a>
+      <ul>
+        <li><a href="#part-1">Part 1</a></li>
+        <li><a href="#part-2">Part 2</a></li>
+        <li><a href="#part-3">Part 3</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav>
+		</div>
+
+		<section class="body">
+			<blockquote>
+<p>继续复现HITCON CTF 的赛题。争取近期全部复现完。</p>
+</blockquote>
+<h2 id="源码">源码</h2>
+<p>chall.py</p>
+<pre><code>from Crypto.Util.number import getPrime, isPrime, bytes_to_long
+
+def getSuperPrime(nbits):
+    while True:
+        p = getPrime(nbits)
+        pp = bytes_to_long(str(p).encode())
+        if isPrime(pp):
+            return p, pp
+
+
+p1, q1 = getSuperPrime(512)
+p2, q2 = getSuperPrime(512)
+p3, q3 = getSuperPrime(512)
+p4, q4 = getSuperPrime(512)
+p5, q5 = getSuperPrime(512)
+
+n1 = p1 * q1
+n2 = p2 * p3
+n3 = q2 * q3
+n4 = p4 * q5
+n5 = p5 * q4
+
+e = 65537
+c = bytes_to_long(open(&quot;flag.txt&quot;, &quot;rb&quot;).read().strip())
+for n in sorted([n1, n2, n3, n4, n5]):
+    c = pow(c, e, n)
+
+print(f&quot;{n1 = }&quot;)
+print(f&quot;{n2 = }&quot;)
+print(f&quot;{n3 = }&quot;)
+print(f&quot;{n4 = }&quot;)
+print(f&quot;{n5 = }&quot;)
+print(f&quot;{e = }&quot;)
+print(f&quot;{c = }&quot;)
+</code></pre>
+<h2 id="思路">思路</h2>
+<p>首先可以令</p>
+<p>$$ f(x)=bytes\_to\_long(str(x).encode()) $$ 通过long_to_bytes源码，知道这这个函数就是把参数的每一个字节转成16进制然后拼起来。假设</p>
+<p>$$ \begin{aligned} x &amp;= a_0 + a_1_10 + a_2_10^2 + \cdots \\ &amp;= \sum_{i=0}^na_i*10^i \end{aligned} $$ 那么</p>
+<p>$$ \begin{aligned} f(x) &amp;= (a_0 + 48) + (a_1 + 48)«8 + (a_2 + 48)«16 + \cdots\\ &amp;=(a_0 + 48) + (a_1 + 48)*2^{8} + (a_2+48)*2^{16}+\cdots\\ &amp;=\sum_{i=0}^{n}(a_i+48)*256^{i} \end{aligned} $$ 根据题目我们可以把题目分解成三个部分</p>
+<pre><code># part 1
+n1 = p1 * q1
+# part 2
+n2 = p2 * p3
+n3 = q2 * q3
+# part 3
+n4 = p4 * q5
+n5 = p5 * q4
+</code></pre>
+<h3 id="part-1">Part 1</h3>
+<p>很容易知道$f(x)$是单调递增的，就可以用二分法搜索，时间复杂度为$O(logN)$，最多查找512次，这个时间复杂度是非常低的。</p>
+<pre><code>def binary_search(n):
+    L, R = 0, 2**512
+    while L &lt;= R:
+        middle = (L+R) // 2
+        v = middle*f(middle)
+        if v &gt; n:
+            R = middle
+        elif v &lt; n:
+            L = middle
+        else:
+            return middle
+</code></pre>
+<p>最后确实找了512次，只用了一秒不到。</p>
+<h3 id="part-2">Part 2</h3>
+<p>从<code>n2</code>, <code>n3</code>的表达式得到</p>
+<p>$$ \begin{aligned} n_2 &amp;= p_2*p_3 \\ &amp;=(a_{01}+a_{11}*10+a_{21}<em>10^2+\cdots+)</em>(a_{02}+a_{12}*10+a_{22}_10^2+\cdots+) \end{aligned} $$ $$ \begin{aligned} n_3&amp;=q_2_q_3 \\ &amp;= [(a_{01}+48) + (a_{11}+48)*256 + (a_{21}+48)<em>256^2+\cdots+]</em>[(a_{02}+48)+(a_{12}+48)*256+(a_{22}+48)*256^2+\cdots+] \end{aligned} $$</p>
+<p>可以推出</p>
+<p>$$ \begin{aligned} n_2 &amp;\equiv a_{01}*a_{02} \pmod{10} \\ n_2 &amp;\equiv (a_{01} + a_{11}<em>10)</em>(a_{02}+a_{12}*10) \pmod{10^2} \\ &amp;\vdots \\ n_2 &amp;\equiv (a_{01} + \cdots+a_{n1}<em>10^n)</em>(a_{02} + \cdots+a_{n2}*10^n) \pmod{10^{n+1}} \end{aligned} $$</p>
+<p>$$ \begin{aligned} n_3 &amp;\equiv (a_{01}+48)*(a_{02}+48) \pmod{256}\\ &amp;\vdots\\ n_3&amp;\equiv[(a_{01}+48)+\cdots+(a_{n1}+48)<em>256^n]</em>[(a_{02}+48)+\cdots+(a_{n2}+48)*256^n] \pmod{256^{n+1}} \end{aligned} $$</p>
+<p>欸？是不是感觉似曾相识。很像BabySSS这道题的处理，不过这里有两个未知变量，但是对于每一个模10和256的幂，有两个方程，而且$a_{i1}$和$a_{i2}$的取值都在$[0, 9]$ 这个区间内，可以爆破。具体的方法使用到了Prune and Search搜索算法。</p>
+<pre><code>#Prune and Search
+#official writeup from maple3142
+
+def factor2(n1, n2):
+    n1p = None
+
+    def test_digits(ps, qs):
+        nonlocal n1p
+        if n1p is not None:
+            return False
+        p = sum([pi * 10**i for i, pi in enumerate(ps)])
+        pp = sum([(48 + pi) * 256**i for i, pi in enumerate(ps)])
+        q = sum([pi * 10**i for i, pi in enumerate(qs)])
+        qq = sum([(48 + pi) * 256**i for i, pi in enumerate(qs)])
+        if p != 0 and p != 1 and n1 % p == 0:
+            n1p = p
+            return False
+        m1 = 10 ** len(ps)
+        m2 = 256 ** len(qs)
+        return (p * q) % m1 == n1 % m1 and (pp * qq) % m2 == n2 % m2
+
+    def find_ij(ps, qs):
+        for i in range(10):
+            for j in range(10):
+                if test_digits(ps + [i], qs + [j]):
+                    yield i, j
+
+    def search(ps, qs):
+        for i, j in find_ij(ps, qs):
+            search(ps + [i], qs + [j])
+
+    search([], [])
+    n2p = bytes_to_long(str(n1p).encode())
+    assert n2 % n2p == 0
+    return (n1p, n1 // n1p), (n2p, n2 // n2p)
+</code></pre>
+<h3 id="part-3">Part 3</h3>
+<p>官方wp的解决方法是把$n_4$看成</p>
+<p>$$ \begin{aligned} n4&amp;=p_4_f(p_5) \\ &amp;=p_4_f(\frac{n_5}{f(p4)}) \end{aligned} $$</p>
+<p>然后在$p_4$的长度不变的时候，$n_4$也是一个单调递增的，就可以用二分搜索分解。 <a href="https://github.com/maple3142/My-CTF-Challenges/tree/master/HITCON%20CTF%202022/Superprime">offical writeup</a></p>
+<pre><code>def factor3(n1, n2):
+    def try_factor(l, r): #二分搜索
+        while l &lt; r:
+            m = (l + r) // 2
+            if m &gt; 1 and n1 % m == 0:
+                return m
+            if m * f(n2 // f(m)) &lt; n1:
+                l = m + 1
+            else:
+                r = m - 1
+
+    for i in range(16):
+        # brute force top 4 bits of p1
+        # because len(str(p1)) must be constant to have monotonic property
+        l = i &lt;&lt; 508
+        r = l + (1 &lt;&lt; 508)
+        if p1 := try_factor(l, r):
+            return (p1, n1 // p1), (f(p1), n2 // f(p1))
+</code></pre>
+<p>最后所有的n都分解了，解5次rsa就可以了。</p>
+<h2 id="总结">总结</h2>
+<p>这道题并没有考到很多密码学上的知识，而是一些非常有用的搜索算法，以及数学上的变换。通过这道题，学习了很多，包括Prune and Search还有对于时间复杂度的估算的应用。</p>
+
+		</section>
+
+		<div class="post-tags">
+			
+			
+			<nav class="nav tags">
+				<ul class="tags">
+					
+					<li><a href="/tags/crypto">Crypto</a></li>
+					
+				</ul>
+			</nav>
+			
+			
+		</div>
+		</article>
+</main>
+
+
+        
+       
+
+<footer>
+  <div style="display:flex"><a class="soc" href="https://github.com/clingm" rel="me" title="GitHub"><i data-feather="github"></i></a>
+    <a class="border"></a></div>
+  <div class="footer-info">
+    2024  © Clingm |  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+<script>
+  feather.replace()
+</script></div>
+    </body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Migrate From Hexo to Hugo - Clingm&#39;s Blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="嗨嗨嗨，Blog大变样。
+上上个周末强网杯打的有点道心破碎，于是抽了点时间出来把博客整了整，大体上就是从hexo迁移到了hugo。于是呢就来简单聊聊整个迁移的过程。
+为什么要迁移到hugo呢？
+
+我hexo的数学公式不知道什么原因一直渲染有问题。
+感觉hexo有点慢，而且臃肿。正好hugo自称是世界上最快的网页生成框架，就想试试。
+总感觉用hugo比用hexo要高级….
+对于go语言写的东西没有抵抗力，而且越来越不喜欢nodejs了。
+
+于是在上周二决定要整成hugo，从此命运的齿轮开始转动。
+安装hugo，在archlinux上直接yay -S hugo就ok了。
+装好hugo后的第一步应该要先选择一个自己喜欢的主题。hugo themes这里有非常多的好看的主题可以选择。我使用的是Jane，在此呢也是非常推荐大家使用这个主题尤其是喜欢&quot;简洁&quot;的小伙伴。
+
+关于主题的配置可以看主题的github仓库有很详细的介绍，而且配置文件里也有很详细的中文注释和英文注释，我这里主要提一下数学公式的配置。
+在示例配置文件theme/jane/exampleSite/full-config.toml中有关于数学公式的配置项（记得把这个复制到博客根目录的配置文件中）
+
+可以在这里直接选一个开，但是这样还不够，我们需要找到主题中用于渲染latex公式的js部分。
+我已经找到在themes/jane/layout/partials/scripts.html，把他修改成下面这个样子
+&lt;!-- Mathjax --&gt;
+{{- if and (or .Params.mathjax (and .Site.Params.mathjax (ne .Params.mathjax false))) (or .IsPage .IsHome) }}
+&lt;script type=&#34;text/javascript&#34;&gt;
+    window.MathJax = { showProcessingMessages: false, messageStyle: &#34;none&#34; };
+&lt;/script&gt;
+&lt;script src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML&#34; async&gt;
+    MathJax.Hub.Config({ tex2jax: { inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;\\(&#39;,&#39;\\)&#39;]], displayMath: [[&#39;$$&#39;,&#39;$$&#39;], [&#39;\[\[&#39;,&#39;\]\]&#39;]], processEscapes: true, processEnvironments: true, skipTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;], TeX: { equationNumbers: { autoNumber: &#34;AMS&#34; }, extensions: [&#34;AMSmath.js&#34;, &#34;AMSsymbols.js&#34;] } } }); MathJax.Hub.Queue(function() { // Fix &lt;code&gt; tags after MathJax finishes running. This is a // hack to overcome a shortcoming of Markdown. Discussion at // https://github.com/mojombo/jekyll/issues/199 var all = MathJax.Hub.getAllJax(), i; for(i = 0; i &lt; all.length; i &#43;= 1) { all[i].SourceElement().parentNode.className &#43;= &#39; has-jax&#39;; } });
+&lt;/script&gt;
+&lt;style&gt;
+    code.has-jax {
+        font: inherit;
+        font-size: 100%;
+        background: inherit;
+        border: inherit;
+        color: #515151;
+    }
+&lt;/style&gt;
+{{- end }}
+&lt;!-- End --&gt;
+&lt;!-- KaTeX --&gt;
+{{- if and (or .Params.katex (and .Site.Params.katex (ne .Params.katex false))) (or .IsPage .IsHome) }}
+&lt;link rel=&#34;stylesheet&#34; href=&#34;https://cdn.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css&#34; integrity=&#34;sha384-BdGj8xC2eZkQaxoQ8nSLefg4AV4/AwB3Fj&#43;8SUSo7pnKP6Eoy18liIKTPn9oBYNG&#34; crossorigin=&#34;anonymous&#34; /&gt;
+&lt;!-- The loading of KaTeX is deferred to speed up page rendering --&gt;
+&lt;script defer src=&#34;https://cdn.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.js&#34; integrity=&#34;sha384-JiKN5O8x9Hhs/UE5cT5AAJqieYlOZbGT3CHws/y97o3ty4R7/O5poG9F3JoiOYw1&#34; crossorigin=&#34;anonymous&#34;&gt;&lt;/script&gt;
+&lt;!-- To automatically render math in text elements, include the auto-render extension: --&gt;
+&lt;script
+    defer
+    src=&#34;https://cdn.jsdelivr.net/npm/katex@0.11.0/dist/contrib/auto-render.min.js&#34;
+    integrity=&#34;sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI&#34;
+    crossorigin=&#34;anonymous&#34;
+    onload=&#34;renderMathInElement(document.body);&#34;
+&gt;&lt;/script&gt;
+&lt;script&gt;
+    document.addEventListener(&#34;DOMContentLoaded&#34;, function() { renderMathInElement(document.body, { // ...options... // customised options // • auto-render specific keys, e.g.: delimiters: [ { left: &#39;$$&#39;, right: &#39;$$&#39;, display: true }, { left: &#39;$&#39;, right: &#39;$&#39;, display: false }, { left: &#39;\\(&#39;, right: &#39;\\)&#39;, display: false }, { left: &#39;\\[&#39;, right: &#39;\\]&#39;, display: true } ], // • rendering keys, e.g.: throwOnError: false }); });
+&lt;/script&gt;
+{{- end }}
+&lt;!-- End --&gt;
+原先这里应该是空的，我加入了一些mathjax和katex的配置，比如公式的前缀后缀这些。" />
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content="https://clingm.github.io/posts/essay/migrate-from-hexo-to-hugo/">
+  <meta property="og:site_name" content="Clingm&#39;s Blog">
+  <meta property="og:title" content="Migrate From Hexo to Hugo">
+  <meta property="og:description" content="嗨嗨嗨，Blog大变样。
+上上个周末强网杯打的有点道心破碎，于是抽了点时间出来把博客整了整，大体上就是从hexo迁移到了hugo。于是呢就来简单聊聊整个迁移的过程。
+为什么要迁移到hugo呢？
+我hexo的数学公式不知道什么原因一直渲染有问题。 感觉hexo有点慢，而且臃肿。正好hugo自称是世界上最快的网页生成框架，就想试试。 总感觉用hugo比用hexo要高级…. 对于go语言写的东西没有抵抗力，而且越来越不喜欢nodejs了。 于是在上周二决定要整成hugo，从此命运的齿轮开始转动。
+安装hugo，在archlinux上直接yay -S hugo就ok了。
+装好hugo后的第一步应该要先选择一个自己喜欢的主题。hugo themes这里有非常多的好看的主题可以选择。我使用的是Jane，在此呢也是非常推荐大家使用这个主题尤其是喜欢&#34;简洁&#34;的小伙伴。
+关于主题的配置可以看主题的github仓库有很详细的介绍，而且配置文件里也有很详细的中文注释和英文注释，我这里主要提一下数学公式的配置。
+在示例配置文件theme/jane/exampleSite/full-config.toml中有关于数学公式的配置项（记得把这个复制到博客根目录的配置文件中）
+可以在这里直接选一个开，但是这样还不够，我们需要找到主题中用于渲染latex公式的js部分。
+我已经找到在themes/jane/layout/partials/scripts.html，把他修改成下面这个样子
+&lt;!-- Mathjax --&gt; {{- if and (or .Params.mathjax (and .Site.Params.mathjax (ne .Params.mathjax false))) (or .IsPage .IsHome) }} &lt;script type=&#34;text/javascript&#34;&gt; window.MathJax = { showProcessingMessages: false, messageStyle: &#34;none&#34; }; &lt;/script&gt; &lt;script src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML&#34; async&gt; MathJax.Hub.Config({ tex2jax: { inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;\\(&#39;,&#39;\\)&#39;]], displayMath: [[&#39;$$&#39;,&#39;$$&#39;], [&#39;\[\[&#39;,&#39;\]\]&#39;]], processEscapes: true, processEnvironments: true, skipTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;], TeX: { equationNumbers: { autoNumber: &#34;AMS&#34; }, extensions: [&#34;AMSmath.js&#34;, &#34;AMSsymbols.js&#34;] } } }); MathJax.Hub.Queue(function() { // Fix &lt;code&gt; tags after MathJax finishes running. This is a // hack to overcome a shortcoming of Markdown. Discussion at // https://github.com/mojombo/jekyll/issues/199 var all = MathJax.Hub.getAllJax(), i; for(i = 0; i &lt; all.length; i &#43;= 1) { all[i].SourceElement().parentNode.className &#43;= &#39; has-jax&#39;; } }); &lt;/script&gt; &lt;style&gt; code.has-jax { font: inherit; font-size: 100%; background: inherit; border: inherit; color: #515151; } &lt;/style&gt; {{- end }} &lt;!-- End --&gt; &lt;!-- KaTeX --&gt; {{- if and (or .Params.katex (and .Site.Params.katex (ne .Params.katex false))) (or .IsPage .IsHome) }} &lt;link rel=&#34;stylesheet&#34; href=&#34;https://cdn.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css&#34; integrity=&#34;sha384-BdGj8xC2eZkQaxoQ8nSLefg4AV4/AwB3Fj&#43;8SUSo7pnKP6Eoy18liIKTPn9oBYNG&#34; crossorigin=&#34;anonymous&#34; /&gt; &lt;!-- The loading of KaTeX is deferred to speed up page rendering --&gt; &lt;script defer src=&#34;https://cdn.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.js&#34; integrity=&#34;sha384-JiKN5O8x9Hhs/UE5cT5AAJqieYlOZbGT3CHws/y97o3ty4R7/O5poG9F3JoiOYw1&#34; crossorigin=&#34;anonymous&#34;&gt;&lt;/script&gt; &lt;!-- To automatically render math in text elements, include the auto-render extension: --&gt; &lt;script defer src=&#34;https://cdn.jsdelivr.net/npm/katex@0.11.0/dist/contrib/auto-render.min.js&#34; integrity=&#34;sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI&#34; crossorigin=&#34;anonymous&#34; onload=&#34;renderMathInElement(document.body);&#34; &gt;&lt;/script&gt; &lt;script&gt; document.addEventListener(&#34;DOMContentLoaded&#34;, function() { renderMathInElement(document.body, { // ...options... // customised options // • auto-render specific keys, e.g.: delimiters: [ { left: &#39;$$&#39;, right: &#39;$$&#39;, display: true }, { left: &#39;$&#39;, right: &#39;$&#39;, display: false }, { left: &#39;\\(&#39;, right: &#39;\\)&#39;, display: false }, { left: &#39;\\[&#39;, right: &#39;\\]&#39;, display: true } ], // • rendering keys, e.g.: throwOnError: false }); }); &lt;/script&gt; {{- end }} &lt;!-- End --&gt; 原先这里应该是空的，我加入了一些mathjax和katex的配置，比如公式的前缀后缀这些。">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2023-12-23T14:55:24+08:00">
+    <meta property="article:modified_time" content="2024-10-27T22:18:18+08:00">
+    <meta property="article:tag" content="Essay">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Migrate From Hexo to Hugo">
+  <meta name="twitter:description" content="嗨嗨嗨，Blog大变样。
+上上个周末强网杯打的有点道心破碎，于是抽了点时间出来把博客整了整，大体上就是从hexo迁移到了hugo。于是呢就来简单聊聊整个迁移的过程。
+为什么要迁移到hugo呢？
+我hexo的数学公式不知道什么原因一直渲染有问题。 感觉hexo有点慢，而且臃肿。正好hugo自称是世界上最快的网页生成框架，就想试试。 总感觉用hugo比用hexo要高级…. 对于go语言写的东西没有抵抗力，而且越来越不喜欢nodejs了。 于是在上周二决定要整成hugo，从此命运的齿轮开始转动。
+安装hugo，在archlinux上直接yay -S hugo就ok了。
+装好hugo后的第一步应该要先选择一个自己喜欢的主题。hugo themes这里有非常多的好看的主题可以选择。我使用的是Jane，在此呢也是非常推荐大家使用这个主题尤其是喜欢&#34;简洁&#34;的小伙伴。
+关于主题的配置可以看主题的github仓库有很详细的介绍，而且配置文件里也有很详细的中文注释和英文注释，我这里主要提一下数学公式的配置。
+在示例配置文件theme/jane/exampleSite/full-config.toml中有关于数学公式的配置项（记得把这个复制到博客根目录的配置文件中）
+可以在这里直接选一个开，但是这样还不够，我们需要找到主题中用于渲染latex公式的js部分。
+我已经找到在themes/jane/layout/partials/scripts.html，把他修改成下面这个样子
+&lt;!-- Mathjax --&gt; {{- if and (or .Params.mathjax (and .Site.Params.mathjax (ne .Params.mathjax false))) (or .IsPage .IsHome) }} &lt;script type=&#34;text/javascript&#34;&gt; window.MathJax = { showProcessingMessages: false, messageStyle: &#34;none&#34; }; &lt;/script&gt; &lt;script src=&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML&#34; async&gt; MathJax.Hub.Config({ tex2jax: { inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;\\(&#39;,&#39;\\)&#39;]], displayMath: [[&#39;$$&#39;,&#39;$$&#39;], [&#39;\[\[&#39;,&#39;\]\]&#39;]], processEscapes: true, processEnvironments: true, skipTags: [&#39;script&#39;, &#39;noscript&#39;, &#39;style&#39;, &#39;textarea&#39;, &#39;pre&#39;], TeX: { equationNumbers: { autoNumber: &#34;AMS&#34; }, extensions: [&#34;AMSmath.js&#34;, &#34;AMSsymbols.js&#34;] } } }); MathJax.Hub.Queue(function() { // Fix &lt;code&gt; tags after MathJax finishes running. This is a // hack to overcome a shortcoming of Markdown. Discussion at // https://github.com/mojombo/jekyll/issues/199 var all = MathJax.Hub.getAllJax(), i; for(i = 0; i &lt; all.length; i &#43;= 1) { all[i].SourceElement().parentNode.className &#43;= &#39; has-jax&#39;; } }); &lt;/script&gt; &lt;style&gt; code.has-jax { font: inherit; font-size: 100%; background: inherit; border: inherit; color: #515151; } &lt;/style&gt; {{- end }} &lt;!-- End --&gt; &lt;!-- KaTeX --&gt; {{- if and (or .Params.katex (and .Site.Params.katex (ne .Params.katex false))) (or .IsPage .IsHome) }} &lt;link rel=&#34;stylesheet&#34; href=&#34;https://cdn.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css&#34; integrity=&#34;sha384-BdGj8xC2eZkQaxoQ8nSLefg4AV4/AwB3Fj&#43;8SUSo7pnKP6Eoy18liIKTPn9oBYNG&#34; crossorigin=&#34;anonymous&#34; /&gt; &lt;!-- The loading of KaTeX is deferred to speed up page rendering --&gt; &lt;script defer src=&#34;https://cdn.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.js&#34; integrity=&#34;sha384-JiKN5O8x9Hhs/UE5cT5AAJqieYlOZbGT3CHws/y97o3ty4R7/O5poG9F3JoiOYw1&#34; crossorigin=&#34;anonymous&#34;&gt;&lt;/script&gt; &lt;!-- To automatically render math in text elements, include the auto-render extension: --&gt; &lt;script defer src=&#34;https://cdn.jsdelivr.net/npm/katex@0.11.0/dist/contrib/auto-render.min.js&#34; integrity=&#34;sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI&#34; crossorigin=&#34;anonymous&#34; onload=&#34;renderMathInElement(document.body);&#34; &gt;&lt;/script&gt; &lt;script&gt; document.addEventListener(&#34;DOMContentLoaded&#34;, function() { renderMathInElement(document.body, { // ...options... // customised options // • auto-render specific keys, e.g.: delimiters: [ { left: &#39;$$&#39;, right: &#39;$$&#39;, display: true }, { left: &#39;$&#39;, right: &#39;$&#39;, display: false }, { left: &#39;\\(&#39;, right: &#39;\\)&#39;, display: false }, { left: &#39;\\[&#39;, right: &#39;\\]&#39;, display: true } ], // • rendering keys, e.g.: throwOnError: false }); }); &lt;/script&gt; {{- end }} &lt;!-- End --&gt; 原先这里应该是空的，我加入了一些mathjax和katex的配置，比如公式的前缀后缀这些。">
+<script src="https://clingm.github.io/js/feather.min.js"></script>
+	
+	
+        <link href="https://clingm.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://clingm.github.io/css/main.a4fb2a2bfee30ab5e4deb557e5c0d3e1a22e972fd4b8059217db4d3647b8ec52.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://clingm.github.io/css/dark.23f68d3ce4525ce2bf3f3085cf718c30981001b6eee182d17676da5827ffb3d0.css"  disabled />
+	
+
+	
+	
+		<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		</script>
+
+		
+		<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			tex2jax: {
+				inlineMath: [['$','$'], ['\\(','\\)']],
+				displayMath: [['$$','$$'], ['\[','\]']],
+				processEscapes: true,
+				processEnvironments: true,
+				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+				TeX: { equationNumbers: { autoNumber: "AMS" },
+						 extensions: ["AMSmath.js", "AMSsymbols.js"] }
+			}
+		});
+		</script>
+	
+
+	
+	
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+		
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+					renderMathInElement(document.body, {
+							delimiters: [
+									{left: "$$", right: "$$", display: true},
+									{left: "$", right: "$", display: false}
+							]
+					});
+			});
+			</script>
+	
+
+	
+		
+		
+		<link rel="stylesheet" type="text/css" href="https://clingm.github.io/css/custom.2391be1053021d99c6aee22f1c21cdfb7abf1fb6cf1d762376ad2f3bd7506461.css">
+		
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://clingm.github.io/">Clingm&#39;s Blog</a>
+	</div>
+	<nav>
+		
+		<a href="/">主页</a>
+		
+		<a href="/posts">文章</a>
+		
+		<a href="/tags">标签</a>
+		
+		<a href="/about">关于</a>
+		
+		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		<script src="https://clingm.github.io/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">Migrate From Hexo to Hugo</h1>
+			<div class="meta">Posted on Dec 23, 2023<br>Updated on Oct 27, 2024</div>
+		</div>
+		
+
+		
+
+		<section class="body">
+			<p>嗨嗨嗨，Blog大变样。</p>
+<p>上上个周末强网杯打的有点道心破碎，于是抽了点时间出来把博客整了整，大体上就是从hexo迁移到了hugo。于是呢就来简单聊聊整个迁移的过程。</p>
+<p>为什么要迁移到hugo呢？</p>
+<ul>
+<li>我hexo的数学公式不知道什么原因一直渲染有问题。</li>
+<li>感觉hexo有点慢，而且臃肿。正好hugo自称是世界上最快的网页生成框架，就想试试。</li>
+<li>总感觉用hugo比用hexo要高级….</li>
+<li>对于go语言写的东西没有抵抗力，而且越来越不喜欢nodejs了。</li>
+</ul>
+<p>于是在上周二决定要整成hugo，从此命运的齿轮开始转动。</p>
+<p>安装hugo，在archlinux上直接<code>yay -S hugo</code>就ok了。</p>
+<p>装好hugo后的第一步应该要先选择一个自己喜欢的主题。<a href="https://themes.gohugo.io/">hugo themes</a>这里有非常多的好看的主题可以选择。我使用的是<a href="https://themes.gohugo.io/themes/hugo-theme-jane/">Jane</a>，在此呢也是非常推荐大家使用这个主题尤其是喜欢&quot;简洁&quot;的小伙伴。</p>
+<p><img src="https://themes.gohugo.io/themes/hugo-theme-jane/screenshot_hue86ec56387d55a4e982f80cc54614468_206579_750x500_fill_catmullrom_top_3.png" alt="Jane preview"></p>
+<p>关于主题的配置可以看主题的<a href="https://github.com/xianmin/hugo-theme-jane/blob/master/README-zh.md">github仓库</a>有很详细的介绍，而且配置文件里也有很详细的中文注释和英文注释，我这里主要提一下数学公式的配置。</p>
+<p>在示例配置文件theme/jane/exampleSite/full-config.toml中有关于数学公式的配置项（记得把这个复制到博客根目录的配置文件中）</p>
+<p><img src="https://s2.loli.net/2023/12/23/xt51I7Y8cw3ybWi.png" alt="Screenshot_2023-12-23-21-57-07.png"></p>
+<p>可以在这里直接选一个开，但是这样还不够，我们需要找到主题中用于渲染latex公式的js部分。</p>
+<p>我已经找到在themes/jane/layout/partials/scripts.html，把他修改成下面这个样子</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- Mathjax --&gt;</span>
+</span></span><span style="display:flex;"><span>{{- if and (or .Params.mathjax (and .Site.Params.mathjax (ne .Params.mathjax false))) (or .IsPage .IsHome) }}
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;text/javascript&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    window.<span style="color:#a6e22e">MathJax</span> <span style="color:#f92672">=</span> { <span style="color:#a6e22e">showProcessingMessages</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">false</span>, <span style="color:#a6e22e">messageStyle</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;none&#34;</span> };
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML&#34;</span> <span style="color:#a6e22e">async</span>&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">MathJax</span>.<span style="color:#a6e22e">Hub</span>.<span style="color:#a6e22e">Config</span>({ <span style="color:#a6e22e">tex2jax</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">inlineMath</span><span style="color:#f92672">:</span> [[<span style="color:#e6db74">&#39;$&#39;</span>,<span style="color:#e6db74">&#39;$&#39;</span>], [<span style="color:#e6db74">&#39;\\(&#39;</span>,<span style="color:#e6db74">&#39;\\)&#39;</span>]], <span style="color:#a6e22e">displayMath</span><span style="color:#f92672">:</span> [[<span style="color:#e6db74">&#39;$$&#39;</span>,<span style="color:#e6db74">&#39;$$&#39;</span>], [<span style="color:#e6db74">&#39;\[\[&#39;</span>,<span style="color:#e6db74">&#39;\]\]&#39;</span>]], <span style="color:#a6e22e">processEscapes</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>, <span style="color:#a6e22e">processEnvironments</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>, <span style="color:#a6e22e">skipTags</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#39;script&#39;</span>, <span style="color:#e6db74">&#39;noscript&#39;</span>, <span style="color:#e6db74">&#39;style&#39;</span>, <span style="color:#e6db74">&#39;textarea&#39;</span>, <span style="color:#e6db74">&#39;pre&#39;</span>], <span style="color:#a6e22e">TeX</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">equationNumbers</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">autoNumber</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;AMS&#34;</span> }, <span style="color:#a6e22e">extensions</span><span style="color:#f92672">:</span> [<span style="color:#e6db74">&#34;AMSmath.js&#34;</span>, <span style="color:#e6db74">&#34;AMSsymbols.js&#34;</span>] } } }); <span style="color:#a6e22e">MathJax</span>.<span style="color:#a6e22e">Hub</span>.<span style="color:#a6e22e">Queue</span>(<span style="color:#66d9ef">function</span>() { <span style="color:#75715e">// Fix &lt;code&gt; tags after MathJax finishes running. This is a // hack to overcome a shortcoming of Markdown. Discussion at // https://github.com/mojombo/jekyll/issues/199 var all = MathJax.Hub.getAllJax(), i; for(i = 0; i &lt; all.length; i += 1) { all[i].SourceElement().parentNode.className += &#39; has-jax&#39;; } });
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>&lt;/<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">style</span>&gt;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">code</span>.<span style="color:#a6e22e">has-jax</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">font</span>: <span style="color:#66d9ef">inherit</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">font-size</span>: <span style="color:#ae81ff">100</span><span style="color:#66d9ef">%</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">background</span>: <span style="color:#66d9ef">inherit</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">border</span>: <span style="color:#66d9ef">inherit</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">color</span>: <span style="color:#ae81ff">#515151</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">style</span>&gt;
+</span></span><span style="display:flex;"><span>{{- end }}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- End --&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- KaTeX --&gt;</span>
+</span></span><span style="display:flex;"><span>{{- if and (or .Params.katex (and .Site.Params.katex (ne .Params.katex false))) (or .IsPage .IsHome) }}
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">link</span> <span style="color:#a6e22e">rel</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;stylesheet&#34;</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://cdn.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.css&#34;</span> <span style="color:#a6e22e">integrity</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;sha384-BdGj8xC2eZkQaxoQ8nSLefg4AV4/AwB3Fj+8SUSo7pnKP6Eoy18liIKTPn9oBYNG&#34;</span> <span style="color:#a6e22e">crossorigin</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;anonymous&#34;</span> /&gt;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- The loading of KaTeX is deferred to speed up page rendering --&gt;</span>
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">script</span> <span style="color:#a6e22e">defer</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://cdn.jsdelivr.net/npm/katex@0.11.0/dist/katex.min.js&#34;</span> <span style="color:#a6e22e">integrity</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;sha384-JiKN5O8x9Hhs/UE5cT5AAJqieYlOZbGT3CHws/y97o3ty4R7/O5poG9F3JoiOYw1&#34;</span> <span style="color:#a6e22e">crossorigin</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;anonymous&#34;</span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- To automatically render math in text elements, include the auto-render extension: --&gt;</span>
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">script</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">defer</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://cdn.jsdelivr.net/npm/katex@0.11.0/dist/contrib/auto-render.min.js&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">integrity</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">crossorigin</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;anonymous&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">onload</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;renderMathInElement(document.body);&#34;</span>
+</span></span><span style="display:flex;"><span>&gt;&lt;/<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span>    document.<span style="color:#a6e22e">addEventListener</span>(<span style="color:#e6db74">&#34;DOMContentLoaded&#34;</span>, <span style="color:#66d9ef">function</span>() { <span style="color:#a6e22e">renderMathInElement</span>(document.<span style="color:#a6e22e">body</span>, { <span style="color:#75715e">// ...options... // customised options // • auto-render specific keys, e.g.: delimiters: [ { left: &#39;$$&#39;, right: &#39;$$&#39;, display: true }, { left: &#39;$&#39;, right: &#39;$&#39;, display: false }, { left: &#39;\\(&#39;, right: &#39;\\)&#39;, display: false }, { left: &#39;\\[&#39;, right: &#39;\\]&#39;, display: true } ], // • rendering keys, e.g.: throwOnError: false }); });
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>&lt;/<span style="color:#f92672">script</span>&gt;
+</span></span><span style="display:flex;"><span>{{- end }}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!-- End --&gt;</span>
+</span></span></code></pre></div><p>原先这里应该是空的，我加入了一些mathjax和katex的配置，比如公式的前缀后缀这些。</p>
+<p>从上面的代码中我们可以看到jane主题在处理latex公式时是请求的cdn，而不是像hexo这样把模块存储在本地。</p>
+<p>然后我们就可以愉快的用<code>hugo server</code>来在线部署我们的博客了。如果想把草稿(draft: true)也加进去记得在命令后面加上参数<code>-D</code>。</p>
+<p>至于部署虽然不能像hexo那样<code>hexo d</code>一键部署，不过写一个脚本来代替git的几个操作用起来还是不错的。</p>
+<p>最后夸一下hugo生成的目录结构真的比hexo好太多了。hexo把我们写的文章按照时间在分类，比如2022年写的文章放一起，2023年写的文章放一起。而hugo的文章目录跟我们content文件夹的目录结构是一样的，这样非常方便我们进行后续的管理或者再迁移。</p>
+
+		</section>
+
+		<div class="post-tags">
+			
+			
+			<nav class="nav tags">
+				<ul class="tags">
+					
+					<li><a href="/tags/essay">Essay</a></li>
+					
+				</ul>
+			</nav>
+			
+			
+		</div>
+		</article>
+</main>
+
+
+        
+       
+
+<footer>
+  <div style="display:flex"><a class="soc" href="https://github.com/clingm" rel="me" title="GitHub"><i data-feather="github"></i></a>
+    <a class="border"></a></div>
+  <div class="footer-info">
+    2024  © Clingm |  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+<script>
+  feather.replace()
+</script></div>
+    </body>
+</html>

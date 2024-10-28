@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Hitcon Ctf 2022 Secret - Clingm&#39;s Blog</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="源码
+prob.py
+import random, os
+from Crypto.Util.number import getPrime, bytes_to_long
+
+p = getPrime(1024)
+q = getPrime(1024)
+n = p * q
+
+flag = open(&#39;flag&#39;,&#39;rb&#39;).read()
+pad_length = 256 - len(flag)
+m = bytes_to_long(os.urandom(pad_length) &#43; flag)
+assert(m &lt; n)
+es = [random.randint(1, 2**512) for _ in range(64)]
+cs = [pow(m, p &#43; e, n) for e in es]
+print(es)
+print(cs)
+
+思路
+Recover N
+题目给出了64组
+$$ c_i\equiv m^{p&#43;e_i} \pmod{n} $$ 但是并没有给模数$n$。其实这类题目在N1CTF（EzDLP）以及maple师傅的另一道题目中出现过。
+需要恢复模数，就需要构造出像这样的式子" />
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content="https://clingm.github.io/posts/crypto/hitcon-ctf-2022-secret/">
+  <meta property="og:site_name" content="Clingm&#39;s Blog">
+  <meta property="og:title" content="Hitcon Ctf 2022 Secret">
+  <meta property="og:description" content="源码 prob.py
+import random, os from Crypto.Util.number import getPrime, bytes_to_long p = getPrime(1024) q = getPrime(1024) n = p * q flag = open(&#39;flag&#39;,&#39;rb&#39;).read() pad_length = 256 - len(flag) m = bytes_to_long(os.urandom(pad_length) &#43; flag) assert(m &lt; n) es = [random.randint(1, 2**512) for _ in range(64)] cs = [pow(m, p &#43; e, n) for e in es] print(es) print(cs) 思路 Recover N 题目给出了64组
+$$ c_i\equiv m^{p&#43;e_i} \pmod{n} $$ 但是并没有给模数$n$。其实这类题目在N1CTF（EzDLP）以及maple师傅的另一道题目中出现过。
+需要恢复模数，就需要构造出像这样的式子">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2022-12-02T15:36:08+08:00">
+    <meta property="article:modified_time" content="2024-10-28T19:24:25+08:00">
+    <meta property="article:tag" content="Crypto">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Hitcon Ctf 2022 Secret">
+  <meta name="twitter:description" content="源码 prob.py
+import random, os from Crypto.Util.number import getPrime, bytes_to_long p = getPrime(1024) q = getPrime(1024) n = p * q flag = open(&#39;flag&#39;,&#39;rb&#39;).read() pad_length = 256 - len(flag) m = bytes_to_long(os.urandom(pad_length) &#43; flag) assert(m &lt; n) es = [random.randint(1, 2**512) for _ in range(64)] cs = [pow(m, p &#43; e, n) for e in es] print(es) print(cs) 思路 Recover N 题目给出了64组
+$$ c_i\equiv m^{p&#43;e_i} \pmod{n} $$ 但是并没有给模数$n$。其实这类题目在N1CTF（EzDLP）以及maple师傅的另一道题目中出现过。
+需要恢复模数，就需要构造出像这样的式子">
+<script src="https://clingm.github.io/js/feather.min.js"></script>
+	
+	
+        <link href="https://clingm.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://clingm.github.io/css/main.a4fb2a2bfee30ab5e4deb557e5c0d3e1a22e972fd4b8059217db4d3647b8ec52.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://clingm.github.io/css/dark.23f68d3ce4525ce2bf3f3085cf718c30981001b6eee182d17676da5827ffb3d0.css"  disabled />
+	
+
+	
+	
+		<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+		</script>
+
+		
+		<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			tex2jax: {
+				inlineMath: [['$','$'], ['\\(','\\)']],
+				displayMath: [['$$','$$'], ['\[','\]']],
+				processEscapes: true,
+				processEnvironments: true,
+				skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+				TeX: { equationNumbers: { autoNumber: "AMS" },
+						 extensions: ["AMSmath.js", "AMSsymbols.js"] }
+			}
+		});
+		</script>
+	
+
+	
+	
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+		
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+					renderMathInElement(document.body, {
+							delimiters: [
+									{left: "$$", right: "$$", display: true},
+									{left: "$", right: "$", display: false}
+							]
+					});
+			});
+			</script>
+	
+
+	
+		
+		
+		<link rel="stylesheet" type="text/css" href="https://clingm.github.io/css/custom.2391be1053021d99c6aee22f1c21cdfb7abf1fb6cf1d762376ad2f3bd7506461.css">
+		
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://clingm.github.io/">Clingm&#39;s Blog</a>
+	</div>
+	<nav>
+		
+		<a href="/">主页</a>
+		
+		<a href="/posts">文章</a>
+		
+		<a href="/tags">标签</a>
+		
+		<a href="/about">关于</a>
+		
+		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		<script src="https://clingm.github.io/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">Hitcon Ctf 2022 Secret</h1>
+			<div class="meta">Posted on Dec 2, 2022<br>Updated on Oct 28, 2024</div>
+		</div>
+		
+
+		
+		<div class="toc">
+		<strong>Table of contents:</strong>
+		<nav id="TableOfContents">
+  <ul>
+    <li><a href="#源码">源码</a></li>
+    <li><a href="#思路">思路</a>
+      <ul>
+        <li><a href="#recover-n">Recover N</a></li>
+        <li><a href="#common-modulus-attack">Common Modulus Attack</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav>
+		</div>
+
+		<section class="body">
+			<h2 id="源码">源码</h2>
+<p>prob.py</p>
+<pre><code>import random, os
+from Crypto.Util.number import getPrime, bytes_to_long
+
+p = getPrime(1024)
+q = getPrime(1024)
+n = p * q
+
+flag = open('flag','rb').read()
+pad_length = 256 - len(flag)
+m = bytes_to_long(os.urandom(pad_length) + flag)
+assert(m &lt; n)
+es = [random.randint(1, 2**512) for _ in range(64)]
+cs = [pow(m, p + e, n) for e in es]
+print(es)
+print(cs)
+</code></pre>
+<h2 id="思路">思路</h2>
+<h3 id="recover-n">Recover N</h3>
+<p>题目给出了64组</p>
+<p>$$ c_i\equiv m^{p+e_i} \pmod{n} $$ 但是并没有给模数$n$。其实这类题目在N1CTF（EzDLP）以及maple师傅的另一道<a href="https://github.com/maple3142/My-CTF-Challenges/tree/master/ImaginaryCTF/Round%2026/no_modulus">题目</a>中出现过。</p>
+<p>需要恢复模数，就需要构造出像这样的式子</p>
+<p>$$ \begin{aligned} C &amp;\equiv 0 \pmod{n} \\ C &amp;=Kn \end{aligned} $$ 如果有两个或多个像这样子的同余式，就可以用$\gcd(C_1, C_2)$来恢复$n$。如果我们能找到多组$a_i$，并且$a_i$中有正数也存在负数。使得</p>
+<p>$$ \begin{aligned} \prod c_i^a \equiv m^{p\sum{a_i}}\cdot m^{\sum{e_i\cdot a_i}}\equiv 1 \pmod{n} \end{aligned} $$ 由于我们不知道$n$，所以不能直接计算模逆，但是可以写成</p>
+<p>$$ \prod{c_{i}^{a_i}}\equiv \prod_{a_i\ge{0}}{m^{p\sum{a_i}}\cdot m^{\sum{a_ie_i}}} * \prod_{a_i&lt;{0}}{m^{p\sum{a_i}}\cdot m^{\sum{a_ie_i}}} \equiv 1 \pmod{n} $$</p>
+<p>两边同乘$\prod_{a_i&lt;{0}}{m^{p\sum{-a_i}}\cdot m^{\sum{-a_ie_i}}}$</p>
+<p>$$
+\begin{aligned} \prod{c_{i}^{a_i}}\equiv \prod_{a_i\ge{0}}{m^{p\sum{a_i}}\cdot m^{\sum{a_ie_i}}}
+\equiv \prod_{a_i&lt;{0}}{m^{p\sum{-a_i}}\cdot m^{\sum{-a_ie_i}}} \pmod{n} \end{aligned}
+$$</p>
+<p>移项</p>
+<p>$$ \prod_{a_i\ge{0}}{m^{p\sum{a_i}}\cdot m^{\sum{a_ie_i}}}
+\\
+\prod_{a_i&lt;{0}}{m^{p\sum{-a_i}}\cdot m^{\sum{-a_ie_i}}} \pmod{n} \equiv 0 \pmod{n}
+$$
+即
+$$
+\prod_{a_i\ge{0}}{c_{i}^{a_i}}
+\\
+\prod_{a_i&lt;{0}}{c_{i}^{-a_i}}\equiv 0 \pmod{n}
+$$
+这样就找到了一开始说的同余式的形式。满足上面等式的$a_i$一定满足</p>
+<ul>
+<li>
+<p>1 $\sum{e_i*a_i} = 0$</p>
+</li>
+<li>
+<p>2 $\sum{a_i}=0$</p>
+</li>
+</ul>
+<p>于是就可以构造格子</p>
+<p>$$ L= \left[\begin{array}{cccccc} e_0 &amp; 1 &amp; 1 &amp; 0 &amp; \cdots &amp; 0 &amp; 0 \\ e_1 &amp; 1 &amp; 0 &amp; 1 &amp; \cdots &amp; 0 &amp; 0 \\ &amp; \vdots &amp; &amp; &amp;\ddots &amp; &amp; \\ e_{62} &amp; 1 &amp; 0 &amp; 0 &amp; \cdots &amp; 1 &amp; 0 \\ e_{63} &amp; 1 &amp; 0 &amp; 0 &amp; \cdots &amp; 0 &amp; 1 \end{array}\right] $$</p>
+<blockquote>
+<p>类似于背包问题的格，只不过背包问题中求解的向量只有0和1。</p>
+</blockquote>
+<p>可以得到</p>
+<p>$$ [a_0, a_1,\cdots,a_{62}, a_{63}]\cdot L=[0, 0,a_0, a_1,\cdots,a_{62}, a_{63}] $$</p>
+<p>由于我们要保证$[0,0, a_0, a_1, \cdots, a_{62}, a_{63}]$在格中足够小，并且可以找到多组$a_i$，可以在第一列和第二列乘一个大的系数。</p>
+<pre><code>from sage.all import *
+
+with open('output.txt') as f:
+    es = eval(f.readline().strip())
+    cs = eval(f.readline().strip())
+
+L = matrix(es).T.augment(matrix([1]*len(es)).T)
+L = L.augment(matrix.identity(len(es)))
+L[:, 0] *= 2**512
+L[:, 1] *= 2**512
+L = L.LLL()
+
+assert sum([a*e for a, e in zip(L[0][2:], es)]) == 0
+assert sum([b*e for b, e in zip(L[1][2:], es)]) == 0
+assert sum(L[0]) == 0
+assert sum(L[1]) == 0
+</code></pre>
+<blockquote>
+<p>实际上不只前两个向量满足等式，不过我们只需要两个$kn$就可以用gcd来恢复n了。</p>
+</blockquote>
+<p>recover_n.py</p>
+<pre><code>def get_kn(an):
+    prod_p = 1
+    prod_n = 1
+    for i, a in enumerate(an):
+        if a &lt; 0:
+            prod_n *= cs[i]**(-a)
+        else:
+            prod_p *= cs[i]**(a)
+    return prod_p - prod_n
+
+
+n1 = get_kn(L[0][2:])
+n2 = get_kn(L[1][2:])
+
+n = gcd(n1, n2)
+
+for i in range(2, 300):
+    while n % i == 0:
+        n //= i 
+
+print(n)
+</code></pre>
+<blockquote>
+<p>可能是由于$a_i$比较接近的原因，在计算gcd后得到的n依然很大，但是通过遍历一些小的因数就可以得到真正的n</p>
+</blockquote>
+<h3 id="common-modulus-attack">Common Modulus Attack</h3>
+<p>在得到n后，再来看</p>
+<p>$$ c_i\equiv m^{p+e_i}\equiv m^p\cdot m^{e_i} $$ 而且$m^p$是固定的，利用任意两组$c_i$就可以消去$m^p$</p>
+<p>$$ \begin{aligned} c_i\equiv m^p\cdot m^{e_i} \\ c_j\equiv m^p\cdot m^{e_j} \\ c^i\cdot c_j^{-1} \equiv m^{e_i-e_j} \pmod{n} \end{aligned} $$</p>
+<p>只要找到两个互质的$e_i - e_j$就可以很轻松的得到flag</p>
+<p>common_modulus_attack.py</p>
+<pre><code>n = 17724789252315807248927730667204930958297858773674832260928199237060866435185638955096592748220649030149566091217826522043129307162493793671996812004000118081710563332939308211259089195461643467445875873771237895923913260591027067630542357457387530104697423520079182068902045528622287770023563712446893601808377717276767453135950949329740598173138072819431625017048326434046147044619183254356138909174424066275565264916713884294982101291708384255124605118760943142140108951391604922691454403740373626767491041574402086547023530218679378259419245611411249759537391050751834703499864363713578006540759995141466969230839
+
+delta_e1 = es[1] - es[0]
+for i in range(64):
+    delta_e2 = es[i] - es[1]
+    if delta_e2 &gt; 0 and gcd(delta_e2, delta_e1) == 1:
+        break
+c1 = (cs[1] * inverse_mod(cs[0], n)) % n
+c2 = (cs[i] * inverse_mod(cs[1], n)) % n
+
+def attack(c1, c2, e1, e2):
+    g, a, b = xgcd(e1, e2)
+    if g != 1:
+        return
+    return power_mod(c1, a, n) * power_mod(c2, b, n) % n
+
+m = attack(c1, c2, delta_e1, delta_e2)
+from Crypto.Util.number import long_to_bytes
+print(long_to_bytes(m))
+</code></pre>
+<p>flag: <code>hitcon{K33p_ev3rythIn9_1nd3p3ndent!}</code></p>
+<h2 id="总结">总结</h2>
+<p>整体复现下来，发现以前还是有很多细节没有弄懂，实际上很早之前就看过了maple师傅出的那道on_modulus，但是在hitcon的比赛中还有之前的N1CTF都没有用上。</p>
+
+		</section>
+
+		<div class="post-tags">
+			
+			
+			<nav class="nav tags">
+				<ul class="tags">
+					
+					<li><a href="/tags/crypto">Crypto</a></li>
+					
+				</ul>
+			</nav>
+			
+			
+		</div>
+		</article>
+</main>
+
+
+        
+       
+
+<footer>
+  <div style="display:flex"><a class="soc" href="https://github.com/clingm" rel="me" title="GitHub"><i data-feather="github"></i></a>
+    <a class="border"></a></div>
+  <div class="footer-info">
+    2024  © Clingm |  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+<script>
+  feather.replace()
+</script></div>
+    </body>
+</html>
