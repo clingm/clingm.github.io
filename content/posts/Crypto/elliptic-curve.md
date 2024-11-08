@@ -10,15 +10,13 @@ toc: true
 
 
 
-定义
---
+## 定义
 
 在数学上，**椭圆曲线**（Elliptic curve，缩写为EC）为一[平面代数曲线](https://zh.wikipedia.org/wiki/%E4%BB%A3%E6%95%B0%E6%9B%B2%E7%BA%BF "代数曲线")，由如下形式的方程定义 $$ y^2=x^3 + ax + b $$
 
 其中$a$和$b$为实数。这类方程被称为short Weierstrass （韦尔斯特拉斯）方程。椭圆曲线的定义也要求曲线是非奇异的。几何上来说，这意味着图像里面没有尖点、自相交或孤立点。代数上来说，这成立当且仅当判别式 $$ \\Delta=-16(4a^3+27b^2) $$ 不等于0。 有short Weierstrass自然也有long Weierstrass方程 $$ y^2+a\_1xy+a\_3y=x^3+a\_2x^2+a\_4x+a\_6 $$ （至于为什么没有$a\_5$我也不知道，看过的资料里都是没有$a\_5$的） long Weierstrass形式可以转化为short Weierstrass形式。 令$y\\longrightarrow y-\\frac{(a\_1x+a\_3)}{2}$，化简后 $$ y^2=x^3+Ax^2+Bx+C $$ 再令$x\\longrightarrow x-\\frac{A}{3}$ $$ y^2=x^3+ax+b $$
 
-实数域
----
+## 实数域
 
 ### 椭圆曲线的加法
 
@@ -26,8 +24,7 @@ toc: true
 
 当$P=Q$的时候，$P,Q$的连线变成椭圆曲线的切线。此时对曲线方程的两边取微分，并且知道切线的斜率等于y的微分比x的微分 $$ 2yd\_y=3x^2d\_x+ad\_x $$ 整理后得 $$ \\lambda=\\frac{d\_y}{d\_x}=\\frac{3x^2+a}{2y} $$ 计算$X\_R,Y\_R$的公式与上面相同。
 
-有限域
----
+## 有限域
 
 实际上在定义在有限域上的椭圆曲线的加法也可以用实数域的公式，只不过除法变成求逆元 $$ \\lambda=(Y\_Q-Y\_P)(X\_Q-X\_P)^{-1} \\pmod{p} $$ 当$P=Q$时 $$ \\lambda=(3x^2+a)(2y)^{-1} \\pmod{p} $$ 但是计算乘法逆元总是复杂的（即使用拓展欧几里德算法）。所以介绍下射影平面坐标。
 
@@ -111,10 +108,9 @@ toc: true
 
 解释一下这句`M = 3*B + 0*N^2`，原先的公式是 $$ M=3B+aN^2 $$ $a$就是曲线的参数a，上面的曲线为 $$ y^2=x^3+7 \\quad(a=0,b=7) $$ 更多的细节可以看[论文](https://www.iacr.org/archive/ches2010/62250060/62250060.pdf)。
 
-Twisted Edwards curve
-=====================
+## Twisted Edwards curve
 
-定义
+### 定义
 --
 
 twisted Edwards curve也是定义在仿射平面上，形如 $$ ax^2+y^2=1+dx^2y^2 $$
@@ -127,8 +123,7 @@ $$ \\left(x\_{1}, y\_{1}\\right)+\\left(x\_{2}, y\_{2}\\right)=\\left(\\frac{x\_
 
 $$ 2(x\_1,y\_1)=\\left(\\frac{2x\_{1}y\_{1}}{ax\_{1}^2+y\_{1}^{2}}, \\frac{y\_{1}^2- a x\_{1}^{2}}{2-a x\_{1}^2- y\_{1}^2}\\right) $$
 
-射影坐标
-----
+### 射影坐标
 
 与Weierstrass curve一样
 
@@ -212,20 +207,19 @@ $$ \\begin{array}{l} B=\\left(X\_{1}+Y\_{1}\\right)^{2} \\\\ C=X\_{1}{ }^{2} \\\
         return Montgomery_to_Weierstrass(u, v, A, B, p)
     
 
-ECDLP
-=====
+## ECDLP
 
-定义
+### 定义
 --
 
 椭圆曲线密码学（ECC）依赖于椭圆曲线离散对数问题（ECDLP）的困难。对于两个点$P,Q$，有
 
-$$ Q=l\*P $$ 计算$l$，这个问题称为ECDLP。或者记作$log\_PQ$。ECDLP本身是十分困难的，但是椭圆曲线参数的选择会降低ECDLP的困难度。下面介绍两个Weak Elliptic Curve。
+$$ Q=l*P $$ 计算$l$，这个问题称为ECDLP。或者记作$log\_PQ$。ECDLP本身是十分困难的，但是椭圆曲线参数的选择会降低ECDLP的困难度。下面介绍两个Weak Elliptic Curve。
 
-Pohlig-Hellman Attack
----------------------
+### Pohlig-Hellman Attack
 
-假设我们现在有一个曲线$E(p): y^2=x^3+ax+b$，以及曲线上的两个点$P,Q$且满足$Q=k\*P$。点$P$的阶为$n=\\#<P>$。Pohlig-Hellman Attack的主要思想是把原先在阶为$n$下的ECDLP转化为若干个在$P$的子群下的ECDLP，最后用中国剩余定理恢复在模$n$下的$k$。这种算法在$n$是光滑数是尤其有效。
+
+假设我们现在有一个曲线$E(p): y^2=x^3+ax+b$，以及曲线上的两个点$P,Q$且满足$Q=k*P$。点$P$的阶为$n=\#<P>$。Pohlig-Hellman Attack的主要思想是把原先在阶为$n$下的ECDLP转化为若干个在$P$的子群下的ECDLP，最后用中国剩余定理恢复在模$n$下的$k$。这种算法在$n$是光滑数是尤其有效。
 
 Sage中的discrete\_log方法使用的就是Pohilg-Hellman Attack算法。
 
@@ -242,12 +236,12 @@ Sage中的discrete\_log方法使用的就是Pohilg-Hellman Attack算法。
     21345332
     
 
-Smart’s Attack
---------------
+### Smart’s Attack
 
-Smart’s Attack 适用于$\\#F(p)=p$的曲线。 脚本可以参考这个[smart’s attack](https://github.com/jvdsn/crypto-attacks/blob/master/attacks/ecc/smart_attack.py)。
+
+Smart’s Attack 适用于$\#F(p)=p$的曲线。 脚本可以参考这个[smart’s attack](https://github.com/jvdsn/crypto-attacks/blob/master/attacks/ecc/smart_attack.py)。
 
 > [more see](https://wstein.org/edu/2010/414/projects/novotney.pdf)
 
-奇异椭圆曲线
---------------
+## 奇异椭圆曲线
+
