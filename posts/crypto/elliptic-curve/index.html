@@ -24,7 +24,7 @@
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2022-12-15T15:33:52+08:00">
-    <meta property="article:modified_time" content="2024-10-28T19:24:25+08:00">
+    <meta property="article:modified_time" content="2024-11-08T21:58:19+08:00">
     <meta property="article:tag" content="Crypto">
 
   <meta name="twitter:card" content="summary">
@@ -41,8 +41,8 @@
 	
 
 	
-	<link rel="stylesheet" type="text/css" media="screen" href="https://clingm.github.io/css/main.a4fb2a2bfee30ab5e4deb557e5c0d3e1a22e972fd4b8059217db4d3647b8ec52.css" />
-		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://clingm.github.io/css/dark.23f68d3ce4525ce2bf3f3085cf718c30981001b6eee182d17676da5827ffb3d0.css"  disabled />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://clingm.github.io/css/main.0c4d3ef74c5e89badbf9c44037329e518be8a9ae7c455325e1030a5842cd8234.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://clingm.github.io/css/dark.db5e3ea3dfa6a5f4d88bc4fad713f11d3521ee55402e6c11cc860e58e2620eca.css"  disabled />
 	
 
 	
@@ -89,7 +89,7 @@
 	
 		
 		
-		<link rel="stylesheet" type="text/css" href="https://clingm.github.io/css/custom.2391be1053021d99c6aee22f1c21cdfb7abf1fb6cf1d762376ad2f3bd7506461.css">
+		<link rel="stylesheet" type="text/css" href="https://clingm.github.io/css/custom.2c85bad6b39bcd95ee0b9dfa78fce69e5e9751fe7350e1cb38633ccf97a0e47e.css">
 		
 </head>
 <body>
@@ -117,7 +117,7 @@
 	<article>
 		<div class="title">
 			<h1 class="title">Elliptic Curve</h1>
-			<div class="meta">Posted on Dec 15, 2022<br>Updated on Oct 28, 2024</div>
+			<div class="meta">Posted on Dec 15, 2022<br>Updated on Nov 8, 2024</div>
 		</div>
 		
 
@@ -138,21 +138,20 @@
         <li><a href="#雅可比坐标">雅可比坐标</a></li>
       </ul>
     </li>
-  </ul>
-
-  <ul>
-    <li><a href="#定义-1">定义</a></li>
-    <li><a href="#射影坐标-1">射影坐标</a>
+    <li><a href="#twisted-edwards-curve">Twisted Edwards curve</a>
       <ul>
+        <li><a href="#定义-1">定义</a></li>
+        <li><a href="#射影坐标-1">射影坐标</a></li>
         <li><a href="#montgomery-curves-and-twisted-edwards-curves">Montgomery Curves and Twisted Edwards Curves</a></li>
       </ul>
     </li>
-  </ul>
-
-  <ul>
-    <li><a href="#定义-2">定义</a></li>
-    <li><a href="#pohlig-hellman-attack">Pohlig-Hellman Attack</a></li>
-    <li><a href="#smarts-attack">Smart’s Attack</a></li>
+    <li><a href="#ecdlp">ECDLP</a>
+      <ul>
+        <li><a href="#定义-2">定义</a></li>
+        <li><a href="#pohlig-hellman-attack">Pohlig-Hellman Attack</a></li>
+        <li><a href="#smarts-attack">Smart’s Attack</a></li>
+      </ul>
+    </li>
     <li><a href="#奇异椭圆曲线">奇异椭圆曲线</a></li>
   </ul>
 </nav>
@@ -237,14 +236,15 @@ sage: 2*P
 (211487819687729717989558216870258642315 : 181567709617916269765770514916557993658 : 1)
 </code></pre>
 <p>解释一下这句<code>M = 3*B + 0*N^2</code>，原先的公式是 $$ M=3B+aN^2 $$ $a$就是曲线的参数a，上面的曲线为 $$ y^2=x^3+7 \quad(a=0,b=7) $$ 更多的细节可以看<a href="https://www.iacr.org/archive/ches2010/62250060/62250060.pdf">论文</a>。</p>
-<h1 id="twisted-edwards-curve">Twisted Edwards curve</h1>
-<h2 id="定义-1">定义</h2>
+<h2 id="twisted-edwards-curve">Twisted Edwards curve</h2>
+<h3 id="定义-1">定义</h3>
+<p>&ndash;</p>
 <p>twisted Edwards curve也是定义在仿射平面上，形如 $$ ax^2+y^2=1+dx^2y^2 $$</p>
 <p><strong>twisted Edwards curve上的加法</strong></p>
 <p>$$ \left(x_{1}, y_{1}\right)+\left(x_{2}, y_{2}\right)=\left(\frac{x_{1} y_{2}+y_{1} x_{2}}{1+d x_{1} x_{2} y_{1} y_{2}}, \frac{y_{1} y_{2}-a x_{1} x_{2}}{1-d x_{1} x_{2} y_{1} y_{2}}\right) $$</p>
 <p><strong>twisted Edwards curve上的倍点</strong></p>
 <p>$$ 2(x_1,y_1)=\left(\frac{2x_{1}y_{1}}{ax_{1}^2+y_{1}^{2}}, \frac{y_{1}^2- a x_{1}^{2}}{2-a x_{1}^2- y_{1}^2}\right) $$</p>
-<h2 id="射影坐标-1">射影坐标</h2>
+<h3 id="射影坐标-1">射影坐标</h3>
 <p>与Weierstrass curve一样</p>
 <p>$$ (X:Y:Z)\longrightarrow \left(\frac{X}{Z},\frac{Y}{Z}\right) $$ 于是得到射影平面的形式</p>
 <p>$$ (aX^2+Y^2)Z^2=Z^4+dX^2Y^2 $$ <strong>加法</strong></p>
@@ -312,12 +312,13 @@ def twisted_to_Weierstrass(x, y, a, d, p):
 	u, v, A, B = twisted_to_Montgomery(x, y, a, d, p)
     return Montgomery_to_Weierstrass(u, v, A, B, p)
 </code></pre>
-<h1 id="ecdlp">ECDLP</h1>
-<h2 id="定义-2">定义</h2>
+<h2 id="ecdlp">ECDLP</h2>
+<h3 id="定义-2">定义</h3>
+<p>&ndash;</p>
 <p>椭圆曲线密码学（ECC）依赖于椭圆曲线离散对数问题（ECDLP）的困难。对于两个点$P,Q$，有</p>
 <p>$$ Q=l*P $$ 计算$l$，这个问题称为ECDLP。或者记作$log_PQ$。ECDLP本身是十分困难的，但是椭圆曲线参数的选择会降低ECDLP的困难度。下面介绍两个Weak Elliptic Curve。</p>
-<h2 id="pohlig-hellman-attack">Pohlig-Hellman Attack</h2>
-<p>假设我们现在有一个曲线$E(p): y^2=x^3+ax+b$，以及曲线上的两个点$P,Q$且满足$Q=k*P$。点$P$的阶为$n=\#<!-- raw HTML omitted -->$。Pohlig-Hellman Attack的主要思想是把原先在阶为$n$下的ECDLP转化为若干个在$P$的子群下的ECDLP，最后用中国剩余定理恢复在模$n$下的$k$。这种算法在$n$是光滑数是尤其有效。</p>
+<h3 id="pohlig-hellman-attack">Pohlig-Hellman Attack</h3>
+<p>假设我们现在有一个曲线$E(p): y^2=x^3+ax+b$，以及曲线上的两个点$P,Q$且满足$Q=k*P$。点$P$的阶为$n=#<!-- raw HTML omitted -->$。Pohlig-Hellman Attack的主要思想是把原先在阶为$n$下的ECDLP转化为若干个在$P$的子群下的ECDLP，最后用中国剩余定理恢复在模$n$下的$k$。这种算法在$n$是光滑数是尤其有效。</p>
 <p>Sage中的discrete_log方法使用的就是Pohilg-Hellman Attack算法。</p>
 <pre><code>sage: m = 21345332
 sage: p = 4516284508517
@@ -331,8 +332,8 @@ CPU times: user 5.13 s, sys: 23.6 ms, total: 5.16 s
 Wall time: 5.16 s
 21345332
 </code></pre>
-<h2 id="smarts-attack">Smart’s Attack</h2>
-<p>Smart’s Attack 适用于$\#F(p)=p$的曲线。 脚本可以参考这个<a href="https://github.com/jvdsn/crypto-attacks/blob/master/attacks/ecc/smart_attack.py">smart’s attack</a>。</p>
+<h3 id="smarts-attack">Smart’s Attack</h3>
+<p>Smart’s Attack 适用于$#F(p)=p$的曲线。 脚本可以参考这个<a href="https://github.com/jvdsn/crypto-attacks/blob/master/attacks/ecc/smart_attack.py">smart’s attack</a>。</p>
 <blockquote>
 <p><a href="https://wstein.org/edu/2010/414/projects/novotney.pdf">more see</a></p>
 </blockquote>

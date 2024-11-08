@@ -35,24 +35,42 @@ def kmeans(k, X, max_iter=100):
 
         centroids = new_centroids
     return labels, centroids, distances
-簇内平方和" />
+簇内平方和
+def metric(X, labels, centroids, k=None):
+    if isinstance(X, pd.DataFrame):
+        X = X.to_numpy()
+    if k == None:
+        k = centroids.shape[0]
+
+    distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2)
+    squared_distances = np.square(distances)
+
+    inertia = 0
+    for i in range(k):
+        inertia &#43;= np.sum(squared_distances[labels == i, i])
+
+    return inertia
+test
+原始数据分布" />
 	<meta property="og:image" content=""/>
 	<meta property="og:url" content="https://clingm.github.io/posts/machine-learning/ml-start-kmeans/">
   <meta property="og:site_name" content="Clingm&#39;s Blog">
   <meta property="og:title" content="Machine Learning Start -- Kmeans">
   <meta property="og:description" content="instro K均值聚类（K-Means clustering）是一种常见的无监督学习算法，用于将数据集划分为K个簇。
-算法伪代码如下 使用西瓜数据集4.0来对算法进行测试 main idea 距离算法使用欧几里得距离，与sklearn和matlab一致 使用最大迭代次数和质心偏移量来控制算法迭代过程 使用簇内距离的平均值作为模型评估的标准 implement def kmeans(k, X, max_iter=100): if isinstance(X, pd.DataFrame): X = X.to_numpy() # init vec centroids = X[np.random.choice(len(X), k, replace=False)] for _ in range(max_iter): # calc distance distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2) labels = np.argmin(distances, axis=1) # new center new_centroids = np.array([X[labels == i].mean(axis=0) for i in range(k)]) if np.linalg.norm(new_centroids - centroids) &lt; 1e-4: break centroids = new_centroids return labels, centroids, distances 簇内平方和">
+算法伪代码如下 使用西瓜数据集4.0来对算法进行测试 main idea 距离算法使用欧几里得距离，与sklearn和matlab一致 使用最大迭代次数和质心偏移量来控制算法迭代过程 使用簇内距离的平均值作为模型评估的标准 implement def kmeans(k, X, max_iter=100): if isinstance(X, pd.DataFrame): X = X.to_numpy() # init vec centroids = X[np.random.choice(len(X), k, replace=False)] for _ in range(max_iter): # calc distance distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2) labels = np.argmin(distances, axis=1) # new center new_centroids = np.array([X[labels == i].mean(axis=0) for i in range(k)]) if np.linalg.norm(new_centroids - centroids) &lt; 1e-4: break centroids = new_centroids return labels, centroids, distances 簇内平方和
+def metric(X, labels, centroids, k=None): if isinstance(X, pd.DataFrame): X = X.to_numpy() if k == None: k = centroids.shape[0] distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2) squared_distances = np.square(distances) inertia = 0 for i in range(k): inertia &#43;= np.sum(squared_distances[labels == i, i]) return inertia test 原始数据分布">
   <meta property="og:locale" content="en_us">
   <meta property="og:type" content="article">
     <meta property="article:section" content="posts">
     <meta property="article:published_time" content="2024-01-27T17:03:21+08:00">
-    <meta property="article:modified_time" content="2024-10-28T19:24:25+08:00">
+    <meta property="article:modified_time" content="2024-11-08T21:48:58+08:00">
     <meta property="article:tag" content="Machine-Learning">
 
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Machine Learning Start -- Kmeans">
   <meta name="twitter:description" content="instro K均值聚类（K-Means clustering）是一种常见的无监督学习算法，用于将数据集划分为K个簇。
-算法伪代码如下 使用西瓜数据集4.0来对算法进行测试 main idea 距离算法使用欧几里得距离，与sklearn和matlab一致 使用最大迭代次数和质心偏移量来控制算法迭代过程 使用簇内距离的平均值作为模型评估的标准 implement def kmeans(k, X, max_iter=100): if isinstance(X, pd.DataFrame): X = X.to_numpy() # init vec centroids = X[np.random.choice(len(X), k, replace=False)] for _ in range(max_iter): # calc distance distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2) labels = np.argmin(distances, axis=1) # new center new_centroids = np.array([X[labels == i].mean(axis=0) for i in range(k)]) if np.linalg.norm(new_centroids - centroids) &lt; 1e-4: break centroids = new_centroids return labels, centroids, distances 簇内平方和">
+算法伪代码如下 使用西瓜数据集4.0来对算法进行测试 main idea 距离算法使用欧几里得距离，与sklearn和matlab一致 使用最大迭代次数和质心偏移量来控制算法迭代过程 使用簇内距离的平均值作为模型评估的标准 implement def kmeans(k, X, max_iter=100): if isinstance(X, pd.DataFrame): X = X.to_numpy() # init vec centroids = X[np.random.choice(len(X), k, replace=False)] for _ in range(max_iter): # calc distance distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2) labels = np.argmin(distances, axis=1) # new center new_centroids = np.array([X[labels == i].mean(axis=0) for i in range(k)]) if np.linalg.norm(new_centroids - centroids) &lt; 1e-4: break centroids = new_centroids return labels, centroids, distances 簇内平方和
+def metric(X, labels, centroids, k=None): if isinstance(X, pd.DataFrame): X = X.to_numpy() if k == None: k = centroids.shape[0] distances = np.linalg.norm(X[:, np.newaxis] - centroids, axis=2) squared_distances = np.square(distances) inertia = 0 for i in range(k): inertia &#43;= np.sum(squared_distances[labels == i, i]) return inertia test 原始数据分布">
 <script src="https://clingm.github.io/js/feather.min.js"></script>
 	
 	
@@ -60,8 +78,8 @@ def kmeans(k, X, max_iter=100):
 	
 
 	
-	<link rel="stylesheet" type="text/css" media="screen" href="https://clingm.github.io/css/main.a4fb2a2bfee30ab5e4deb557e5c0d3e1a22e972fd4b8059217db4d3647b8ec52.css" />
-		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://clingm.github.io/css/dark.23f68d3ce4525ce2bf3f3085cf718c30981001b6eee182d17676da5827ffb3d0.css"  disabled />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://clingm.github.io/css/main.0c4d3ef74c5e89badbf9c44037329e518be8a9ae7c455325e1030a5842cd8234.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://clingm.github.io/css/dark.db5e3ea3dfa6a5f4d88bc4fad713f11d3521ee55402e6c11cc860e58e2620eca.css"  disabled />
 	
 
 	
@@ -108,7 +126,7 @@ def kmeans(k, X, max_iter=100):
 	
 		
 		
-		<link rel="stylesheet" type="text/css" href="https://clingm.github.io/css/custom.2391be1053021d99c6aee22f1c21cdfb7abf1fb6cf1d762376ad2f3bd7506461.css">
+		<link rel="stylesheet" type="text/css" href="https://clingm.github.io/css/custom.2c85bad6b39bcd95ee0b9dfa78fce69e5e9751fe7350e1cb38633ccf97a0e47e.css">
 		
 </head>
 <body>
@@ -136,7 +154,7 @@ def kmeans(k, X, max_iter=100):
 	<article>
 		<div class="title">
 			<h1 class="title">Machine Learning Start -- Kmeans</h1>
-			<div class="meta">Posted on Jan 27, 2024<br>Updated on Oct 28, 2024</div>
+			<div class="meta">Posted on Jan 27, 2024<br>Updated on Nov 8, 2024</div>
 		</div>
 		
 
@@ -167,51 +185,51 @@ def kmeans(k, X, max_iter=100):
 <li>使用簇内距离的平均值作为模型评估的标准</li>
 </ul>
 <h2 id="implement">implement</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">kmeans</span>(k, X, max_iter<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>):
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> isinstance(X, pd<span style="color:#f92672">.</span>DataFrame):
-</span></span><span style="display:flex;"><span>        X <span style="color:#f92672">=</span> X<span style="color:#f92672">.</span>to_numpy()
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># init vec</span>
-</span></span><span style="display:flex;"><span>    centroids <span style="color:#f92672">=</span> X[np<span style="color:#f92672">.</span>random<span style="color:#f92672">.</span>choice(len(X), k, replace<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>)]
+<div class="highlight"><pre tabindex="0" style="color:#c6d0f5;background-color:#303446;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ca9ee6">def</span> <span style="color:#8caaee">kmeans</span>(k, X, max_iter<span style="color:#99d1db;font-weight:bold">=</span><span style="color:#ef9f76">100</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#ca9ee6">if</span> <span style="color:#99d1db">isinstance</span>(X, pd<span style="color:#99d1db;font-weight:bold">.</span>DataFrame):
+</span></span><span style="display:flex;"><span>        X <span style="color:#99d1db;font-weight:bold">=</span> X<span style="color:#99d1db;font-weight:bold">.</span>to_numpy()
+</span></span><span style="display:flex;"><span>    <span style="color:#737994;font-style:italic"># init vec</span>
+</span></span><span style="display:flex;"><span>    centroids <span style="color:#99d1db;font-weight:bold">=</span> X[np<span style="color:#99d1db;font-weight:bold">.</span>random<span style="color:#99d1db;font-weight:bold">.</span>choice(<span style="color:#99d1db">len</span>(X), k, replace<span style="color:#99d1db;font-weight:bold">=</span><span style="color:#ef9f76">False</span>)]
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(max_iter):
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># calc distance</span>
-</span></span><span style="display:flex;"><span>        distances <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>linalg<span style="color:#f92672">.</span>norm(X[:, np<span style="color:#f92672">.</span>newaxis] <span style="color:#f92672">-</span> centroids, axis<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#ca9ee6">for</span> _ <span style="color:#99d1db;font-weight:bold">in</span> <span style="color:#99d1db">range</span>(max_iter):
+</span></span><span style="display:flex;"><span>        <span style="color:#737994;font-style:italic"># calc distance</span>
+</span></span><span style="display:flex;"><span>        distances <span style="color:#99d1db;font-weight:bold">=</span> np<span style="color:#99d1db;font-weight:bold">.</span>linalg<span style="color:#99d1db;font-weight:bold">.</span>norm(X[:, np<span style="color:#99d1db;font-weight:bold">.</span>newaxis] <span style="color:#99d1db;font-weight:bold">-</span> centroids, axis<span style="color:#99d1db;font-weight:bold">=</span><span style="color:#ef9f76">2</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        labels <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>argmin(distances, axis<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        labels <span style="color:#99d1db;font-weight:bold">=</span> np<span style="color:#99d1db;font-weight:bold">.</span>argmin(distances, axis<span style="color:#99d1db;font-weight:bold">=</span><span style="color:#ef9f76">1</span>)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># new center</span>
-</span></span><span style="display:flex;"><span>        new_centroids <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>array([X[labels <span style="color:#f92672">==</span> i]<span style="color:#f92672">.</span>mean(axis<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(k)])
+</span></span><span style="display:flex;"><span>        <span style="color:#737994;font-style:italic"># new center</span>
+</span></span><span style="display:flex;"><span>        new_centroids <span style="color:#99d1db;font-weight:bold">=</span> np<span style="color:#99d1db;font-weight:bold">.</span>array([X[labels <span style="color:#99d1db;font-weight:bold">==</span> i]<span style="color:#99d1db;font-weight:bold">.</span>mean(axis<span style="color:#99d1db;font-weight:bold">=</span><span style="color:#ef9f76">0</span>) <span style="color:#ca9ee6">for</span> i <span style="color:#99d1db;font-weight:bold">in</span> <span style="color:#99d1db">range</span>(k)])
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> np<span style="color:#f92672">.</span>linalg<span style="color:#f92672">.</span>norm(new_centroids <span style="color:#f92672">-</span> centroids) <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">1e-4</span>:
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">break</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#ca9ee6">if</span> np<span style="color:#99d1db;font-weight:bold">.</span>linalg<span style="color:#99d1db;font-weight:bold">.</span>norm(new_centroids <span style="color:#99d1db;font-weight:bold">-</span> centroids) <span style="color:#99d1db;font-weight:bold">&lt;</span> <span style="color:#ef9f76">1e-4</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#ca9ee6">break</span>
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        centroids <span style="color:#f92672">=</span> new_centroids
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> labels, centroids, distances
+</span></span><span style="display:flex;"><span>        centroids <span style="color:#99d1db;font-weight:bold">=</span> new_centroids
+</span></span><span style="display:flex;"><span>    <span style="color:#ca9ee6">return</span> labels, centroids, distances
 </span></span></code></pre></div><p>簇内平方和</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">metric</span>(X, labels, centroids, k<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>):
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> isinstance(X, pd<span style="color:#f92672">.</span>DataFrame):
-</span></span><span style="display:flex;"><span>        X <span style="color:#f92672">=</span> X<span style="color:#f92672">.</span>to_numpy()
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> k <span style="color:#f92672">==</span> <span style="color:#66d9ef">None</span>:
-</span></span><span style="display:flex;"><span>        k <span style="color:#f92672">=</span> centroids<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>]
+<div class="highlight"><pre tabindex="0" style="color:#c6d0f5;background-color:#303446;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#ca9ee6">def</span> <span style="color:#8caaee">metric</span>(X, labels, centroids, k<span style="color:#99d1db;font-weight:bold">=</span><span style="color:#ef9f76">None</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#ca9ee6">if</span> <span style="color:#99d1db">isinstance</span>(X, pd<span style="color:#99d1db;font-weight:bold">.</span>DataFrame):
+</span></span><span style="display:flex;"><span>        X <span style="color:#99d1db;font-weight:bold">=</span> X<span style="color:#99d1db;font-weight:bold">.</span>to_numpy()
+</span></span><span style="display:flex;"><span>    <span style="color:#ca9ee6">if</span> k <span style="color:#99d1db;font-weight:bold">==</span> <span style="color:#ef9f76">None</span>:
+</span></span><span style="display:flex;"><span>        k <span style="color:#99d1db;font-weight:bold">=</span> centroids<span style="color:#99d1db;font-weight:bold">.</span>shape[<span style="color:#ef9f76">0</span>]
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    distances <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>linalg<span style="color:#f92672">.</span>norm(X[:, np<span style="color:#f92672">.</span>newaxis] <span style="color:#f92672">-</span> centroids, axis<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>)
-</span></span><span style="display:flex;"><span>    squared_distances <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>square(distances)
+</span></span><span style="display:flex;"><span>    distances <span style="color:#99d1db;font-weight:bold">=</span> np<span style="color:#99d1db;font-weight:bold">.</span>linalg<span style="color:#99d1db;font-weight:bold">.</span>norm(X[:, np<span style="color:#99d1db;font-weight:bold">.</span>newaxis] <span style="color:#99d1db;font-weight:bold">-</span> centroids, axis<span style="color:#99d1db;font-weight:bold">=</span><span style="color:#ef9f76">2</span>)
+</span></span><span style="display:flex;"><span>    squared_distances <span style="color:#99d1db;font-weight:bold">=</span> np<span style="color:#99d1db;font-weight:bold">.</span>square(distances)
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    inertia <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(k):
-</span></span><span style="display:flex;"><span>        inertia <span style="color:#f92672">+=</span> np<span style="color:#f92672">.</span>sum(squared_distances[labels <span style="color:#f92672">==</span> i, i])
+</span></span><span style="display:flex;"><span>    inertia <span style="color:#99d1db;font-weight:bold">=</span> <span style="color:#ef9f76">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#ca9ee6">for</span> i <span style="color:#99d1db;font-weight:bold">in</span> <span style="color:#99d1db">range</span>(k):
+</span></span><span style="display:flex;"><span>        inertia <span style="color:#99d1db;font-weight:bold">+=</span> np<span style="color:#99d1db;font-weight:bold">.</span>sum(squared_distances[labels <span style="color:#99d1db;font-weight:bold">==</span> i, i])
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> inertia
+</span></span><span style="display:flex;"><span>    <span style="color:#ca9ee6">return</span> inertia
 </span></span></code></pre></div><h2 id="test">test</h2>
 <p>原始数据分布</p>
 <p><img src="https://s2.loli.net/2024/01/27/3azAEeUpL2FrRqj.png" alt="raw-data-4-0.png"></p>
 <p>聚类结果</p>
 <p><img src="https://s2.loli.net/2024/01/27/SZk8b5MtgizOTVG.png" alt="kmeans.png"></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>质心: 
-</span></span><span style="display:flex;"><span><span style="color:#f92672">[[</span>0.64666667 0.18044444<span style="color:#f92672">]</span>
-</span></span><span style="display:flex;"><span> <span style="color:#f92672">[</span>0.471      0.39928571<span style="color:#f92672">]</span>
-</span></span><span style="display:flex;"><span> <span style="color:#f92672">[</span>0.348      0.18955556<span style="color:#f92672">]</span>
-</span></span><span style="display:flex;"><span> <span style="color:#f92672">[</span>0.7322     0.4232    <span style="color:#f92672">]]</span>
+<div class="highlight"><pre tabindex="0" style="color:#c6d0f5;background-color:#303446;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>质心: 
+</span></span><span style="display:flex;"><span><span style="color:#99d1db;font-weight:bold">[[</span>0.64666667 0.18044444<span style="color:#99d1db;font-weight:bold">]</span>
+</span></span><span style="display:flex;"><span> <span style="color:#99d1db;font-weight:bold">[</span>0.471      0.39928571<span style="color:#99d1db;font-weight:bold">]</span>
+</span></span><span style="display:flex;"><span> <span style="color:#99d1db;font-weight:bold">[</span>0.348      0.18955556<span style="color:#99d1db;font-weight:bold">]</span>
+</span></span><span style="display:flex;"><span> <span style="color:#99d1db;font-weight:bold">[</span>0.7322     0.4232    <span style="color:#99d1db;font-weight:bold">]]</span>
 </span></span><span style="display:flex;"><span>簇内平方和: 0.24863747301587302
 </span></span></code></pre></div>
 		</section>
