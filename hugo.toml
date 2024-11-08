@@ -52,3 +52,10 @@ weight = 3
 name = "关于"
 url = "/about"
 weight = 4
+
+[markup]
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = true
+    style = "catppuccin-frappe"
+    tabWidth = 4

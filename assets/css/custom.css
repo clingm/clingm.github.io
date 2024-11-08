@@ -6,3 +6,13 @@ pre, code {
     font-size: 18px; /* 调整字体大小，可以根据需要修改 */
     line-height: 1.5; /* 调整行高以增强可读性 */
 }
+
+/* Media Queries */
+@media (max-width: 1080px) {
+    main {
+        max-width: 100%;
+    }
+    .toc {
+        display: none;
+    }
+}
